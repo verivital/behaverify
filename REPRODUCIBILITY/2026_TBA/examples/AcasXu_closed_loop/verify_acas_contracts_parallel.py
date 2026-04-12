@@ -1,11 +1,11 @@
 """
-verify_acas_parallel.py
+verify_acas_contracts_parallel.py
 
 Parallel wrapper for verify_acas_contracts.py.
 Splits TIMEOUT contracts across N worker processes and merges results.
 
 Usage:
-    python verify_acas_parallel.py \
+    python verify_acas_contracts_parallel.py \
         --timeout 3600 \
         --retry-from contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
         --workers 8 \
@@ -96,7 +96,7 @@ def worker_fn(args_tuple):
 
 def main():
     parser = argparse.ArgumentParser(description="Parallel ACAS Xu contract verification")
-    parser.add_argument("--config", default="verify_acas_contracts.yaml")
+    parser.add_argument("--config", default="acas_config.yaml")
     parser.add_argument("--retry-from", dest="retry_from", required=True,
                         help="Previous results JSON — re-verify TIMEOUT contracts")
     parser.add_argument("--timeout", type=int, default=3600,

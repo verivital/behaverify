@@ -1,5 +1,5 @@
 """
-run_acas_pipeline.py
+run_acas_compositional_pipeline.py
 
 End-to-end compositional verification pipeline for the ACAS Xu 5-NN closed-loop NSBT.
 
@@ -31,7 +31,7 @@ INVAR format (one per dangerous (state, advisory) pair in each SAT contract):
        -> system.command_stage_5 != <forbidden>;
 
 Usage (from AcasXu_closed_loop/):
-  python run_acas_pipeline.py \\
+  python run_acas_compositional_pipeline.py \\
       --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \\
       --output    results/compositional/continuous_goals/enabled_pgd/nn1 \\
       [--nuxmv    ../../../../nuXmv] \\

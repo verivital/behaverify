@@ -17,7 +17,7 @@ Contract semantics (range-based, analogous to grid-world single-call contracts):
 Class index mapping (matches DSL enum order and generate_acas_contracts.py):
   clear=0  weak_left=1  weak_right=2  strong_left=3  strong_right=4
 
-Configuration: verify_acas_contracts.yaml
+Configuration: acas_config.yaml
 Output: JSON report (path set in YAML)
 
 Run from:  REPRODUCIBILITY/2026_TBA/examples/AcasXu_closed_loop/
@@ -39,7 +39,7 @@ from abcrown import ABCrownSolver, VerificationSpec, ConfigBuilder, input_vars, 
 # Configuration loading
 # ---------------------------------------------------------------------------
 
-def load_config(path: str = "verify_acas_contracts.yaml") -> dict[str, Any]:
+def load_config(path: str = "acas_config.yaml") -> dict[str, Any]:
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
@@ -256,8 +256,8 @@ if __name__ == "__main__":
         description="Verify ACAS Xu A/G contracts via alpha-beta-CROWN."
     )
     parser.add_argument(
-        "--config", default="verify_acas_contracts.yaml",
-        help="Path to YAML config (default: verify_acas_contracts.yaml)",
+        "--config", default="acas_config.yaml",
+        help="Path to YAML config (default: acas_config.yaml)",
     )
     parser.add_argument(
         "--limit", type=int, default=None,

@@ -33,8 +33,8 @@ AcasXu_closed_loop/
 ├── handle_360.py                           # Fills in template → tree/acasxu_360.tree
 ├── generate_acas_contracts.py              # Enumerate dangerous states → contract specs
 ├── verify_acas_contracts.py                # Verify contract specs via CROWN
-├── verify_acas_contracts.yaml              # Config for verify_acas_contracts.py
-├── run_acas_pipeline.py                    # End-to-end compositional pipeline
+├── acas_config.yaml                        # Config for verify_acas_contracts.py
+├── run_acas_compositional_pipeline.py      # End-to-end compositional pipeline
 ├── command.sh                              # Generate monolithic SMV
 ├── time_command.sh                         # Generate monolithic SMV with timing
 └── invar.txt                               # Monolithic nuXmv result (committed)
@@ -152,7 +152,7 @@ The compositional pipeline has four stages:
 ```
 generate_acas_contracts.py  →  contract specs JSON
 verify_acas_contracts.py    →  CROWN verification results JSON
-run_acas_pipeline.py        →  contract-injected SMV  →  nuXmv verdict
+run_acas_compositional_pipeline.py  →  contract-injected SMV  →  nuXmv verdict
 ```
 
 All commands below assume you are in this directory:
@@ -192,7 +192,7 @@ Expected output: a mix of SAT (~0.5s each) and TIMEOUT (30s each).
 
 #### Full run for NN_1
 
-Edit `verify_acas_contracts.yaml` if you need to change the timeout or output
+Edit `acas_config.yaml` if you need to change the timeout or output
 path. The default is 30s per contract, NN_1 only.
 
 ```bash
@@ -225,7 +225,7 @@ This re-verifies only the TIMEOUT contracts and merges results into
 Using pre-computed contracts (skip tree/SMV regeneration):
 
 ```bash
-python run_acas_pipeline.py \
+python run_acas_compositional_pipeline.py \
     --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
     --output    results/compositional/continuous_goals/enabled_pgd/nn1 \
     --skip-tree --skip-smv
@@ -234,7 +234,7 @@ python run_acas_pipeline.py \
 Full pipeline (regenerate tree and SMV from scratch):
 
 ```bash
-python run_acas_pipeline.py \
+python run_acas_compositional_pipeline.py \
     --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
     --output    results/compositional/continuous_goals/enabled_pgd/nn1
 ```
@@ -319,7 +319,7 @@ The monolithic SMV (`smv/acasxu_360.smv`) is ~9,700 lines and contains 5 full
 NN lookup tables. nuXmv peak RSS is ~9.6 GB. Ensure at least 12 GB free RAM.
 The compositional patched SMV is ~1,600 lines and uses far less memory.
 
-### `run_acas_pipeline.py` gives `INVARSPEC=None`
+### `run_acas_compositional_pipeline.py` gives `INVARSPEC=None`
 
 Check `results/compositional/continuous_goals/enabled_pgd/nn1/nuxmv_output.txt` for nuXmv error messages.
 Common causes: SMV type errors (see `--skip-smv` flag to reuse a known-good
