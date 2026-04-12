@@ -40,6 +40,8 @@ DEGREE_MULTIPLIER = 9             # degrees per heading step
 DISTANCE_MEAN  = 19791.091
 DISTANCE_RANGE = 60261.0
 
+HEADING_INT = 225   # fixed intruder heading (degrees)
+
 ADVISORY_LABELS = {
     "clear":        "Clear (CoC)",
     "weak_left":    "Weak Left",
@@ -47,6 +49,54 @@ ADVISORY_LABELS = {
     "strong_left":  "Strong Left",
     "strong_right": "Strong Right",
 }
+
+# ---------------------------------------------------------------------------
+# NN input computation (mirrors generate_acas_contracts.py)
+# ---------------------------------------------------------------------------
+
+def _compute_nn_input1(x_mag: int, y_mag: int) -> float:
+    """Normalized distance (NN input 1)."""
+    dist = round(math.sqrt(x_mag * x_mag + y_mag * y_mag)) * DISTANCE_MODIFIER
+    return (dist - DISTANCE_MEAN) / DISTANCE_RANGE
+
+
+def _compute_nn_input2(
+    x_mag: int, y_mag: int, x_sign: int, y_sign: int, heading_own_var: int
+) -> float:
+    """Normalized relative angle (NN input 2)."""
+    heading_own = heading_own_var * DEGREE_MULTIPLIER
+
+    # arctan_val: atan(y/x) if y_sign=1, atan(x/y) if y_sign=-1
+    if y_sign == 1:
+        av = 0 if x_mag == 0 else round(math.degrees(math.atan(y_mag / x_mag)))
+    else:
+        av = 0 if y_mag == 0 else round(math.degrees(math.atan(x_mag / y_mag)))
+
+    # Relative angle cases (matches DSL sequential case order)
+    x, y = x_mag * DISTANCE_MODIFIER, y_mag * DISTANCE_MODIFIER
+    if x_sign == 1 and y == 0:
+        rel = 270 - heading_own
+    elif x_sign == -1 and y == 0:
+        rel = 90 - heading_own
+    elif x == 0 and y_sign == 1:
+        rel = 360 - heading_own
+    elif x == 0 and y_sign == -1:
+        rel = 180 - heading_own
+    elif x_sign == 1 and y_sign == 1:
+        rel = (270 - heading_own) + av
+    elif x_sign == 1 and y_sign == -1:
+        rel = (180 - heading_own) + av
+    elif x_sign == -1 and y_sign == 1:
+        rel = (90 - heading_own) - av
+    else:  # x_sign == -1 and y_sign == -1
+        rel = (180 - heading_own) - av
+
+    # Normalize to [-180, 180]
+    mod = rel % 360
+    pos = mod if mod >= 0 else mod + 360
+    adj = pos - 360 if pos > 180 else pos
+    return adj / 360.0
+
 
 # ---------------------------------------------------------------------------
 # Data loading
@@ -73,22 +123,12 @@ def select_contract(contracts: list[dict], contract_id: int | None) -> dict:
     return contracts[0]  # fallback
 
 
-def compute_safe_cells() -> set[tuple[int, int]]:
-    """All (x_mag, y_mag) with distance >= SAFETY_THRESHOLD."""
-    safe = set()
-    for x in range(MAX_DIST_VAR + 1):
-        for y in range(MAX_DIST_VAR + 1):
-            dist = round(math.sqrt(x * x + y * y)) * DISTANCE_MODIFIER
-            if dist >= SAFETY_THRESHOLD:
-                safe.add((x, y))
-    return safe
-
 
 # ---------------------------------------------------------------------------
 # Plotting
 # ---------------------------------------------------------------------------
 
-def plot_physical_space(ax: plt.Axes, contract: dict, safe_cells: set) -> None:
+def plot_physical_space(ax: plt.Axes, contract: dict) -> None:
     """Left panel: (x_mag, y_mag) physical state space."""
     x_sign = contract["x_sign"]
     y_sign = contract["y_sign"]
@@ -97,37 +137,28 @@ def plot_physical_space(ax: plt.Axes, contract: dict, safe_cells: set) -> None:
     advisory     = contract["forbidden_advisory"]
     dangerous_xy = contract["dangerous_xy"]   # list of [x_mag, y_mag]
 
-    # Grid background: green = safe, salmon = already unsafe
-    for xv in range(MAX_DIST_VAR + 1):
-        for yv in range(MAX_DIST_VAR + 1):
-            color = "#d4edda" if (xv, yv) in safe_cells else "#f8d7da"
-            rect = mpatches.FancyBboxPatch(
-                (xv - 0.5, yv - 0.5), 1.0, 1.0,
-                boxstyle="square,pad=0",
-                linewidth=0,
-                facecolor=color,
-                zorder=0,
-            )
-            ax.add_patch(rect)
+    # Green background for the full grid
+    ax.set_facecolor("#d4edda")
 
-    # Grid lines
-    for i in range(MAX_DIST_VAR + 2):
-        ax.axhline(i - 0.5, color="white", linewidth=0.6, zorder=1)
-        ax.axvline(i - 0.5, color="white", linewidth=0.6, zorder=1)
-
-    # Safety boundary circle (radius where round(r)*100 = 200 → r ≈ 1.5 in grid units)
+    # Solid red filled circle = unsafe region (distance < 200 ft)
+    # Radius 1.5 grid units is the exact discretization boundary:
+    # round(sqrt(x²+y²)) * 100 < 200 iff Euclidean distance < 1.5
     theta = np.linspace(0, 2 * math.pi, 300)
-    radius = 1.5  # 150 ft / 100 ft-per-unit = 1.5 grid units
+    radius = 1.5
+    ax.fill(
+        radius * np.cos(theta), radius * np.sin(theta),
+        color="#c0392b", alpha=0.35, zorder=1,
+        label=f"Unsafe region (< {SAFETY_THRESHOLD} ft)",
+    )
     ax.plot(
         radius * np.cos(theta), radius * np.sin(theta),
-        color="#c0392b", linewidth=1.5, linestyle="--", zorder=3,
-        label=f"Safety boundary (~{SAFETY_THRESHOLD} ft)",
+        color="#c0392b", linewidth=1.5, zorder=2,
     )
 
-    # Dangerous state dots
+    # Dangerous state dots (intruder positions)
     dx = [s[0] for s in dangerous_xy]
     dy = [s[1] for s in dangerous_xy]
-    ax.scatter(dx, dy, s=70, color="#c0392b", zorder=5, label="Dangerous states")
+    ax.scatter(dx, dy, s=70, color="#c0392b", zorder=5, label="Intruder positions (dangerous)")
 
     # Ownship marker at origin (relative coordinate frame)
     ax.scatter(0, 0, s=120, color="#2471a3", marker="^", zorder=6, label="Ownship (origin)")
@@ -155,13 +186,18 @@ def plot_input_space(ax: plt.Axes, contract: dict) -> None:
     dangerous_xy = contract["dangerous_xy"]
     advisory     = contract["forbidden_advisory"]
 
-    # We need to recompute NN inputs for each dangerous state.
-    # They're not stored in the spec per-state, but we can back them out
-    # from the bounding box extremes plus dots.
-    # Instead, the contract has nn_input_lower/upper — we have the bounding box.
-    # For the dots, we use the stored dangerous_xy and note the box is tight.
-    # We plot the box rectangle and annotate the dangerous states as a cluster.
-    # (exact per-state normalized inputs would require re-running compute_nn_inputs)
+    x_sign      = contract["x_sign"]
+    y_sign      = contract["y_sign"]
+    heading_var = contract["heading_own_var"]
+
+    # Compute exact NN inputs 1 & 2 for each dangerous state
+    pts = [
+        (
+            _compute_nn_input1(xm, ym),
+            _compute_nn_input2(xm, ym, x_sign, y_sign, heading_var),
+        )
+        for xm, ym in dangerous_xy
+    ]
 
     # Bounding box rectangle
     box_x = lower[0]
@@ -185,14 +221,11 @@ def plot_input_space(ax: plt.Axes, contract: dict) -> None:
     ax.scatter([lower[0], upper[0]], [lower[1], upper[1]], s=30, color="#2e86c1",
                marker="x", zorder=4, linewidths=1.5)
 
-    # Dangerous state cluster — shown schematically since exact per-state normalized
-    # inputs are not stored in the spec (only bounding box is stored).
-    # Place a red dot at the centroid of the box to indicate coverage.
-    cx = (lower[0] + upper[0]) / 2
-    cy = (lower[1] + upper[1]) / 2
+    # Intruder positions: exact NN inputs computed per dangerous state
     ax.scatter(
-        [cx], [cy], s=80, color="#c0392b", zorder=5,
-        label=f"{contract['n_states_covered']} dangerous state(s)\n(centroid shown)",
+        [p[0] for p in pts], [p[1] for p in pts],
+        s=70, color="#c0392b", zorder=5,
+        label=f"Intruder positions ({contract['n_states_covered']} states)",
     )
 
     # Constant inputs annotation
@@ -209,11 +242,12 @@ def plot_input_space(ax: plt.Axes, contract: dict) -> None:
         bbox=dict(boxstyle="round,pad=0.4", facecolor="white", alpha=0.8, edgecolor="#aaaaaa"),
     )
 
-    # Axis limits with margin
-    margin_x = max(0.05, box_w * 0.5)
-    margin_y = max(0.05, box_h * 0.5)
-    ax.set_xlim(lower[0] - margin_x, upper[0] + margin_x)
-    ax.set_ylim(lower[1] - margin_y, upper[1] + margin_y)
+    # Independent proportional padding per axis so the box occupies ~50% of
+    # each axis regardless of its aspect ratio. Small floor handles near-zero spans.
+    pad_x = max(box_w * 0.5, 0.01)
+    pad_y = max(box_h * 0.5, 0.01)
+    ax.set_xlim(lower[0] - pad_x, upper[0] + pad_x)
+    ax.set_ylim(lower[1] - pad_y, upper[1] + pad_y)
 
     ax.set_xlabel("NN input 1: normalized distance\n(dist − 19791.091) / 60261", fontsize=10)
     ax.set_ylabel("NN input 2: normalized relative angle\nrel_angle_adj / 360", fontsize=10)
@@ -256,7 +290,6 @@ def main() -> None:
     print(f"Loading contracts from: {specs_path}")
     contracts = load_contracts(specs_path)
     contract  = select_contract(contracts, args.contract_id)
-    safe_cells = compute_safe_cells()
 
     print(f"Selected contract id={contract['id']}:")
     print(f"  heading_own_var={contract['heading_own_var']}  "
@@ -269,7 +302,7 @@ def main() -> None:
 
     fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(11, 5))
 
-    plot_physical_space(ax_left, contract, safe_cells)
+    plot_physical_space(ax_left, contract)
     plot_input_space(ax_right, contract)
 
     fig.suptitle(
