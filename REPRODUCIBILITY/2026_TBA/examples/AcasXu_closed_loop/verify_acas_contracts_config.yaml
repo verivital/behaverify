@@ -1,4 +1,4 @@
-# acas_config.yaml
+# verify_acas_contracts_config.yaml
 # Configuration for A/G contract verification of the ACAS Xu closed-loop NSBT.
 # See verify_acas_contracts.py for the contract schema and class index mapping.
 #

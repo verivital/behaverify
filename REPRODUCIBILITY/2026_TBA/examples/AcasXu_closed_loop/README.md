@@ -39,7 +39,7 @@ AcasXu_closed_loop/
 ├── generate_acas_contracts.py              # Enumerate dangerous states → contract specs
 ├── verify_acas_contracts.py                # Verify contract specs via CROWN
 ├── verify_acas_contracts_parallel.py       # Parallel retry wrapper for TIMEOUT contracts
-├── acas_config.yaml                        # Config for verify_acas_contracts.py
+├── verify_acas_contracts_config.yaml                        # Config for verify_acas_contracts.py
 ├── run_acas_compositional_pipeline.py      # End-to-end compositional pipeline (single NN)
 ├── run_all_continuous_pipelines.sh         # Batch: run pipeline for all NNs
 ├── command.sh                              # Generate monolithic SMV
@@ -198,7 +198,7 @@ Expected output: a mix of SAT (~0.5s each) and TIMEOUT (30s each).
 
 #### Full run for NN_1
 
-Edit `acas_config.yaml` if you need to change the timeout or output
+Edit `verify_acas_contracts_config.yaml` if you need to change the timeout or output
 path. The default is 30s per contract, NN_1 only.
 
 ```bash

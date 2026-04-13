@@ -151,7 +151,7 @@ def worker_fn(args_tuple):
 
 def main():
     parser = argparse.ArgumentParser(description="Parallel ACAS Xu contract verification")
-    parser.add_argument("--config", default="acas_config.yaml")
+    parser.add_argument("--config", default="verify_acas_contracts_config.yaml")
     parser.add_argument("--retry-from", dest="retry_from", required=True,
                         help="Previous results JSON — re-verify TIMEOUT contracts")
     parser.add_argument("--timeout", type=int, default=3600,
