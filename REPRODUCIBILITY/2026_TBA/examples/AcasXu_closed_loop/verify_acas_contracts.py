@@ -35,6 +35,20 @@ import yaml
 import torch
 from abcrown import ABCrownSolver, VerificationSpec, ConfigBuilder, input_vars, output_vars
 
+from generate_acas_contracts import compute_nn_inputs
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+
+# Epsilon used for NN input bounds in discrete mode.
+# Set to 0.0 so each CROWN call checks the exact dangerous state point,
+# matching the 2025_NEUS table approach (NN evaluated at exact integer coordinates).
+DISCRETE_STATE_EPS: float = 0.0
+
+# Default per-state timeout for discrete mode (seconds).
+DISCRETE_DEFAULT_TIMEOUT_SEC: float = 5.0
+
 # ---------------------------------------------------------------------------
 # Configuration loading
 # ---------------------------------------------------------------------------
@@ -98,14 +112,54 @@ def verify_contract(
 # Helpers
 # ---------------------------------------------------------------------------
 
-def build_crown_config(cfg: dict[str, Any]) -> Any:
+def build_crown_config(cfg: dict[str, Any], timeout_override: float | None = None) -> Any:
+    timeout = timeout_override if timeout_override is not None \
+        else cfg["verification"]["timeout_sec"]
     return (
         ConfigBuilder.from_defaults()
         .set(general__device="cpu")
         .set(attack__pgd_order="skip")
-        .set(bab__timeout=cfg["verification"]["timeout_sec"])
+        .set(bab__timeout=timeout)
         ()
     )
+
+def verify_contract_discrete(
+    contract: dict[str, Any],
+    onnx_path: str,
+    forbidden_idx: int,
+    num_classes: int,
+    crown_config: Any,
+) -> str:
+    """
+    Verify one contract in discrete mode: one CROWN call per dangerous state.
+
+    Loops over contract["dangerous_xy"] (pre-computed integer (x_mag, y_mag) pairs),
+    computes exact NN inputs for each, and calls CROWN with lower=upper=exact_inputs.
+    Short-circuits on the first UNSAT. Returns TIMEOUT only if no UNSAT was found
+    but at least one state timed out.
+    """
+    x_sign      = contract["x_sign"]
+    y_sign      = contract["y_sign"]
+    heading_var = contract["heading_own_var"]
+    timeout_seen = False
+
+    for x_mag, y_mag in contract["dangerous_xy"]:
+        exact = compute_nn_inputs(x_mag, y_mag, x_sign, y_sign, heading_var)
+        status = verify_contract(
+            onnx_path=onnx_path,
+            lower=exact,
+            upper=exact,
+            forbidden_idx=forbidden_idx,
+            num_classes=num_classes,
+            crown_config=crown_config,
+        )
+        if status == "UNSAT":
+            return "UNSAT"
+        if status == "TIMEOUT":
+            timeout_seen = True
+
+    return "TIMEOUT" if timeout_seen else "SAT"
+
 
 def result_marker(status: str) -> str:
     if status == "SAT":
@@ -126,6 +180,7 @@ def save_report(
     nn_idx: int,
     onnx_path: str,
     total_wall_sec: float,
+    mode: str = "continuous",
 ) -> None:
     counts = {s: sum(1 for r in records if r["status"] == s)
               for s in ("SAT", "UNSAT", "TIMEOUT")}
@@ -133,6 +188,7 @@ def save_report(
     report = {
         "network_idx":     nn_idx,
         "onnx_path":       onnx_path,
+        "mode":            mode,
         "timestamp":       datetime.datetime.now().isoformat(),
         "timeout_sec":     cfg["verification"]["timeout_sec"],
         "total_wall_sec":  round(total_wall_sec, 3),
@@ -187,25 +243,45 @@ def run_verification(
     # Derive ONNX path from the first matching contract (all share the same file)
     onnx_path = contracts[0]["onnx"]
 
-    print(f"Verifying {len(contracts)} contracts for NN_{nn_idx} ({onnx_path})")
-    print(f"Timeout: {timeout}s per contract\n")
+    discrete = cfg.get("discrete", False)
+    if discrete:
+        dt = cfg.get("discrete_timeout", DISCRETE_DEFAULT_TIMEOUT_SEC)
+        crown_config = build_crown_config(cfg, timeout_override=dt)
+        mode_str = (f"discrete, EPS={DISCRETE_STATE_EPS}, "
+                    f"timeout={dt}s per state")
+        print(f"Verifying {len(contracts)} contracts for NN_{nn_idx} ({onnx_path})")
+        print(f"Mode: {mode_str}\n")
+    else:
+        crown_config = build_crown_config(cfg, timeout_override=timeout_override)
+        mode_str = "continuous"
+        print(f"Verifying {len(contracts)} contracts for NN_{nn_idx} ({onnx_path})")
+        print(f"Timeout: {timeout}s per contract\n")
+
     print(f"{'#':<5} {'Heading':>7} {'Quad':>6} {'Forbidden':<14} {'States':>6} {'Sec':>6} {'Status':<10} Marker")
     print("-" * 80)
 
-    crown_config = build_crown_config(cfg)
     new_records = []
     run_start = time.perf_counter()
 
     for i, contract in enumerate(contracts):
-        t0     = time.perf_counter()
-        status = verify_contract(
-            onnx_path=onnx_path,
-            lower=contract["nn_input_lower"],
-            upper=contract["nn_input_upper"],
-            forbidden_idx=contract["forbidden_advisory_idx"],
-            num_classes=num_classes,
-            crown_config=crown_config,
-        )
+        t0 = time.perf_counter()
+        if discrete:
+            status = verify_contract_discrete(
+                contract=contract,
+                onnx_path=onnx_path,
+                forbidden_idx=contract["forbidden_advisory_idx"],
+                num_classes=num_classes,
+                crown_config=crown_config,
+            )
+        else:
+            status = verify_contract(
+                onnx_path=onnx_path,
+                lower=contract["nn_input_lower"],
+                upper=contract["nn_input_upper"],
+                forbidden_idx=contract["forbidden_advisory_idx"],
+                num_classes=num_classes,
+                crown_config=crown_config,
+            )
         wall_sec = time.perf_counter() - t0
 
         sign = lambda v: "+" if v == 1 else "-"
@@ -248,7 +324,7 @@ def run_verification(
     print("-" * 80)
     print_summary(records)
     print(f"Total wall time: {total_wall:.1f}s  ({total_wall/60:.1f} min)")
-    save_report(records, cfg, nn_idx, onnx_path, total_wall)
+    save_report(records, cfg, nn_idx, onnx_path, total_wall, mode=mode_str)
 
 
 if __name__ == "__main__":
@@ -280,12 +356,27 @@ if __name__ == "__main__":
         "--output", default=None,
         help="Override output_path from YAML",
     )
+    parser.add_argument(
+        "--discrete", action="store_true",
+        help="Discrete mode: verify each dangerous (x_mag, y_mag) state individually "
+             "(lower=upper=exact NN inputs, EPS=0). Short-circuits on first UNSAT. "
+             "Bridges to the 2025_NEUS table approach.",
+    )
+    parser.add_argument(
+        "--discrete-timeout", type=float, default=DISCRETE_DEFAULT_TIMEOUT_SEC,
+        dest="discrete_timeout",
+        help=(f"Per-state timeout in seconds for discrete mode "
+              f"(default: {DISCRETE_DEFAULT_TIMEOUT_SEC}s). Ignored if --discrete not set."),
+    )
     args = parser.parse_args()
     cfg = load_config(args.config)
     if args.network_idx is not None:
         cfg["network_idx"] = args.network_idx
     if args.output is not None:
         cfg["output_path"] = args.output
+    if args.discrete:
+        cfg["discrete"]         = True
+        cfg["discrete_timeout"] = args.discrete_timeout
     run_verification(
         cfg,
         limit=args.limit,
