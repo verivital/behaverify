@@ -38,18 +38,6 @@ from abcrown import ABCrownSolver, VerificationSpec, ConfigBuilder, input_vars, 
 from generate_acas_contracts import compute_nn_inputs
 
 # ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-
-# Epsilon used for NN input bounds in discrete mode.
-# Set to 0.0 so each CROWN call checks the exact dangerous state point,
-# matching the 2025_NEUS table approach (NN evaluated at exact integer coordinates).
-DISCRETE_STATE_EPS: float = 0.0
-
-# Default per-state timeout for discrete mode (seconds).
-DISCRETE_DEFAULT_TIMEOUT_SEC: float = 5.0
-
-# ---------------------------------------------------------------------------
 # Configuration loading
 # ---------------------------------------------------------------------------
 
@@ -245,9 +233,11 @@ def run_verification(
 
     discrete = cfg.get("discrete", False)
     if discrete:
-        dt = cfg.get("discrete_timeout", DISCRETE_DEFAULT_TIMEOUT_SEC)
+        dt = cfg.get("discrete_timeout",
+                     cfg["verification"].get("discrete_timeout_sec", 5.0))
+        eps = cfg["verification"].get("discrete_state_eps", 0.0)
         crown_config = build_crown_config(cfg, timeout_override=dt)
-        mode_str = (f"discrete, EPS={DISCRETE_STATE_EPS}, "
+        mode_str = (f"discrete, EPS={eps}, "
                     f"timeout={dt}s per state")
         print(f"Verifying {len(contracts)} contracts for NN_{nn_idx} ({onnx_path})")
         print(f"Mode: {mode_str}\n")
@@ -363,10 +353,11 @@ if __name__ == "__main__":
              "Bridges to the 2025_NEUS table approach.",
     )
     parser.add_argument(
-        "--discrete-timeout", type=float, default=DISCRETE_DEFAULT_TIMEOUT_SEC,
+        "--discrete-timeout", type=float, default=None,
         dest="discrete_timeout",
-        help=(f"Per-state timeout in seconds for discrete mode "
-              f"(default: {DISCRETE_DEFAULT_TIMEOUT_SEC}s). Ignored if --discrete not set."),
+        help=("Per-state timeout in seconds for discrete mode. "
+              "Default: verification.discrete_timeout_sec from YAML. "
+              "Ignored if --discrete not set."),
     )
     args = parser.parse_args()
     cfg = load_config(args.config)
@@ -375,8 +366,9 @@ if __name__ == "__main__":
     if args.output is not None:
         cfg["output_path"] = args.output
     if args.discrete:
-        cfg["discrete"]         = True
-        cfg["discrete_timeout"] = args.discrete_timeout
+        cfg["discrete"] = True
+        if args.discrete_timeout is not None:
+            cfg["discrete_timeout"] = args.discrete_timeout
     run_verification(
         cfg,
         limit=args.limit,

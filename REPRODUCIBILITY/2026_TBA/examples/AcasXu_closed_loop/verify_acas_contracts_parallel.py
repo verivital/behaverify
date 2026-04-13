@@ -149,9 +149,6 @@ def worker_fn(args_tuple):
     }
 
 
-DISCRETE_DEFAULT_TIMEOUT_SEC: float = 5.0
-
-
 def main():
     parser = argparse.ArgumentParser(description="Parallel ACAS Xu contract verification")
     parser.add_argument("--config", default="acas_config.yaml")
@@ -171,10 +168,11 @@ def main():
              "(lower=upper=exact NN inputs, EPS=0). Short-circuits on first UNSAT.",
     )
     parser.add_argument(
-        "--discrete-timeout", type=float, default=DISCRETE_DEFAULT_TIMEOUT_SEC,
+        "--discrete-timeout", type=float, default=None,
         dest="discrete_timeout",
-        help=(f"Per-state timeout in seconds for discrete mode "
-              f"(default: {DISCRETE_DEFAULT_TIMEOUT_SEC}s). Ignored if --discrete not set."),
+        help=("Per-state timeout in seconds for discrete mode. "
+              "Default: verification.discrete_timeout_sec from YAML. "
+              "Ignored if --discrete not set."),
     )
     args = parser.parse_args()
 
@@ -184,6 +182,14 @@ def main():
 
     nn_idx = cfg["network_idx"]
     num_classes = cfg["num_classes"]
+
+    # Resolve discrete timeout: CLI arg takes priority; fall back to YAML default.
+    discrete_timeout = (
+        args.discrete_timeout
+        if args.discrete_timeout is not None
+        else cfg["verification"].get("discrete_timeout_sec", 5.0)
+    )
+    discrete_eps = cfg["verification"].get("discrete_state_eps", 0.0)
 
     # Load contract specs
     with open(cfg["contracts_path"], encoding="utf-8") as f:
@@ -200,7 +206,7 @@ def main():
         timeout_ids = timeout_ids[:args.limit]
 
     if args.discrete:
-        mode_str = (f"discrete, EPS=0.0, timeout={args.discrete_timeout}s per state")
+        mode_str = (f"discrete, EPS={discrete_eps}, timeout={discrete_timeout}s per state")
     else:
         mode_str = "continuous"
 
@@ -221,7 +227,7 @@ def main():
             args.device,
             i,
             args.discrete,
-            args.discrete_timeout,
+            discrete_timeout,
         ))
 
     n_workers = args.workers or mp.cpu_count()

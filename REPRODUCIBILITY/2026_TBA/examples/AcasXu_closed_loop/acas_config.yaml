@@ -23,10 +23,22 @@ num_classes: 5
 
 # Verification parameters
 verification:
-  # BaB timeout in seconds per contract.
+  # BaB timeout in seconds per contract (continuous mode).
   # ACAS Xu input regions are much smaller than grid-world contracts, so
   # 30 s is a reasonable starting point (vs 60 s for grid world).
   timeout_sec: 30
+
+  # Discrete mode: epsilon applied symmetrically around each exact (x_mag, y_mag)
+  # state when constructing CROWN input bounds (lower = exact - eps, upper = exact + eps).
+  # 0.0 means each CROWN call checks the exact integer state point, matching the
+  # 2025_NEUS table approach.  Raise to a small value (e.g. 1e-5) if alpha-beta-CROWN
+  # crashes with inf/NaN due to zero-width bounds in cut_ops.py.
+  discrete_state_eps: 0.0
+
+  # Default per-state BaB timeout for discrete mode (seconds).
+  # Each dangerous (x_mag, y_mag) state gets this budget independently.
+  # Overridden at runtime by --discrete-timeout.
+  discrete_timeout_sec: 5.0
 
 # Output path for verification report (relative to script working directory).
 output_path: "contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json"
