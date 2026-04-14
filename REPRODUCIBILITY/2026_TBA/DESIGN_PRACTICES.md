@@ -1,7 +1,7 @@
 # BehaVerify Design Practices
 
 This document defines the numbered design principles used in commit messages and
-code review for the BehaVerify project. When a commit references `DESIGN-XX`, the
+code review for `2026_TBA/` folder of the BehaVerify project. When a commit references `DESIGN-XX`, the
 number refers to the principle described here.
 
 **Example commit:**
@@ -78,7 +78,7 @@ A function that both computes a value and formats it for output is doing two thi
 
 ---
 
-## DESIGN-08 — Code Formatting
+## DESIGN-08 — Comments
 
 Public functions and modules should have docstrings that describe:
 1. What the function does (not how)
