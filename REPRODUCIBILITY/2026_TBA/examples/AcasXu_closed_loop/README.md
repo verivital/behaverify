@@ -81,13 +81,18 @@ AcasXu_closed_loop/
 
 ## Prerequisites
 
-### 1. BehaVerify
+### 1. BehaVerify + extra dependencies
 
-Install from the repository root:
+Install from the repository root, then add the extras for this pipeline:
 
 ```bash
 pip install -e .
+pip install -r REPRODUCIBILITY/2026_TBA/requirements.txt
 ```
+
+The extras file currently adds only `gradio` (for the interactive contract explorer).
+Everything else (`matplotlib`, `numpy`, `pandas`, `onnxruntime`, `PyYAML`) is already
+pulled in by the base `behaverify` install.
 
 ### 2. nuXmv 2.1.0
 

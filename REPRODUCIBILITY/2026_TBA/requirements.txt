@@ -1,0 +1,9 @@
+# Extra dependencies for REPRODUCIBILITY/2026_TBA beyond the base behaverify install.
+#
+# The base install (pip install -e . from the repo root) already provides:
+#   matplotlib, pandas, numpy, onnxruntime, PyYAML, textX, py-trees, ...
+#
+# Install these after the base install:
+#   pip install -r REPRODUCIBILITY/2026_TBA/requirements.txt
+
+gradio>=4.0.0

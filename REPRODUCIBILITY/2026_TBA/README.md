@@ -58,7 +58,19 @@ chmod +x REPRODUCIBILITY/2026_TBA/nuXmv_DL/bin/nuXmv
 The pipeline scripts default to `../../nuXmv_DL/bin/nuXmv` relative to their example
 folder. Override with `--nuxmv` if your binary is elsewhere.
 
-### 3. alpha-beta-CROWN (only needed to re-verify contracts)
+### 3. Extra Python dependencies
+
+After the base `pip install -e .`, install the small set of extras this pipeline needs:
+
+```bash
+pip install -r REPRODUCIBILITY/2026_TBA/requirements.txt
+```
+
+Currently this adds only `gradio` (used by the interactive contract explorer app).
+Everything else — `matplotlib`, `numpy`, `pandas`, `onnxruntime`, `PyYAML` — is
+already pulled in by the base `behaverify` install.
+
+### 4. alpha-beta-CROWN (only needed to re-verify contracts)
 
 Pre-computed contracts are already committed. Only needed for re-running CROWN from scratch:
 
