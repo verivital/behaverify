@@ -13,6 +13,31 @@ For background, see the NeuS 2025 paper:
 
 ---
 
+## Quick start — interactive contract explorer
+
+Before running any verification, explore the pre-computed A/G contracts
+interactively with the Gradio app. No CROWN or nuXmv needed.
+
+```bash
+cd REPRODUCIBILITY/2026_TBA/examples/AcasXu_closed_loop
+pip install gradio          # one-time, if not already installed
+python3 figures/image_scripts/acas_contract_explorer.py
+# → open http://localhost:7860
+```
+
+The app shows a 2×2 dashboard for any selected contract:
+
+| | Left | Right |
+|---|---|---|
+| **Top** | Original physical state space (signed coordinates, heading arrow, quadrant highlight) | Normalized physical state space (ownship at origin) |
+| **Bottom** | NN input space — toggle **Continuous**, **Discrete**, or **Both** modes; drag **eps** slider to grow/shrink the bounding box live | Contract details table (id, heading, quadrant, forbidden advisory, bounding box bounds) |
+
+This is the fastest way to build intuition for what continuous vs. discrete
+contract verification actually checks before reading any of the pipeline scripts.
+See [`figures/README.md`](figures/README.md) for full app documentation.
+
+---
+
 ## Directory Layout
 
 ```
@@ -32,6 +57,12 @@ AcasXu_closed_loop/
 │       │       └── nn1/                    # Pipeline output for NN_1
 │       └── discrete_goals/                 # (empty — future runs)
 ├── figures/                                # Visualization scripts and outputs
+│   ├── image_scripts/
+│   │   ├── acas_contract_explorer.py       # Interactive Gradio demo (start here)
+│   │   ├── acas_discrete_vs_continuous.py  # Static 3-panel comparison figure
+│   │   ├── acas_input_region.py            # Single-contract static figure
+│   │   └── acas_output_property.py         # NN output bar charts
+│   └── figures/README.md                   # Figure documentation
 ├── smv/                                    # Generated base SMV (reused via --skip-smv)
 ├── tree/                                   # Generated tree file (reused via --skip-tree)
 ├── acas_template_360.tree                # Template for the closed-loop model
