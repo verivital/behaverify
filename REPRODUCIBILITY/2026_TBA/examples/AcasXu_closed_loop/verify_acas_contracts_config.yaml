@@ -41,4 +41,8 @@ verification:
   discrete_timeout_sec: 5.0
 
 # Output path for verification report (relative to script working directory).
+# NOTE: This default is for continuous mode NN_1 only. Always override with
+# --output when running discrete mode or a different NN to avoid overwriting
+# the wrong file. The shell scripts (verify_all_discrete_contracts.sh,
+# run_all_continuous_pipelines.sh) always pass --output explicitly.
 output_path: "contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json"
