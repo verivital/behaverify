@@ -259,7 +259,7 @@ def _draw_physical_original(ax: plt.Axes, contract: dict) -> None:
         (qx0, qy0), qw, qh,
         facecolor="#fff9c4", alpha=0.55, zorder=1,
         edgecolor="#f39c12", linewidth=1.5,
-        label="Contract quadrant (normalized →)",
+        label="Contract quadrant",
     ))
 
     # Safety circle (drawn above quadrant highlight)
@@ -267,7 +267,7 @@ def _draw_physical_original(ax: plt.Axes, contract: dict) -> None:
     radius = 1.5
     ax.fill(radius * np.cos(theta), radius * np.sin(theta),
             color="#c0392b", alpha=0.35, zorder=2,
-            label=f"Unsafe (< {SAFETY_THRESHOLD} ft)")
+            label=f"Invariant (< {SAFETY_THRESHOLD} ft)")
     ax.plot(radius * np.cos(theta), radius * np.sin(theta),
             color="#c0392b", linewidth=1.5, zorder=3)
 
@@ -291,7 +291,7 @@ def _draw_physical_original(ax: plt.Axes, contract: dict) -> None:
                label=f"Dangerous states ({contract['n_states_covered']})")
 
     # Ownship at origin
-    ax.scatter(0, 0, s=120, color="#2471a3", marker="^", zorder=6,
+    ax.scatter(0, 0, s=70, color="#2471a3", zorder=6,
                label="Ownship (origin)")
 
     # Heading arrow — shows true facing direction of ownship
@@ -300,11 +300,11 @@ def _draw_physical_original(ax: plt.Axes, contract: dict) -> None:
     ady = math.sin(heading_rad) * arrow_len
     ax.annotate(
         "", xy=(adx, ady), xytext=(0, 0),
-        arrowprops=dict(arrowstyle="-|>", color="#2471a3", lw=2.0),
+        arrowprops=dict(arrowstyle="-|>", color="#2471a3", lw=4.0),
         zorder=7,
     )
     ax.text(adx * 1.12, ady * 1.12, f"{heading_deg}°",
-            color="#2471a3", fontsize=7.5, ha="center", va="center")
+            color="#2471a3", fontsize=15, ha="center", va="center")
 
     sign_x = "+" if x_sign == 1 else "−"
     sign_y = "+" if y_sign == 1 else "−"
@@ -341,7 +341,7 @@ def _draw_physical_normalized(ax: plt.Axes, contract: dict) -> None:
     radius = 1.5
     ax.fill(radius * np.cos(theta), radius * np.sin(theta),
             color="#c0392b", alpha=0.35, zorder=1,
-            label=f"Unsafe (< {SAFETY_THRESHOLD} ft)")
+            label=f"Invariant (< {SAFETY_THRESHOLD} ft)")
     ax.plot(radius * np.cos(theta), radius * np.sin(theta),
             color="#c0392b", linewidth=1.5, zorder=2)
 
@@ -349,8 +349,8 @@ def _draw_physical_normalized(ax: plt.Axes, contract: dict) -> None:
     dy = [s[1] for s in contract["dangerous_xy"]]
     ax.scatter(dx, dy, s=70, color="#c0392b", zorder=5,
                label=f"Dangerous states ({contract['n_states_covered']})")
-    ax.scatter(0, 0, s=120, color="#2471a3", marker="^", zorder=6,
-               label="Ownship (origin)")
+    ax.scatter(0, 0, s=70, color="#2471a3", zorder=6,
+               label="Ownship")
 
     sign_x = "+" if x_sign == 1 else "−"
     sign_y = "+" if y_sign == 1 else "−"
