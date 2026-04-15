@@ -23,6 +23,7 @@ Output: JSON report (path set in YAML)
 Run from:  REPRODUCIBILITY/2026_TBA/examples/AcasXu_closed_loop/
 """
 
+import os
 import sys
 import json
 import functools
@@ -184,6 +185,7 @@ def save_report(
         "summary":         {**counts, "total": len(records)},
         "contracts":       records,
     }
+    os.makedirs(os.path.dirname(cfg["output_path"]) or ".", exist_ok=True)
     with open(cfg["output_path"], "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
     print(f"Results saved to {cfg['output_path']}")
