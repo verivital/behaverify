@@ -96,17 +96,16 @@ pulled in by the base `behaverify` install.
 
 ### 2. nuXmv 2.1.0
 
-nuXmv cannot be redistributed. Download and place the binary at
-`REPRODUCIBILITY/2026_TBA/nuXmv/bin/nuXmv` (relative to the repo root):
+nuXmv cannot be redistributed. Download and extract into `REPRODUCIBILITY/2026_TBA/`:
 
 ```bash
 wget "https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz" \
     -O nuXmv_DL.tar.xz
-tar -xf nuXmv_DL.tar.xz --one-top-level=nuXmv --strip-components 1
-chmod +x nuXmv/bin/nuXmv
+tar -xf nuXmv_DL.tar.xz --one-top-level=nuXmv_DL --strip-components 1
+chmod +x nuXmv_DL/bin/nuXmv
 ```
 
-The pipeline defaults to `../../../../nuXmv/bin/nuXmv` relative to this directory.
+The pipeline defaults to `../../nuXmv_DL/bin/nuXmv` relative to this directory.
 
 ### 3. alpha-beta-CROWN (only needed to re-verify contracts)
 
@@ -174,7 +173,7 @@ python generate_acas_tree.py
 ./time_command.sh
 
 # 3. Verify with nuXmv
-../../../../nuXmv/bin/nuXmv \
+../../nuXmv_DL/bin/nuXmv \
     -source ../../scripts/nuxmv_commands/command_all_invar \
     ./smv/acas_360.smv \
     > results/monolithic_invar.txt

@@ -52,11 +52,11 @@ nuXmv cannot be redistributed. Download and extract into `REPRODUCIBILITY/2026_T
 ```bash
 wget https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz -O nuXmv_DL.tar.xz
 tar -xf nuXmv_DL.tar.xz --one-top-level=nuXmv_DL --strip-components 1
-chmod +x REPRODUCIBILITY/2026_TBA/nuXmv_DL/bin/nuXmv
+chmod +x nuXmv_DL/bin/nuXmv
 ```
 
-The pipeline scripts default to `../../nuXmv_DL/bin/nuXmv` relative to their example
-folder. Override with `--nuxmv` if your binary is elsewhere.
+The pipeline scripts default to `nuXmv_DL/bin/nuXmv` inside `REPRODUCIBILITY/2026_TBA/`.
+Override with `--nuxmv` if your binary is elsewhere.
 
 ### 3. Extra Python dependencies
 
