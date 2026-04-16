@@ -148,16 +148,22 @@ def run_smv_generation(ctx: dict) -> dict:
     tracemalloc.start()
     t0 = time.perf_counter()
 
-    _dsl.dsl_to_nuxmv(
-        str(ctx["metamodel"]),
-        str(ctx["tree_path"]),
-        str(ctx["base_smv_path"]),
-        False, False, False, False,
-        10000,       # recursion_limit
-        False,       # keep_stage_0
-        True,        # skip_grammar_check (--no_checks)
-        None,        # record_times
-    )
+    # ONNX paths in the tree are relative to tree/, so chdir there for parsing
+    _orig_cwd = os.getcwd()
+    os.chdir(str(ctx["tree_path"].parent))
+    try:
+        _dsl.dsl_to_nuxmv(
+            str(ctx["metamodel"]),
+            str(ctx["tree_path"]),
+            str(ctx["base_smv_path"]),
+            False, False, False, False,
+            10000,       # recursion_limit
+            False,       # keep_stage_0
+            True,        # skip_grammar_check (--no_checks)
+            None,        # record_times
+        )
+    finally:
+        os.chdir(_orig_cwd)
 
     wall_sec = time.perf_counter() - t0
     _, peak_traced = tracemalloc.get_traced_memory()
@@ -208,10 +214,10 @@ def _remove_nn_defines(smv: str) -> tuple[str, int]:
     for k in range(1, 6):
         var = f"network_{k}_1_stage_0"
         pattern = (
-            r"        " + re.escape(var) + r" :=\n"
-            r"            case\n"
+            r" +" + re.escape(var) + r" :=\s+"
+            r"case\s+"
             r".*?"
-            r"            esac;\n"
+            r"esac;\n"
         )
         before = smv.count("\n")
         smv, n = re.subn(pattern, "", smv, flags=re.DOTALL)
@@ -305,7 +311,7 @@ def run_smv_patch(ctx: dict) -> dict:
     contracts = _load_sat_contracts(ctx["contracts_path"], ctx["spec_path"])
 
     t0 = time.perf_counter()
-    smv = ctx["base_smv_path"].read_text(encoding="utf-8")
+    smv = ctx["base_smv_path"].read_text(encoding="utf-8").replace("\r\n", "\n")
 
     smv, lines_removed = _remove_nn_defines(smv)
     print(f"  Removed 5 NN DEFINE blocks ({lines_removed} lines)")
