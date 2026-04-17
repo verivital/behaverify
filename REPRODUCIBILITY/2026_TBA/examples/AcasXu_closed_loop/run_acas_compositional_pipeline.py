@@ -35,7 +35,7 @@ Usage (from AcasXu_closed_loop/):
       --contracts contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \\
       --output    results/compositional/continuous_goals/enabled_pgd/nn1 \\
       [--nuxmv    ../../nuXmv_DL/bin/nuXmv] \\
-      [--nuxmv-cmd ../../scripts/nuxmv_commands/command_invar] \\
+      [--nuxmv-cmd ../../commands/nuxmv_commands/command_invar] \\
       [--skip-tree]   # reuse existing tree/acas_360.tree
       [--skip-smv]    # reuse existing smv/acas_360.smv
 """
@@ -61,7 +61,7 @@ _HERE     = Path(__file__).parent.resolve()
 _REPO     = (_HERE / "../../../../").resolve()
 
 DEFAULT_NUXMV     = _HERE / "../../nuXmv_DL/bin/nuXmv"
-DEFAULT_NUXMV_CMD = _HERE / "../../scripts/nuxmv_commands/command_invar"
+DEFAULT_NUXMV_CMD = _HERE / "../../commands/nuxmv_commands/command_invar"
 DEFAULT_METAMODEL = _HERE / "../../metamodel/behaverify.tx"
 DEFAULT_SRC       = _HERE / "../../src"
 

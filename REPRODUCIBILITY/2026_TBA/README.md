@@ -19,7 +19,7 @@ Two examples are included:
 │   └── AcasXu_closed_loop/ # 5-NN ACAS Xu pipeline  (see examples/AcasXu_closed_loop/README.md)
 ├── metamodel/              # Pinned BehaVerify TextX grammar
 ├── reports/                # Refactoring logs, session snapshots, and result summaries
-├── scripts/nuxmv_commands/ # nuXmv command files used by both pipelines
+├── commands/nuxmv_commands/ # nuXmv command files used by both pipelines
 ├── src/                    # BehaVerify source modules (compositional pipeline only)
 └── nuXmv_DL/               # nuXmv binary (not committed, download separately)
 ```

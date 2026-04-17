@@ -17,7 +17,7 @@ Usage (from REPRODUCIBILITY/2026_TBA/examples/grid_world/):
       [--tree       path/to/counter.tree]
       [--config     grid_world_config.yaml]
       [--nuxmv      ../../nuXmv_DL/bin/nuXmv]
-      [--nuxmv-cmd  ../../scripts/nuxmv_commands/command_combo_invar_ctl]
+      [--nuxmv-cmd  ../../commands/nuxmv_commands/command_combo_invar_ctl]
       [--metamodel  ../../metamodel/behaverify.tx]
       [--skip-contracts]
       [--contracts  path/to/contracts.json]

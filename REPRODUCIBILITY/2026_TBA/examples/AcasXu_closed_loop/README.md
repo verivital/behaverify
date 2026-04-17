@@ -174,7 +174,7 @@ python generate_acas_tree.py
 
 # 3. Verify with nuXmv
 ../../nuXmv_DL/bin/nuXmv \
-    -source ../../scripts/nuxmv_commands/command_all_invar \
+    -source ../../commands/nuxmv_commands/command_all_invar \
     ./smv/acas_360.smv \
     > results/monolithic_invar.txt
 ```

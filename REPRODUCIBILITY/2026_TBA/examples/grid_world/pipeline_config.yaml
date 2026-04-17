@@ -6,7 +6,7 @@
 # Paths to external tools and artifacts (adjust for your environment).
 paths:
   nuxmv_bin:        ../../nuXmv_DL/bin/nuXmv
-  nuxmv_cmd:        ../../scripts/nuxmv_commands/command_combo_invar_ctl
+  nuxmv_cmd:        ../../commands/nuxmv_commands/command_combo_invar_ctl
   metamodel:        ../../metamodel/behaverify.tx
   counter_template: counter_template.tree
   contracts_config: grid_world_config.yaml

@@ -52,7 +52,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-NUXMV_CMD_ALL_INVAR="${_HERE}/../../scripts/nuxmv_commands/command_all_invar"
+NUXMV_CMD_ALL_INVAR="${_HERE}/../../commands/nuxmv_commands/command_all_invar"
 SRC_DIR="${_HERE}/../../src"
 METAMODEL="${_HERE}/../../metamodel/behaverify.tx"
 PYTHON="${PYTHON:-python3}"

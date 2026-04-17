@@ -26,7 +26,7 @@ set -euo pipefail
 
 _HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NUXMV="${_HERE}/../../nuXmv_DL/bin/nuXmv"
-NUXMV_CMD="${_HERE}/../../scripts/nuxmv_commands/command_combo_invar_ctl"
+NUXMV_CMD="${_HERE}/../../commands/nuxmv_commands/command_combo_invar_ctl"
 # Template lives in 2025_NEUS — the .tree format and obstacle config are shared.
 TEMPLATE="${_HERE}/../../../2025_NEUS/examples/grid_world/template.tree"
 OUT="${_HERE}/results/monolithic"

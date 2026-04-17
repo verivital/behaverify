@@ -164,7 +164,7 @@ Hardcoded parameters, file paths, and environment-specific values do not belong 
 - **Behavior tree models** → `.tree` DSL files, not generated code
 - **Reproducibility materials** → self-contained subdirectories under `REPRODUCIBILITY/`,
   isolated from the core `src/` tree
-- **nuXmv commands** → `scripts/nuxmv_commands/` command files, not hardcoded strings
+- **nuXmv commands** → `commands/nuxmv_commands/` command files, not hardcoded strings
 - **NN weights** → ONNX files referenced by path, not embedded in code
 
 A `REPRODUCIBILITY/<year>_<venue>/` directory is itself a configuration artifact: it captures the exact scripts, models, and parameters used to produce a specific paper's results. It should be independently reproducible from a clean checkout.
