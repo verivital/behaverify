@@ -3,10 +3,9 @@ verify_acas_contracts.py
 
 Verify A/G safety contracts for the ACAS Xu closed-loop NSBT using alpha-beta-CROWN.
 
-Contracts are pre-computed by generate_acas_contracts.py and stored as a JSON file
-containing range-based input bounds (nn_input_lower / nn_input_upper).  This script
-loads the contracts for a single NN (filtered by network_idx), calls CROWN once per
-contract, and writes a verification report.
+Thin wrapper: ACAS-specific logic is limited to input-space construction
+(compute_nn_inputs, dangerous_xy iteration).  All CROWN invocation, config
+building, and status normalization are delegated to pipeline/crown/crown_verification.py.
 
 Contract semantics (range-based, analogous to grid-world single-call contracts):
   - Input region : nn_input_lower[i] <= x[i] <= nn_input_upper[i]  (5 inputs)
@@ -18,7 +17,7 @@ Class index mapping (matches DSL enum order and generate_acas_contracts.py):
   clear=0  weak_left=1  weak_right=2  strong_left=3  strong_right=4
 
 Configuration: verify_acas_contracts_config.yaml
-Output: JSON report (path set in YAML)
+Output: JSON report (path set in YAML or overridden via --output)
 
 Run from:  REPRODUCIBILITY/2026_TBA/examples/AcasXu_closed_loop/
 """
@@ -26,17 +25,27 @@ Run from:  REPRODUCIBILITY/2026_TBA/examples/AcasXu_closed_loop/
 import os
 import sys
 import json
-import functools
 import datetime
 import time
 import argparse
+from pathlib import Path
 from typing import Any
 
 import yaml
-import torch
-from abcrown import ABCrownSolver, VerificationSpec, ConfigBuilder, input_vars, output_vars
+
+_HERE = Path(__file__).parent.resolve()
+_TBA  = (_HERE / "../../").resolve()
+if str(_TBA) not in sys.path:
+    sys.path.insert(0, str(_TBA))
+
+from pipeline.crown.crown_verification import (
+    build_crown_config,
+    normalize_status,
+    run_crown_verification,
+)
 
 from generate_acas_contracts import compute_nn_inputs
+
 
 # ---------------------------------------------------------------------------
 # Configuration loading
@@ -46,71 +55,10 @@ def load_config(path: str = "verify_acas_contracts_config.yaml") -> dict[str, An
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
-# ---------------------------------------------------------------------------
-# Status normalization  (identical to grid-world verify_contracts.py)
-# ---------------------------------------------------------------------------
-
-def normalize_status(raw: str) -> str:
-    """Map CROWN result.status to SAT / UNSAT / TIMEOUT."""
-    if raw in ("safe", "verified", "safe-incomplete"):
-        return "SAT"
-    if raw.startswith("unsafe"):
-        return "UNSAT"
-    return "TIMEOUT"
 
 # ---------------------------------------------------------------------------
-# Single-contract verification
+# Discrete-mode contract verification
 # ---------------------------------------------------------------------------
-
-def verify_contract(
-    onnx_path: str,
-    lower: list[float],
-    upper: list[float],
-    forbidden_idx: int,
-    num_classes: int,
-    crown_config: Any,
-) -> str:
-    """
-    Verify one range-based contract with a single CROWN call.
-
-    Input region : lower[i] <= x[i] <= upper[i]   (pre-computed by generate_acas_contracts.py)
-    Output       : forbidden_idx score < max(all other scores)
-
-    Returns 'SAT', 'UNSAT', or 'TIMEOUT'.
-    """
-    x = input_vars((5,))
-    lower_t = torch.tensor(lower, dtype=torch.float32)
-    upper_t = torch.tensor(upper, dtype=torch.float32)
-    input_constraint = (x >= lower_t) & (x <= upper_t)
-
-    y = output_vars(num_classes)
-    others = [j for j in range(num_classes) if j != forbidden_idx]
-    output_constraint = functools.reduce(
-        lambda a, b: a | b,
-        [y[j] > y[forbidden_idx] for j in others],
-    )
-
-    spec = VerificationSpec.build_spec(
-        input_vars=x, output_vars=y,
-        input_constraint=input_constraint, output_constraint=output_constraint,
-    )
-    result = ABCrownSolver(spec, onnx_path, config=crown_config).solve()
-    return normalize_status(result.status)
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def build_crown_config(cfg: dict[str, Any], timeout_override: float | None = None) -> Any:
-    timeout = timeout_override if timeout_override is not None \
-        else cfg["verification"]["timeout_sec"]
-    return (
-        ConfigBuilder.from_defaults()
-        .set(general__device="cpu")
-        .set(attack__pgd_order="skip")
-        .set(bab__timeout=timeout)
-        ()
-    )
 
 def verify_contract_discrete(
     contract: dict[str, Any],
@@ -134,7 +82,7 @@ def verify_contract_discrete(
 
     for x_mag, y_mag in contract["dangerous_xy"]:
         exact = compute_nn_inputs(x_mag, y_mag, x_sign, y_sign, heading_var)
-        status = verify_contract(
+        status, _ = run_crown_verification(
             onnx_path=onnx_path,
             lower=exact,
             upper=exact,
@@ -150,6 +98,24 @@ def verify_contract_discrete(
     return "TIMEOUT" if timeout_seen else "SAT"
 
 
+# ---------------------------------------------------------------------------
+# CROWN config builder (ACAS-specific defaults)
+# ---------------------------------------------------------------------------
+
+def _build_crown_cfg(cfg: dict[str, Any], timeout_override: float | None = None) -> Any:
+    timeout = timeout_override if timeout_override is not None \
+        else cfg["verification"]["timeout_sec"]
+    return build_crown_config(
+        timeout=timeout,
+        pgd_order="skip",
+        device="cpu",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Console helpers
+# ---------------------------------------------------------------------------
+
 def result_marker(status: str) -> str:
     if status == "SAT":
         return "✓"
@@ -157,11 +123,13 @@ def result_marker(status: str) -> str:
         return "✗  <- VIOLATION"
     return "?  <- TIMEOUT (inconclusive)"
 
+
 def print_summary(records: list[dict[str, Any]]) -> None:
     counts = {s: sum(1 for r in records if r["status"] == s)
               for s in ("SAT", "UNSAT", "TIMEOUT")}
     print(f"\nSummary: {counts['SAT']} SAT, {counts['UNSAT']} UNSAT, "
           f"{counts['TIMEOUT']} TIMEOUT out of {len(records)} contracts")
+
 
 def save_report(
     records: list[dict[str, Any]],
@@ -190,6 +158,7 @@ def save_report(
         json.dump(report, f, indent=2)
     print(f"Results saved to {cfg['output_path']}")
 
+
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
@@ -206,7 +175,6 @@ def run_verification(
         cfg["verification"]["timeout_sec"] = timeout_override
     timeout = cfg["verification"]["timeout_sec"]
 
-    # Load pre-computed contracts and filter to the requested NN
     with open(cfg["contracts_path"], encoding="utf-8") as f:
         spec_data = json.load(f)
 
@@ -217,7 +185,6 @@ def run_verification(
         print(f"No contracts found for network_idx={nn_idx}. Check contracts_path.")
         sys.exit(1)
 
-    # --retry-from: load previous results and retry only TIMEOUT contracts
     previous_records: dict[int, dict] = {}
     if retry_from:
         with open(retry_from, encoding="utf-8") as f:
@@ -230,21 +197,19 @@ def run_verification(
     if limit is not None:
         contracts = contracts[:limit]
 
-    # Derive ONNX path from the first matching contract (all share the same file)
     onnx_path = contracts[0]["onnx"]
+    discrete  = cfg.get("discrete", False)
 
-    discrete = cfg.get("discrete", False)
     if discrete:
         dt = cfg.get("discrete_timeout",
                      cfg["verification"].get("discrete_timeout_sec", 5.0))
-        eps = cfg["verification"].get("discrete_state_eps", 0.0)
-        crown_config = build_crown_config(cfg, timeout_override=dt)
-        mode_str = (f"discrete, EPS={eps}, "
-                    f"timeout={dt}s per state")
+        crown_config = _build_crown_cfg(cfg, timeout_override=dt)
+        eps      = cfg["verification"].get("discrete_state_eps", 0.0)
+        mode_str = f"discrete, EPS={eps}, timeout={dt}s per state"
         print(f"Verifying {len(contracts)} contracts for NN_{nn_idx} ({onnx_path})")
         print(f"Mode: {mode_str}\n")
     else:
-        crown_config = build_crown_config(cfg, timeout_override=timeout_override)
+        crown_config = _build_crown_cfg(cfg, timeout_override=timeout_override)
         mode_str = "continuous"
         print(f"Verifying {len(contracts)} contracts for NN_{nn_idx} ({onnx_path})")
         print(f"Timeout: {timeout}s per contract\n")
@@ -266,7 +231,7 @@ def run_verification(
                 crown_config=crown_config,
             )
         else:
-            status = verify_contract(
+            status, _ = run_crown_verification(
                 onnx_path=onnx_path,
                 lower=contract["nn_input_lower"],
                 upper=contract["nn_input_upper"],
@@ -301,13 +266,10 @@ def run_verification(
 
     total_wall = time.perf_counter() - run_start
 
-    # Merge with previous results if retrying
     if retry_from:
         updated = {r["id"]: r for r in new_records}
         previous_records.update(updated)
-        # Restore original order
-        records = list(previous_records.values())
-        records.sort(key=lambda r: r["id"])
+        records = sorted(previous_records.values(), key=lambda r: r["id"])
         improved = sum(1 for r in new_records if r["status"] == "SAT")
         print(f"\nRetry improved {improved}/{len(new_records)} contracts to SAT")
     else:
@@ -351,8 +313,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--discrete", action="store_true",
         help="Discrete mode: verify each dangerous (x_mag, y_mag) state individually "
-             "(lower=upper=exact NN inputs, EPS=0). Short-circuits on first UNSAT. "
-             "Bridges to the 2025_NEUS table approach.",
+             "(lower=upper=exact NN inputs, EPS=0). Short-circuits on first UNSAT.",
     )
     parser.add_argument(
         "--discrete-timeout", type=float, default=None,

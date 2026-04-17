@@ -11,7 +11,7 @@
 #   ./verify_all_discrete_contracts.sh
 #   ./verify_all_discrete_contracts.sh --discrete-timeout 10   # override per-state timeout
 #
-# Results go to: contracts/discrete_goals/aprev_*_crown_results.json
+# Results go to: contracts/crown/discrete_goals/aprev_*_crown_results.json
 
 set -euo pipefail
 
@@ -25,7 +25,7 @@ declare -A NN_MAP=(
     [5]="aprev_strong_left"
 )
 
-OUT_DIR="contracts/discrete_goals"
+OUT_DIR="contracts/crown/discrete_goals"
 
 for IDX in 1 2 3 4 5; do
     NAME="${NN_MAP[$IDX]}"

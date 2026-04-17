@@ -6,23 +6,23 @@
 # Usage (from REPRODUCIBILITY/2026_TBA/examples/AcasXu_closed_loop/):
 #
 #   ./run_all_continuous_pipelines.sh                                               # defaults
-#   ./run_all_continuous_pipelines.sh contracts/continuous_goals/enabled_pgd/
-#   ./run_all_continuous_pipelines.sh contracts/continuous_goals/disabled_pgd/
-#   ./run_all_continuous_pipelines.sh contracts/discrete_goals/
+#   ./run_all_continuous_pipelines.sh contracts/crown/continuous_goals/enabled_pgd/
+#   ./run_all_continuous_pipelines.sh contracts/crown/continuous_goals/disabled_pgd/
+#   ./run_all_continuous_pipelines.sh contracts/crown/discrete_goals/
 #
 # Outputs go to:
-#   results/compositional/<relative-path-under-contracts>/<nn_stem>/pipeline_report.json
+#   results/compositional/<relative-path-under-crown>/<nn_stem>/pipeline_report.json
 #
-# The output path mirrors the contracts/ structure under results/compositional/:
-#   contracts/continuous_goals/enabled_pgd/ -> results/compositional/continuous_goals/enabled_pgd/
-#   contracts/discrete_goals/              -> results/compositional/discrete_goals/
+# The output path mirrors the contracts/crown/ structure under results/compositional/:
+#   contracts/crown/continuous_goals/enabled_pgd/ -> results/compositional/continuous_goals/enabled_pgd/
+#   contracts/crown/discrete_goals/              -> results/compositional/discrete_goals/
 
 set -euo pipefail
 
-CONTRACTS_DIR="${1:-contracts/continuous_goals/enabled_pgd}"
+CONTRACTS_DIR="${1:-contracts/crown/continuous_goals/enabled_pgd}"
 
-# Strip leading "contracts/" to get the relative subfolder, then mirror under results/compositional/
-RELATIVE="${CONTRACTS_DIR#contracts/}"
+# Strip leading "contracts/crown/" to get the relative subfolder, then mirror under results/compositional/
+RELATIVE="${CONTRACTS_DIR#contracts/crown/}"
 RELATIVE="${RELATIVE%/}"  # strip trailing slash if present
 OUTPUT_BASE="results/compositional/${RELATIVE}"
 

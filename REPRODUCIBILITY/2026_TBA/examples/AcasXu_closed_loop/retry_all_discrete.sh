@@ -13,7 +13,7 @@ declare -A NN_MAP=(
 )
 
 BASE_CFG="verify_acas_contracts_config.yaml"
-OUT_DIR="contracts/discrete_goals"
+OUT_DIR="contracts/crown/discrete_goals"
 
 for IDX in 1 2 3 4 5; do
     NAME="${NN_MAP[$IDX]}"

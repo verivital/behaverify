@@ -8,7 +8,7 @@
 #   ./verify_all_continuous_contracts.sh
 #   ./verify_all_continuous_contracts.sh --timeout 60   # pass extra args to verifier
 #
-# Results go to: contracts/continuous_goals/enabled_pgd/aprev_*_crown_results.json
+# Results go to: contracts/crown/continuous_goals/enabled_pgd/aprev_*_crown_results.json
 # Run time estimate: ~2h per NN at 30s timeout (490 contracts each)
 
 set -euo pipefail
@@ -23,7 +23,7 @@ declare -A NN_MAP=(
     [5]="aprev_strong_left"
 )
 
-OUT_DIR="contracts/continuous_goals/enabled_pgd"
+OUT_DIR="contracts/crown/continuous_goals/enabled_pgd"
 
 for IDX in 1 2 3 4 5; do
     NAME="${NN_MAP[$IDX]}"

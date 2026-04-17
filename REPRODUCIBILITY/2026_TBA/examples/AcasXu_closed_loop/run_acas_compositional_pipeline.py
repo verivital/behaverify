@@ -9,87 +9,82 @@ Stages:
   3. [PATCH]    Replace 5 NN lookup-table DEFINE blocks with non-deterministic VAR +
                 INVAR constraints derived from the verified A/G contracts JSON
   4. [VERIFY]   Run nuXmv to check INVARSPEC (distance >= 200)
+                Delegates to pipeline/symbolic/nuxmv/run_nuxmv_verification.py
   5. [REPORT]   Write JSON report with per-step timing and verdicts
+                Delegates to pipeline/write_pipeline_report.py
 
-SMV variable structure (from acas_360.smv):
-  command_stage_0          -- a_prev (blackboard VAR; which NN was last chosen)
-  command_stage_5          -- final NN output after tree execution
-  network_k_1_stage_0      -- NN_k lookup-table DEFINE (k = 1..5)
-  x_var_stage_0            -- ownship x position (env VAR, [0..10])
-  y_var_stage_0            -- ownship y position (env VAR, [0..10])
-  x_mult_stage_0           -- x sign (env VAR, {-1, 1})
-  y_mult_stage_0           -- y sign (env VAR, {-1, 1})
-  heading_own_var_stage_0  -- heading index (env VAR, [0..39])
+SMV variable names are read from verify_acas_contracts_config.yaml (smv_variables section)
+rather than hardcoded in this script.
 
-INVAR format (one per dangerous (state, advisory) pair in each SAT contract):
-  INVAR (system.command_stage_0 = <a_prev>
-       & system.heading_own_var_stage_0 = <h>
-       & system.x_mult_stage_0 = <xm>
-       & system.y_mult_stage_0 = <ym>
-       & system.x_var_stage_0 = <xv>
-       & system.y_var_stage_0 = <yv>)
-       -> system.command_stage_5 != <forbidden>;
+SMV file locations:
+  Base SMV  : symbolic/smv/acas_360.smv   (generated once, reused with --skip-smv)
+  Patched SMV: <output_dir>/acas_360_contracts.smv
 
 Usage (from AcasXu_closed_loop/):
   python run_acas_compositional_pipeline.py \\
-      --contracts contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \\
-      --output    results/compositional/continuous_goals/enabled_pgd/nn1 \\
+      --contracts contracts/crown/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \\
+      --output    results/compositional/continuous_goals/enabled_pgd/aprev_clear \\
       [--nuxmv    ../../nuXmv_DL/bin/nuXmv] \\
       [--nuxmv-cmd ../../commands/nuxmv_commands/command_invar] \\
       [--skip-tree]   # reuse existing tree/acas_360.tree
-      [--skip-smv]    # reuse existing smv/acas_360.smv
+      [--skip-smv]    # reuse existing symbolic/smv/acas_360.smv
 """
 
 from __future__ import annotations
 
 import argparse
-import datetime
 import json
 import os
 import re
-try:
-    import resource
-except ImportError:
-    resource = None  # Windows: resource module not available
-import subprocess
 import sys
 import time
 import tracemalloc
 from pathlib import Path
 
-_HERE     = Path(__file__).parent.resolve()
-_REPO     = (_HERE / "../../../../").resolve()
+import yaml
+
+_HERE = Path(__file__).parent.resolve()
+_TBA  = (_HERE / "../../").resolve()
+
+if str(_TBA) not in sys.path:
+    sys.path.insert(0, str(_TBA))
+
+from pipeline.symbolic.nuxmv.run_nuxmv_verification import run_nuxmv
+from pipeline.write_pipeline_report                import write_report
+from pipeline.resolve_pipeline_paths               import self_rss_kb, children_rss_kb
+
+try:
+    import resource as _resource
+except ImportError:
+    _resource = None  # Windows
 
 DEFAULT_NUXMV     = _HERE / "../../nuXmv_DL/bin/nuXmv"
 DEFAULT_NUXMV_CMD = _HERE / "../../commands/nuxmv_commands/command_invar"
 DEFAULT_METAMODEL = _HERE / "../../metamodel/behaverify.tx"
 DEFAULT_SRC       = _HERE / "../../src"
+DEFAULT_CONFIG    = _HERE / "verify_acas_contracts_config.yaml"
 
 ADVISORIES = ['clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right']
 
-# SMV variable names (from inspecting acas_360.smv)
-SMV_COMMAND_PREV  = "command_stage_0"    # a_prev
-SMV_COMMAND_FINAL = "command_stage_5"    # NN output after tree
-SMV_X_VAR         = "x_var_stage_0"
-SMV_Y_VAR         = "y_var_stage_0"
-SMV_X_MULT        = "x_mult_stage_0"
-SMV_Y_MULT        = "y_mult_stage_0"
-SMV_HEADING       = "heading_own_var_stage_0"
-
 
 # ---------------------------------------------------------------------------
-# Memory helpers
+# SMV variable names (read from config)
 # ---------------------------------------------------------------------------
 
-def _self_rss_kb() -> int:
-    if resource is None:
-        return 0
-    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-
-def _children_rss_kb() -> int:
-    if resource is None:
-        return 0
-    return resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
+def _load_smv_vars(config_path: Path = DEFAULT_CONFIG) -> dict[str, str]:
+    """Load SMV variable names from verify_acas_contracts_config.yaml."""
+    with open(config_path, encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+    smv = cfg.get("smv_variables", {})
+    return {
+        "command_prev":  smv.get("command_prev",  "command_stage_0"),
+        "command_final": smv.get("command_final", "command_stage_5"),
+        "x_var":         smv.get("x_var",         "x_var_stage_0"),
+        "y_var":         smv.get("y_var",          "y_var_stage_0"),
+        "x_mult":        smv.get("x_mult",        "x_mult_stage_0"),
+        "y_mult":        smv.get("y_mult",        "y_mult_stage_0"),
+        "heading":       smv.get("heading",       "heading_own_var_stage_0"),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -97,6 +92,7 @@ def _children_rss_kb() -> int:
 # ---------------------------------------------------------------------------
 
 def run_tree_generation(ctx: dict) -> dict:
+    import subprocess
     print("\n" + "=" * 60)
     print("[1/4] TREE GENERATION")
     print("=" * 60)
@@ -106,15 +102,9 @@ def run_tree_generation(ctx: dict) -> dict:
         return {"wall_sec": 0.0, "skipped": True}
 
     t0 = time.perf_counter()
-
-    # Run as subprocess so the module-level write logic executes cleanly
-    # (generate_acas_tree.py writes directly to ./tree/acas_360.tree).
     result = subprocess.run(
         [sys.executable, str(_HERE / "generate_acas_tree.py")],
-        cwd=str(_HERE),
-        capture_output=True,
-        text=True,
-        check=False,
+        cwd=str(_HERE), capture_output=True, text=True, check=False,
     )
     wall_sec = time.perf_counter() - t0
 
@@ -148,7 +138,6 @@ def run_smv_generation(ctx: dict) -> dict:
     tracemalloc.start()
     t0 = time.perf_counter()
 
-    # ONNX paths in the tree are relative to tree/, so chdir there for parsing
     _orig_cwd = os.getcwd()
     os.chdir(str(ctx["tree_path"].parent))
     try:
@@ -157,10 +146,7 @@ def run_smv_generation(ctx: dict) -> dict:
             str(ctx["tree_path"]),
             str(ctx["base_smv_path"]),
             False, False, False, False,
-            10000,       # recursion_limit
-            False,       # keep_stage_0
-            True,        # skip_grammar_check (--no_checks)
-            None,        # record_times
+            10000, False, True, None,
         )
     finally:
         os.chdir(_orig_cwd)
@@ -168,7 +154,7 @@ def run_smv_generation(ctx: dict) -> dict:
     wall_sec = time.perf_counter() - t0
     _, peak_traced = tracemalloc.get_traced_memory()
     tracemalloc.stop()
-    rss = _self_rss_kb()
+    rss = self_rss_kb()
 
     smv_lines = ctx["base_smv_path"].read_text().count("\n")
     print(f"  Generated {ctx['base_smv_path']}  ({wall_sec:.1f}s, {smv_lines} lines)")
@@ -186,11 +172,6 @@ def run_smv_generation(ctx: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 def _load_sat_contracts(verified_path: Path, spec_path: Path) -> list[dict]:
-    """
-    Load SAT contracts, joining the verified-results JSON with the original
-    spec JSON to recover fields (like a_prev) that verify_acas_contracts.py
-    did not copy through.
-    """
     with open(verified_path, encoding="utf-8") as f:
         verified = json.load(f)
     with open(spec_path, encoding="utf-8") as f:
@@ -201,7 +182,7 @@ def _load_sat_contracts(verified_path: Path, spec_path: Path) -> list[dict]:
     for c in verified["contracts"]:
         if c["status"] != "SAT":
             continue
-        merged = {**spec_by_id[c["id"]], **c}   # spec fields + status/wall_sec from verified
+        merged = {**spec_by_id[c["id"]], **c}
         sat.append(merged)
 
     print(f"  {len(sat)} SAT contracts loaded (of {len(verified['contracts'])} total)")
@@ -231,28 +212,17 @@ def _add_command_free_var(smv: str) -> str:
     """
     Replace the 5 TRUE-branch NN-table references with a single fresh free VAR.
 
-    Original staging (after NN DEFINE removed):
-        command_stage_k :=
-            case
-                !(call_k_1.active) : command_stage_{k-1};
-                TRUE               : network_k_1_stage_0;  ← undefined now
-            esac;
-
-    Fix: declare  nn_output_free : {advisory domain}  as a free VAR in the
-    VAR section, then replace each TRUE branch with nn_output_free.  Since at
-    most one NN runs per tick, a single shared free variable is sound — and it
-    avoids the symbolic-set vs. symbolic-enum type error that would arise from
-    using an inline {a,b,c,...} literal in a DEFINE case expression.
+    Declares  nn_output_free : {advisory domain}  in the VAR section, then
+    replaces each TRUE branch with nn_output_free.  A single shared free
+    variable is sound — at most one NN runs per tick.
     """
     domain = "{" + ", ".join(ADVISORIES) + "}"
-    # 1. Add the free VAR declaration
     new_var = f"        nn_output_free : {domain};\n"
     marker = "--START OF BLACKBOARD VARIABLES DECLARATION\n"
     if marker not in smv:
         raise ValueError("VAR-section marker '--START OF BLACKBOARD VARIABLES DECLARATION' not found.")
     smv = smv.replace(marker, marker + new_var, 1)
 
-    # 2. Point every NN stage's TRUE branch at nn_output_free
     for k in range(1, 6):
         old = f"                TRUE : network_{k}_1_stage_0;"
         new = f"                TRUE : nn_output_free;"
@@ -263,15 +233,12 @@ def _add_command_free_var(smv: str) -> str:
     return smv
 
 
-def _build_invar_lines(contracts: list[dict]) -> list[str]:
+def _build_invar_lines(contracts: list[dict], smv_vars: dict[str, str]) -> list[str]:
     """
-    For each SAT contract, enumerate its dangerous (x_mag, y_mag) states and
-    emit one INVAR per state (point constraints — exact state match).
+    Emit one INVAR per dangerous (state, advisory) pair in each SAT contract.
 
-    Sound because: CROWN verified the property over the bounding box in NN input
-    space, and each dangerous state's inputs are within that box by construction.
-    Using exact state conditions rather than bounding-box ranges avoids including
-    non-dangerous states that could be on the wrong side of the NN's decision boundary.
+    Uses smv_vars to look up SMV variable names so they don't need to be
+    hardcoded in this function.
     """
     lines = []
     for c in contracts:
@@ -283,14 +250,16 @@ def _build_invar_lines(contracts: list[dict]) -> list[str]:
 
         for x_mag, y_mag in c["dangerous_xy"]:
             cond = (
-                f"system.{SMV_COMMAND_PREV} = {ap} & "
-                f"system.{SMV_HEADING} = {h} & "
-                f"system.{SMV_X_MULT} = {xm} & "
-                f"system.{SMV_Y_MULT} = {ym} & "
-                f"system.{SMV_X_VAR} = {x_mag} & "
-                f"system.{SMV_Y_VAR} = {y_mag}"
+                f"system.{smv_vars['command_prev']} = {ap} & "
+                f"system.{smv_vars['heading']} = {h} & "
+                f"system.{smv_vars['x_mult']} = {xm} & "
+                f"system.{smv_vars['y_mult']} = {ym} & "
+                f"system.{smv_vars['x_var']} = {x_mag} & "
+                f"system.{smv_vars['y_var']} = {y_mag}"
             )
-            lines.append(f"INVAR ({cond}) -> system.{SMV_COMMAND_FINAL} != {fbd};")
+            lines.append(
+                f"INVAR ({cond}) -> system.{smv_vars['command_final']} != {fbd};"
+            )
     return lines
 
 
@@ -303,7 +272,7 @@ def _inject_invars(smv: str, invar_lines: list[str]) -> str:
     return smv.replace(marker, marker + block, 1)
 
 
-def run_smv_patch(ctx: dict) -> dict:
+def run_smv_patch(ctx: dict, smv_vars: dict[str, str]) -> dict:
     print("\n" + "=" * 60)
     print("[3/4] SMV PATCHING (contract injection)")
     print("=" * 60)
@@ -317,90 +286,22 @@ def run_smv_patch(ctx: dict) -> dict:
     print(f"  Removed 5 NN DEFINE blocks ({lines_removed} lines)")
 
     smv = _add_command_free_var(smv)
-    print(f"  Replaced NN table outputs with non-deterministic advisory domain")
+    print("  Replaced NN table outputs with non-deterministic advisory domain")
 
-    invar_lines = _build_invar_lines(contracts)
+    invar_lines = _build_invar_lines(contracts, smv_vars)
     smv = _inject_invars(smv, invar_lines)
     print(f"  Injected {len(invar_lines)} INVAR constraints from {len(contracts)} SAT contracts")
 
-    ctx["patched_smv_path"].write_text(smv, encoding="utf-8")
+    ctx["smv_path"].write_text(smv, encoding="utf-8")
     wall_sec = time.perf_counter() - t0
 
-    print(f"  Patched SMV: {ctx['patched_smv_path']}  ({wall_sec:.1f}s)")
+    print(f"  Patched SMV: {ctx['smv_path']}  ({wall_sec:.1f}s)")
     return {
-        "wall_sec":            round(wall_sec, 3),
-        "sat_contracts":       len(contracts),
-        "invar_lines":         len(invar_lines),
-        "nn_lines_removed":    lines_removed,
+        "wall_sec":         round(wall_sec, 3),
+        "sat_contracts":    len(contracts),
+        "invar_lines":      len(invar_lines),
+        "nn_lines_removed": lines_removed,
     }
-
-
-# ---------------------------------------------------------------------------
-# Step 4 — nuXmv verification
-# ---------------------------------------------------------------------------
-
-def _parse_verdicts(text: str) -> dict:
-    invar = re.search(r"-- invariant .+ is (true|false)", text)
-    return {"invarspec": invar.group(1) if invar else None}
-
-
-def run_nuxmv(ctx: dict) -> dict:
-    print("\n" + "=" * 60)
-    print("[4/4] NUXMV VERIFICATION")
-    print("=" * 60)
-
-    cmd = [str(ctx["nuxmv_bin"]), "-source", str(ctx["nuxmv_cmd"]), str(ctx["patched_smv_path"])]
-    print(f"  Command: {' '.join(cmd)}")
-
-    rss_before = _children_rss_kb()
-    t0 = time.perf_counter()
-    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
-    wall_sec = time.perf_counter() - t0
-    rss_after = _children_rss_kb()
-
-    output = result.stdout + result.stderr
-    ctx["nuxmv_out_path"].write_text(output, encoding="utf-8")
-
-    verdicts = _parse_verdicts(output)
-    print(f"\n  [nuxmv] {wall_sec:.1f}s  |  INVARSPEC={verdicts['invarspec']}")
-    print(f"  Output: {ctx['nuxmv_out_path']}")
-    return {
-        "wall_sec":    round(wall_sec, 3),
-        "peak_rss_kb": rss_after - rss_before,
-        "returncode":  result.returncode,
-        **verdicts,
-    }
-
-
-# ---------------------------------------------------------------------------
-# Step 5 — Report
-# ---------------------------------------------------------------------------
-
-def write_report(ctx: dict, steps: dict, total_wall_sec: float) -> None:
-    invar = steps["nuxmv"]["invarspec"]
-    report = {
-        "timestamp":      datetime.datetime.now().isoformat(),
-        "contracts_path": str(ctx["contracts_path"]),
-        "steps":          steps,
-        "total_wall_sec": round(total_wall_sec, 3),
-        "verdict":        f"INVAR={invar}",
-    }
-    ctx["report_path"].write_text(json.dumps(report, indent=2), encoding="utf-8")
-
-    print("\n" + "=" * 60)
-    print("PIPELINE SUMMARY")
-    print("=" * 60)
-    sp = steps["smv_patch"]
-    print(f"  Contracts : {sp['sat_contracts']} SAT → {sp['invar_lines']} INVARs injected")
-    print(f"  NN tables : {sp['nn_lines_removed']} lines removed from SMV")
-    print(f"  nuXmv     : INVARSPEC={invar}")
-    print(f"  Timing    : tree={steps['tree']['wall_sec']:.1f}s  "
-          f"smv={steps['smv']['wall_sec']:.1f}s  "
-          f"patch={steps['smv_patch']['wall_sec']:.1f}s  "
-          f"nuxmv={steps['nuxmv']['wall_sec']:.1f}s  "
-          f"total={total_wall_sec:.1f}s")
-    print(f"  Report    : {ctx['report_path']}")
-    print("=" * 60)
 
 
 # ---------------------------------------------------------------------------
@@ -412,9 +313,9 @@ def main() -> None:
         description="End-to-end compositional verification pipeline for ACAS Xu 5-NN NSBT."
     )
     p.add_argument("--contracts",  required=True,
-                   help="Path to verified contracts JSON (e.g. contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json)")
-    p.add_argument("--spec",       default="contracts/continuous_goals/contract_specs_eps1e4.json",
-                   help="Path to original contract spec JSON (default: contracts/continuous_goals/contract_specs_eps1e4.json)")
+                   help="Path to verified contracts JSON (e.g. contracts/crown/continuous_goals/enabled_pgd/aprev_clear_crown_results.json)")
+    p.add_argument("--spec",       default="contracts/crown/continuous_goals/contract_specs_eps1e4.json",
+                   help="Path to original contract spec JSON (default: contracts/crown/continuous_goals/contract_specs_eps1e4.json)")
     p.add_argument("--output",     required=True,
                    help="Output directory for patched SMV, nuXmv output, and report")
     p.add_argument("--nuxmv",      default=str(DEFAULT_NUXMV),
@@ -423,21 +324,28 @@ def main() -> None:
                    help=f"nuXmv command file (default: {DEFAULT_NUXMV_CMD})")
     p.add_argument("--metamodel",  default=str(DEFAULT_METAMODEL),
                    help=f"behaverify.tx path (default: {DEFAULT_METAMODEL})")
+    p.add_argument("--config",     default=str(DEFAULT_CONFIG),
+                   help=f"Config YAML for SMV variable names (default: {DEFAULT_CONFIG})")
     p.add_argument("--skip-tree",  action="store_true",
                    help="Skip tree generation; reuse tree/acas_360.tree if it exists")
     p.add_argument("--skip-smv",   action="store_true",
-                   help="Skip base SMV generation; reuse smv/acas_360.smv if it exists")
+                   help="Skip base SMV generation; reuse symbolic/smv/acas_360.smv if it exists")
     args = p.parse_args()
 
+    smv_vars   = _load_smv_vars(Path(args.config))
     output_dir = Path(args.output).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Ensure tree/ and symbolic/smv/ dirs exist
+    (_HERE / "tree").mkdir(exist_ok=True)
+    (_HERE / "symbolic" / "smv").mkdir(parents=True, exist_ok=True)
 
     ctx = {
         "contracts_path":  Path(args.contracts).resolve(),
         "spec_path":       Path(args.spec).resolve(),
         "tree_path":       _HERE / "tree" / "acas_360.tree",
-        "base_smv_path":   _HERE / "smv"  / "acas_360.smv",
-        "patched_smv_path": output_dir / "acas_360_contracts.smv",
+        "base_smv_path":   _HERE / "symbolic" / "smv" / "acas_360.smv",
+        "smv_path":        output_dir / "acas_360_contracts.smv",   # patched SMV
         "nuxmv_out_path":  output_dir / "nuxmv_output.txt",
         "report_path":     output_dir / "pipeline_report.json",
         "metamodel":       Path(args.metamodel).resolve(),
@@ -447,25 +355,26 @@ def main() -> None:
         "skip_smv":        args.skip_smv,
     }
 
-    # Ensure tree/ and smv/ dirs exist
-    ((_HERE / "tree")).mkdir(exist_ok=True)
-    ((_HERE / "smv")).mkdir(exist_ok=True)
-
     t_start = time.perf_counter()
 
     tree_metrics  = run_tree_generation(ctx)
     smv_metrics   = run_smv_generation(ctx)
-    patch_metrics = run_smv_patch(ctx)
+    patch_metrics = run_smv_patch(ctx, smv_vars)
     nuxmv_metrics = run_nuxmv(ctx)
 
     total = time.perf_counter() - t_start
 
-    write_report(ctx, {
-        "tree":      tree_metrics,
-        "smv":       smv_metrics,
-        "smv_patch": patch_metrics,
-        "nuxmv":     nuxmv_metrics,
-    }, total)
+    write_report(
+        ctx["report_path"],
+        steps={
+            "tree":      tree_metrics,
+            "smv":       smv_metrics,
+            "smv_patch": patch_metrics,
+            "nuxmv":     nuxmv_metrics,
+        },
+        total_wall_sec=total,
+        extra={"contracts_path": str(ctx["contracts_path"])},
+    )
 
 
 if __name__ == "__main__":

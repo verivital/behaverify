@@ -7,7 +7,7 @@
 #
 # Stages:
 #   1. [TREE]         Generate tree/acas_360.tree (if missing)
-#   2. [SMV]          Generate smv/acas_360.smv via dsl_to_nuxmv (if missing)
+#   2. [SMV]          Generate symbolic/smv/acas_360.smv via dsl_to_nuxmv (if missing)
 #   3. [MONO-VERIFY]  Run nuXmv on the monolithic SMV; emit pipeline_report.json
 #                     (or load pre-computed 2025_NEUS result via --skip-monolithic)
 #   4. [MERGE]        Merge discrete contract results for all 5 NNs
@@ -27,7 +27,7 @@
 #   results/monolithic/nuxmv_output.txt       (skipped with --skip-monolithic)
 #   results/monolithic/timing.txt             (skipped with --skip-monolithic)
 #   results/monolithic/pipeline_report.json
-#   results/compositional/discrete_goals/all_nns/pipeline_report.json
+#   results/compositional/discrete_goals/all_nns/pipeline_report.json  (same as before — output path, not contracts)
 #
 # Prerequisites:
 #   pip install -e .
@@ -81,10 +81,10 @@ echo "========================================"
 echo "[2/6] BASE SMV GENERATION"
 echo "========================================"
 
-if [[ -f "${_HERE}/smv/acas_360.smv" ]]; then
-    echo "  Skipped — smv/acas_360.smv already exists"
+if [[ -f "${_HERE}/symbolic/smv/acas_360.smv" ]]; then
+    echo "  Skipped — symbolic/smv/acas_360.smv already exists"
 else
-    mkdir -p "${_HERE}/smv"
+    mkdir -p "${_HERE}/symbolic/smv"
     echo "  Calling dsl_to_nuxmv (this may take ~30s)..."
     cd "${_HERE}"
     "${PYTHON}" - <<PYEOF
@@ -96,14 +96,14 @@ import dsl_to_nuxmv as _dsl
 _dsl.dsl_to_nuxmv(
     "${METAMODEL}",
     "tree/acas_360.tree",
-    "smv/acas_360.smv",
+    "symbolic/smv/acas_360.smv",
     False, False, False, False,
     10000,  # recursion_limit
     False,  # keep_stage_0
     True,   # skip_grammar_check
     None,   # record_times
 )
-print("  Generated smv/acas_360.smv")
+print("  Generated symbolic/smv/acas_360.smv")
 PYEOF
 fi
 
@@ -144,7 +144,7 @@ peak_rss_kb = int(m.group(1)) if m else None
 report = {
     "mode":           "monolithic",
     "source":         "2025_NEUS reference (--skip-monolithic)",
-    "smv_path":       "smv/acas_360.smv",
+    "smv_path":       "symbolic/smv/acas_360.smv",
     "timestamp":      datetime.datetime.utcnow().isoformat() + "Z",
     "steps": {
         "nuxmv": {
@@ -167,12 +167,12 @@ print(f"  Report    : ${MONO_REPORT}")
 PYEOF
 
 else
-    echo "  Running nuXmv on smv/acas_360.smv..."
+    echo "  Running nuXmv on symbolic/smv/acas_360.smv..."
     echo "  WARNING: requires ~9.6 GB RAM. Use --skip-monolithic if machine has <12 GB free."
     echo "  (Expected: ~49s, ~9.6 GB peak RSS)"
 
     cd "${_HERE}"
-    { time "${NUXMV}" -source "${NUXMV_CMD_ALL_INVAR}" smv/acas_360.smv \
+    { time "${NUXMV}" -source "${NUXMV_CMD_ALL_INVAR}" symbolic/smv/acas_360.smv \
         > "${MONO_OUT}" 2>&1 ; } 2> "${MONO_TIMING}"
 
     echo "  nuXmv done. Parsing results..."
@@ -197,7 +197,7 @@ wall_sec = float(m.group(1)) * 60 + float(m.group(2)) if m else user_sec
 
 report = {
     "mode":           "monolithic",
-    "smv_path":       "smv/acas_360.smv",
+    "smv_path":       "symbolic/smv/acas_360.smv",
     "timestamp":      datetime.datetime.utcnow().isoformat() + "Z",
     "steps": {
         "nuxmv": {
@@ -228,7 +228,7 @@ echo "========================================"
 echo "[4/6] MERGING DISCRETE CONTRACT RESULTS"
 echo "========================================"
 
-DISCRETE_DIR="${_HERE}/contracts/discrete_goals"
+DISCRETE_DIR="${_HERE}/contracts/crown/discrete_goals"
 MERGED_JSON="${DISCRETE_DIR}/.merged.json"
 
 "${PYTHON}" - <<PYEOF
