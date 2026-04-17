@@ -112,10 +112,10 @@ python run_compositional_pipeline.py \
     --contracts contracts/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
 ```
 
-### Batch PGD Run (all five 100%-accurate NNs)
+### Batch PGD Run (all NNs)
 
 ```bash
-./run_continuous_pgd_1000_contracts.sh
+./verify_continuous_pgd_contracts.sh
 ```
 
 Results are saved to `contracts/continuous_goals/enabled_pgd/<name>_pgd60.json`.
@@ -126,7 +126,7 @@ Same networks and 60s timeout as the PGD run, but with `--no-pgd` (BaB only).
 Expect UNSAT contracts to become TIMEOUT — that is the finding.
 
 ```bash
-./run_continuous_bab_1000_contracts.sh
+./verify_continuous_bab_contracts.sh
 ```
 
 Results are saved to `contracts/continuous_goals/disabled_pgd/<name>.json`.

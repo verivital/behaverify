@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# run_discrete_contracts.sh
+# verify_discrete_contracts.sh
 #
-# Verify A/G contracts for all five 100%-accurate grid-world NNs using
-# alpha-beta-CROWN in DISCRETE mode (49 integer goal points per contract).
+# Verify A/G contracts for all grid-world NNs (five 100%-accurate and two
+# near-accurate: 99.6% and 99.5%) using alpha-beta-CROWN in DISCRETE mode
+# (49 integer goal points per contract).
 #
 # Each contract is checked against every integer goal in {0,...,6}^2 rather
 # than the full continuous range [0,6]^2. If all 38 contracts are SAT, the NN

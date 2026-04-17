@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# run_continuous_bab_1000_contracts.sh
+# verify_continuous_bab_contracts.sh
 #
-# Verify A/G contracts for all five 100%-accurate grid-world NNs using
-# alpha-beta-CROWN with PGD attack DISABLED (BaB only, timeout=60s).
+# Verify A/G contracts for all grid-world NNs (five 100%-accurate and two
+# near-accurate: 99.6% and 99.5%) using alpha-beta-CROWN with PGD attack
+# DISABLED (BaB only, timeout=60s).
 #
-# This is the baseline comparison for run_continuous_pgd_1000_contracts.sh.
+# This is the baseline comparison for verify_continuous_pgd_contracts.sh.
 # Both use timeout_sec=60; the only variable is PGD enabled/disabled.
 #
 # Results are saved to contracts/continuous_goals/disabled_pgd/<name>.json
