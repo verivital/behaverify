@@ -1,9 +1,9 @@
 """
-pipeline.resolve_pipeline_paths — shared memory helpers and pipeline context setup.
+pipeline.resolve_pipeline_paths — RSS helpers and grid-world pipeline context setup.
 
-setup() resolves all paths, creates the output directory, and optionally
-auto-generates a .tree file from the counter template. It returns a context
-dict that every downstream stage reads from.
+self_rss_kb() / children_rss_kb() are used by any pipeline stage that tracks memory.
+setup() is grid-world-specific: it resolves paths, creates the output directory,
+and optionally auto-generates a .tree file from the counter template.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ def children_rss_kb() -> int:
 
 def setup(args: argparse.Namespace, counter_template: Path) -> dict[str, Any]:
     """
-    Resolve all pipeline paths and prepare the output directory.
+    Resolve all pipeline paths and prepare the output directory (grid-world).
 
     If --tree is not provided, auto-generates a .tree file by substituting
     the ONNX path into counter_template.tree.

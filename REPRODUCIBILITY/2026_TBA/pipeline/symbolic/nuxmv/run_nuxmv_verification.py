@@ -1,8 +1,14 @@
 """
-pipeline.run_nuxmv_verification — Step 3: nuXmv verification and verdict parsing.
+pipeline.symbolic.nuxmv.run_nuxmv_verification — nuXmv subprocess runner.
 
-run_nuxmv()      — runs nuXmv as a subprocess and returns metrics + verdicts.
+run_nuxmv(ctx)   — runs nuXmv as a subprocess and returns timing + verdicts.
 parse_verdicts() — extracts INVARSPEC and CTLSPEC verdicts from nuXmv stdout.
+
+ctx keys consumed:
+    nuxmv_bin       Path  — nuXmv binary
+    nuxmv_cmd       Path  — nuXmv command file (-source argument)
+    smv_path        Path  — SMV model file to verify
+    nuxmv_out_path  Path  — where to write combined stdout+stderr
 """
 
 from __future__ import annotations
@@ -15,7 +21,6 @@ from typing import Any
 from pipeline.resolve_pipeline_paths import children_rss_kb
 
 
-# nuXmv output patterns
 _INVAR_RE = re.compile(r"-- invariant .+ is (true|false)")
 _CTL_RE   = re.compile(r"-- specification .+ is (true|false)")
 
@@ -32,12 +37,13 @@ def parse_verdicts(output_text: str) -> dict[str, str | None]:
 
 def run_nuxmv(ctx: dict[str, Any]) -> dict[str, Any]:
     """
-    Run nuXmv on the contract-based SMV and record timing, RSS, and verdicts.
+    Run nuXmv on ctx["smv_path"] and record timing, RSS, and verdicts.
 
-    Captures both stdout and stderr; writes combined output to nuxmv_output.txt.
+    Captures both stdout and stderr; writes combined output to ctx["nuxmv_out_path"].
+    Returns a metrics dict suitable for inclusion in a pipeline steps dict.
     """
     print("\n" + "=" * 60)
-    print("[3/3] NUXMV VERIFICATION")
+    print("[nuXmv] SYMBOLIC VERIFICATION")
     print("=" * 60)
 
     cmd = [str(ctx["nuxmv_bin"]), "-source", str(ctx["nuxmv_cmd"]), str(ctx["smv_path"])]
@@ -61,7 +67,7 @@ def run_nuxmv(ctx: dict[str, Any]) -> dict[str, Any]:
         "returncode":  result.returncode,
         **verdicts,
     }
-    print(f"\n[nuxmv] {wall_sec:.1f}s  |  "
-          f"INVARSPEC={verdicts['invarspec']}  CTLSPEC={verdicts['ctlspec']}")
+    print(f"\n  [{wall_sec:.1f}s]  INVARSPEC={verdicts['invarspec']}  "
+          f"CTLSPEC={verdicts['ctlspec']}")
     print(f"  Output saved to: {ctx['nuxmv_out_path']}")
     return metrics
