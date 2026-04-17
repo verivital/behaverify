@@ -44,18 +44,24 @@ See [`figures/README.md`](figures/README.md) for full app documentation.
 AcasXu_closed_loop/
 ├── networks/                               # 5 ONNX files (see networks/README.md)
 ├── contracts/
-│   ├── continuous_goals/
-│   │   ├── contract_specs_eps1e4.json        # Pre-computed A/G contract specs (eps=1e-4)
-│   │   ├── enabled_pgd/
-│   │   │   └── aprev_clear_crown_results.json      # CROWN results for NN_1 (PGD-enabled)
-│   │   └── disabled_pgd/                   # (empty — future runs)
-│   └── discrete_goals/                     # (empty — future eps=0.0 contracts)
+│   └── crown/
+│       ├── continuous_goals/
+│       │   ├── contract_specs_eps1e4.json        # Pre-computed A/G contract specs (eps=1e-4)
+│       │   ├── enabled_pgd/
+│       │   │   └── aprev_*_crown_results.json    # CROWN results per NN (PGD-enabled)
+│       │   └── disabled_pgd/                     # (empty — future runs)
+│       └── discrete_goals/
+│           └── aprev_*_crown_results.json        # Discrete CROWN results (eps=0, per NN)
 ├── results/
+│   ├── monolithic/                         # nuXmv output and report for the monolithic run
 │   └── compositional/
 │       ├── continuous_goals/
 │       │   └── enabled_pgd/
-│       │       └── nn1/                    # Pipeline output for NN_1
-│       └── discrete_goals/                 # (empty — future runs)
+│       │       └── aprev_*/                # Pipeline output per NN
+│       └── discrete_goals/
+│           └── all_nns/                    # Discrete compositional pipeline output (all 5 NNs)
+├── symbolic/
+│   └── smv/                               # Generated base SMV (reused via --skip-smv)
 ├── figures/                                # Visualization scripts and outputs
 │   ├── image_scripts/
 │   │   ├── acas_contract_explorer.py       # Interactive Gradio demo (start here)
@@ -63,18 +69,19 @@ AcasXu_closed_loop/
 │   │   ├── acas_input_region.py            # Single-contract static figure
 │   │   └── acas_output_property.py         # NN output bar charts
 │   └── figures/README.md                   # Figure documentation
-├── smv/                                    # Generated base SMV (reused via --skip-smv)
 ├── tree/                                   # Generated tree file (reused via --skip-tree)
-├── acas_template_360.tree                # Template for the closed-loop model
-├── generate_acas_tree.py                 # Fills in template → tree/acas_360.tree
+├── acas_template_360.tree                  # Template for the closed-loop model
+├── generate_acas_tree.py                   # Fills in template → tree/acas_360.tree
 ├── generate_acas_contracts.py              # Enumerate dangerous states → contract specs
-├── verify_acas_contracts.py                # Verify contract specs via CROWN
+├── verify_acas_contracts.py                # Verify contract specs via CROWN (serial)
 ├── verify_acas_contracts_parallel.py       # Parallel retry wrapper for TIMEOUT contracts
-├── verify_acas_contracts_config.yaml                        # Config for verify_acas_contracts.py
+├── verify_acas_contracts_config.yaml       # Config for verify_acas_contracts.py
 ├── run_acas_compositional_pipeline.py      # End-to-end compositional pipeline (single NN)
-├── run_all_continuous_pipelines.sh         # Batch: run pipeline for all NNs
-├── command.sh                              # Generate monolithic SMV
-└── time_command.sh                         # Generate monolithic SMV with timing
+├── run_all_continuous_pipelines.sh         # Batch: run compositional pipeline for all NNs
+├── run_acas_monolithic_pipelines.sh        # Monolithic vs. discrete compositional benchmark
+├── verify_all_continuous_contracts.sh      # Batch: run CROWN for all 5 NNs (continuous)
+├── verify_all_discrete_contracts.sh        # Batch: run CROWN for all 5 NNs (discrete)
+└── retry_all_discrete.sh                   # Retry TIMEOUT discrete contracts via PGD
 ```
 
 ---
@@ -169,14 +176,29 @@ To regenerate the monolithic SMV and re-verify (from this directory):
 # 1. Generate tree from template
 python generate_acas_tree.py
 
-# 2. Generate SMV (with timing)
-./time_command.sh
+# 2. Generate base SMV
+mkdir -p symbolic/smv
+python3 -c "
+import sys; sys.path.insert(0, '../../src')
+import dsl_to_nuxmv as _dsl
+_dsl.dsl_to_nuxmv('../../metamodel/behaverify.tx',
+    'tree/acas_360.tree', 'symbolic/smv/acas_360.smv',
+    False, False, False, False, 10000, False, True, None)
+"
 
 # 3. Verify with nuXmv
 ../../nuXmv_DL/bin/nuXmv \
     -source ../../commands/nuxmv_commands/command_all_invar \
-    ./smv/acas_360.smv \
-    > results/monolithic_invar.txt
+    ./symbolic/smv/acas_360.smv \
+    > results/monolithic/nuxmv_output.txt
+```
+
+Or use the all-in-one benchmark script (handles tree/SMV generation, monolithic run, discrete
+compositional run, and side-by-side summary):
+
+```bash
+./run_acas_monolithic_pipelines.sh
+./run_acas_monolithic_pipelines.sh --skip-monolithic   # use 2025_NEUS reference result (~9.6 GB RAM)
 ```
 
 Use `command_all_invar` (not `command_invar`) to get nuXmv's internal timing.
@@ -212,12 +234,12 @@ range-based A/G contracts (bounding box over `x_mag`, `y_mag` for fixed
 
 ```bash
 python generate_acas_contracts.py
-# Output: contracts/continuous_goals/contract_specs_eps1e4.json
+# Output: contracts/crown/continuous_goals/contract_specs_eps1e4.json
 # Expected: ~490 contracts for NN_1 (one per non-empty heading/sign/advisory group)
 ```
 
 This step is fast (~1 minute) and does not require CROWN. The output is
-already committed in `contracts/continuous_goals/contract_specs_eps1e4.json`.
+already committed in `contracts/crown/continuous_goals/contract_specs_eps1e4.json`.
 
 ---
 
@@ -246,13 +268,13 @@ Expected: ~269 SAT, ~221 TIMEOUT, ~113 minutes total.
 
 ```bash
 nohup python verify_acas_contracts.py \
-    --retry-from contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
+    --retry-from contracts/crown/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
     --timeout 60 \
     > results/verify_nn1_retry.log 2>&1 &
 ```
 
 This re-verifies only the TIMEOUT contracts and merges results into
-`contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json`. Worst case: ~3.7 hours.
+`contracts/crown/continuous_goals/enabled_pgd/aprev_clear_crown_results.json`. Worst case: ~3.7 hours.
 
 > **Why two passes?** Contracts either verify in under 1s (large margin) or
 > time out quickly (near the NN's decision boundary). A short initial timeout
@@ -267,8 +289,8 @@ Using pre-computed contracts (skip tree/SMV regeneration):
 
 ```bash
 python run_acas_compositional_pipeline.py \
-    --contracts contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
-    --output    results/compositional/continuous_goals/enabled_pgd/nn1 \
+    --contracts contracts/crown/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
+    --output    results/compositional/continuous_goals/enabled_pgd/aprev_clear \
     --skip-tree --skip-smv
 ```
 
@@ -276,11 +298,11 @@ Full pipeline (regenerate tree and SMV from scratch):
 
 ```bash
 python run_acas_compositional_pipeline.py \
-    --contracts contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
-    --output    results/compositional/continuous_goals/enabled_pgd/nn1
+    --contracts contracts/crown/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
+    --output    results/compositional/continuous_goals/enabled_pgd/aprev_clear
 ```
 
-Results are written to `results/compositional/continuous_goals/enabled_pgd/nn1/pipeline_report.json`.
+Results are written to `results/compositional/continuous_goals/enabled_pgd/aprev_clear/pipeline_report.json`.
 
 ---
 
@@ -350,19 +372,19 @@ the spec file changes.
 The `tree/` directory must exist before running:
 
 ```bash
-mkdir -p tree smv
+mkdir -p tree symbolic/smv
 python generate_acas_tree.py
 ```
 
 ### Monolithic SMV takes too long or runs out of memory
 
-The monolithic SMV (`smv/acas_360.smv`) is ~9,700 lines and contains 5 full
+The monolithic SMV (`symbolic/smv/acas_360.smv`) is ~9,700 lines and contains 5 full
 NN lookup tables. nuXmv peak RSS is ~9.6 GB. Ensure at least 12 GB free RAM.
 The compositional patched SMV is ~1,600 lines and uses far less memory.
 
 ### `run_acas_compositional_pipeline.py` gives `INVARSPEC=None`
 
-Check `results/compositional/continuous_goals/enabled_pgd/nn1/nuxmv_output.txt` for nuXmv error messages.
+Check `results/compositional/continuous_goals/enabled_pgd/aprev_clear/nuxmv_output.txt` for nuXmv error messages.
 Common causes: SMV type errors (see `--skip-smv` flag to reuse a known-good
 base SMV), or missing nuXmv binary.
 

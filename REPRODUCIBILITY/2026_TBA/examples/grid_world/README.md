@@ -18,10 +18,11 @@ For setup (BehaVerify, nuXmv, alpha-beta-CROWN), see the
 grid_world/
 ├── networks/              # 7 ONNX files — see networks/README.md for naming convention
 ├── contracts/             # Pre-computed A/G contracts (CROWN output, JSON)
-│   ├── continuous_goals/
-│   │   ├── enabled_pgd/   # PGD-enabled contracts (SAT/UNSAT, zero timeouts)
-│   │   └── disabled_pgd/  # BaB-only contracts (baseline comparison, some timeouts)
-│   └── discrete_goals/    # Discrete contracts (eps=0, replicates 2025_NEUS integer-point check)
+│   └── crown/
+│       ├── continuous_goals/
+│       │   ├── enabled_pgd/   # PGD-enabled contracts (SAT/UNSAT, zero timeouts)
+│       │   └── disabled_pgd/  # BaB-only contracts (baseline comparison, some timeouts)
+│       └── discrete_goals/    # Discrete contracts (eps=0, replicates 2025_NEUS integer-point check)
 ├── results/
 │   ├── compositional/     # Pipeline reports (pipeline_report.json per network per mode)
 │   │   ├── continuous_goals/enabled_pgd/
@@ -29,8 +30,8 @@ grid_world/
 │   │   └── discrete_goals/
 │   └── monolithic/        # nuXmv output from the 2025_NEUS table approach
 ├── figures/               # Generated figures and scripts — see figures/README.md
-├── pipeline/              # Internal pipeline modules (not for direct use)
 ├── generate_grid_world_contracts.py   # Generate contract specs from obstacle config (no CROWN)
+├── convert_contracts_to_smv.py        # Convert verified contracts → contract-injected SMV
 ├── verify_grid_world_contracts.py     # Verify contracts via alpha-beta-CROWN
 ├── run_compositional_pipeline.py      # Single-network end-to-end compositional pipeline
 ├── run_all_compositional_pipelines.sh # Batch: run compositional pipeline for all networks in a contracts folder
@@ -39,6 +40,11 @@ grid_world/
 ├── pipeline_config.yaml               # Pipeline config: paths, nuXmv settings
 └── counter_template.tree              # Tree template for run_compositional_pipeline.py
 ```
+
+> **Shared pipeline modules** live in `2026_TBA/pipeline/` (not inside `grid_world/`).
+> `run_compositional_pipeline.py` imports from there via a `sys.path` insert.
+> This keeps NN-verifier logic (`pipeline/crown/`) and symbolic-checker logic
+> (`pipeline/symbolic/nuxmv/`) reusable across both the grid-world and ACAS Xu examples.
 
 > **Why compositional has more output folders than monolithic:**
 > Monolithic verification has one configuration — BehaVerify embeds a lookup table, nuXmv checks it.
@@ -71,23 +77,23 @@ JSON is used directly. PGD only matters when re-running contract verification fr
 # Unsafe network (0995, ~99.5% accuracy) -- expect INVAR=false
 python run_compositional_pipeline.py \
     --onnx networks/0995__6_18_0__200_1.onnx \
-    --output results/compositional/0995 \
+    --output results/compositional/continuous_goals/disabled_pgd/0995 \
     --skip-contracts \
-    --contracts contracts/disabled_pgd/0995__6_18_0__200_1.json
+    --contracts contracts/crown/continuous_goals/disabled_pgd/0995__6_18_0__200_1.json
 
 # 100%-accurate network, BaB-only contracts -- expect INVAR=false (UNSAT contracts)
 python run_compositional_pipeline.py \
     --onnx networks/1000__6_18_0__0100_1.onnx \
-    --output results/compositional/1000__0100_bab \
+    --output results/compositional/continuous_goals/disabled_pgd/1000__0100 \
     --skip-contracts \
-    --contracts contracts/disabled_pgd/1000__6_18_0__0100_1.json
+    --contracts contracts/crown/continuous_goals/disabled_pgd/1000__6_18_0__0100_1.json
 
 # 100%-accurate network, PGD contracts -- expect INVAR=false (genuine UNSAT)
 python run_compositional_pipeline.py \
     --onnx networks/1000__6_18_0__0100_1.onnx \
-    --output results/compositional/1000__0100_pgd \
+    --output results/compositional/continuous_goals/enabled_pgd/1000__0100 \
     --skip-contracts \
-    --contracts contracts/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
+    --contracts contracts/crown/continuous_goals/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
 ```
 
 Each run produces a `pipeline_report.json` in the output directory with per-step
@@ -100,7 +106,7 @@ Re-run contract verification with PGD enabled (recommended):
 ```bash
 python verify_grid_world_contracts.py \
     --onnx networks/1000__6_18_0__0100_1.onnx \
-    --output contracts/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
+    --output contracts/crown/continuous_goals/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
 ```
 
 Then run the pipeline:
@@ -108,8 +114,8 @@ Then run the pipeline:
 ```bash
 python run_compositional_pipeline.py \
     --onnx networks/1000__6_18_0__0100_1.onnx \
-    --output results/compositional/1000__0100 \
-    --contracts contracts/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
+    --output results/compositional/continuous_goals/enabled_pgd/1000__0100 \
+    --contracts contracts/crown/continuous_goals/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
 ```
 
 ### Batch PGD Run (all NNs)
@@ -118,7 +124,7 @@ python run_compositional_pipeline.py \
 ./verify_continuous_pgd_contracts.sh
 ```
 
-Results are saved to `contracts/continuous_goals/enabled_pgd/<name>_pgd60.json`.
+Results are saved to `contracts/crown/continuous_goals/enabled_pgd/<name>_pgd60.json`.
 
 ### Batch BaB-only Run (fair comparison, no PGD)
 
@@ -129,7 +135,7 @@ Expect UNSAT contracts to become TIMEOUT — that is the finding.
 ./verify_continuous_bab_contracts.sh
 ```
 
-Results are saved to `contracts/continuous_goals/disabled_pgd/<name>.json`.
+Results are saved to `contracts/crown/continuous_goals/disabled_pgd/<name>.json`.
 
 ---
 
