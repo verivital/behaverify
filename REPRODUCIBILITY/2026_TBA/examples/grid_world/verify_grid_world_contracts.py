@@ -25,16 +25,26 @@ Run from: REPRODUCIBILITY/2026_TBA/examples/grid_world/
 
 import argparse
 import datetime
-import functools
 import json
 import sys
 import time
 import tracemalloc
+from pathlib import Path
 from typing import Any
 
 import torch
 import yaml
-from abcrown import ABCrownSolver, ConfigBuilder, VerificationSpec, input_vars, output_vars
+
+_HERE = Path(__file__).parent.resolve()
+_TBA  = (_HERE / "../../").resolve()
+if str(_TBA) not in sys.path:
+    sys.path.insert(0, str(_TBA))
+
+from pipeline.crown.crown_verification import (
+    build_crown_config,
+    normalize_status,
+    run_crown_verification,
+)
 
 from generate_grid_world_contracts import generate_contracts, load_config
 
@@ -43,32 +53,11 @@ from generate_grid_world_contracts import generate_contracts, load_config
 # Constants
 # ---------------------------------------------------------------------------
 
-# Default per-goal timeout for discrete mode (seconds).
-# Each of the 49 integer goal checks gets this budget independently.
 DISCRETE_GOAL_DEFAULT_TIMEOUT_SEC: float = 5.0
 
-# Epsilon used for goal bounds in discrete mode.
-# Set to 0.0 so each CROWN call checks the exact integer goal point, matching
-# the 2025_NEUS table approach (which evaluates the NN at exact integer coordinates).
-#
-# NOTE: alpha-beta-CROWN divides by (upper - lower) in cut_ops.py (lines 319-322)
-# without a zero-guard. eps=0.0 is safe here in practice because PGD resolves all
-# contracts for 100%-accurate networks before BaB is invoked, so that division is
-# never reached. If you see inf/NaN crashes, fall back to eps=1e-5.
+# See note in original file: eps=0.0 is safe in practice because PGD resolves
+# all contracts for 100%-accurate NNs before BaB. Use 1e-5 if inf/NaN crashes.
 DISCRETE_GOAL_EPS: float = 0.0
-
-
-# ---------------------------------------------------------------------------
-# Status normalization
-# ---------------------------------------------------------------------------
-
-def normalize_status(raw: str) -> str:
-    """Map CROWN result.status to SAT / UNSAT / TIMEOUT."""
-    if raw in ("safe", "verified", "safe-incomplete"):
-        return "SAT"
-    if raw.startswith("unsafe"):
-        return "UNSAT"
-    return "TIMEOUT"
 
 
 # ---------------------------------------------------------------------------
@@ -89,30 +78,18 @@ def verify_one_contract(
     """
     Verify one A/G contract with a single CROWN call.
 
-    Drone position: [cx-eps, cx+eps] x [cy-eps, cy+eps]  (≈ integer point)
-    Goal position:  [grid_min, grid_max]^2                (full continuous range)
+    Drone position: [cx-eps, cx+eps] x [cy-eps, cy+eps]
+    Goal position:  [grid_min, grid_max]^2
 
-    Returns (status, counterexample) where:
-        status          — "SAT", "UNSAT", or "TIMEOUT"
-        counterexample  — [drone_x, drone_y, goal_x, goal_y] if UNSAT, else None
+    Returns (status, counterexample) where counterexample is
+    [drone_x, drone_y, goal_x, goal_y] if UNSAT, else None.
     """
-    x = input_vars((4,))
-    lower = torch.tensor([cx - eps, cy - eps, grid_min, grid_min], dtype=torch.float32)
-    upper = torch.tensor([cx + eps, cy + eps, grid_max, grid_max], dtype=torch.float32)
-    input_constraint = (x >= lower) & (x <= upper)
+    lower = [cx - eps, cy - eps, grid_min, grid_min]
+    upper = [cx + eps, cy + eps, grid_max, grid_max]
 
-    y = output_vars(num_classes)
-    other = [j for j in range(num_classes) if j != forbidden_d]
-    output_constraint = functools.reduce(
-        lambda a, b: a | b, [y[j] > y[forbidden_d] for j in other]
+    status, result = run_crown_verification(
+        onnx_path, lower, upper, forbidden_d, num_classes, crown_config
     )
-
-    spec = VerificationSpec.build_spec(
-        input_vars=x, output_vars=y,
-        input_constraint=input_constraint, output_constraint=output_constraint,
-    )
-    result = ABCrownSolver(spec, onnx_path, config=crown_config).solve()
-    status = normalize_status(result.status)
 
     counterexample = None
     if status == "UNSAT":
@@ -147,45 +124,20 @@ def verify_one_contract_discrete(
     """
     Verify one A/G contract against all integer goal positions (discrete mode).
 
-    Makes one CROWN call per integer goal in {grid_min, ..., grid_max}^2,
-    short-circuiting on the first UNSAT found. If all 49 calls return SAT the
-    contract is SAT. If any call returns UNSAT the contract is immediately UNSAT.
-    If no UNSAT is found but at least one call timed out, returns TIMEOUT.
-
-    Drone position: [cx-eps, cx+eps] x [cy-eps, cy+eps]  (≈ integer source cell)
-    Goal position:  [gx-eps, gx+eps] x [gy-eps, gy+eps]  (≈ one integer point)
-
-    Returns (status, counterexample) where:
-        status          — "SAT", "UNSAT", or "TIMEOUT"
-        counterexample  — [drone_x, drone_y, goal_x, goal_y] if UNSAT, else None
+    Makes one CROWN call per integer goal in {grid_min,...,grid_max}^2,
+    short-circuiting on the first UNSAT. Returns TIMEOUT only if no UNSAT was
+    found but at least one call timed out.
     """
     timeout_seen = False
 
     for gx in range(grid_min, grid_max + 1):
         for gy in range(grid_min, grid_max + 1):
-            x = input_vars((4,))
-            lower = torch.tensor(
-                [cx - eps, cy - eps, gx - DISCRETE_GOAL_EPS, gy - DISCRETE_GOAL_EPS],
-                dtype=torch.float32,
-            )
-            upper = torch.tensor(
-                [cx + eps, cy + eps, gx + DISCRETE_GOAL_EPS, gy + DISCRETE_GOAL_EPS],
-                dtype=torch.float32,
-            )
-            input_constraint = (x >= lower) & (x <= upper)
+            lower = [cx - eps, cy - eps, gx - DISCRETE_GOAL_EPS, gy - DISCRETE_GOAL_EPS]
+            upper = [cx + eps, cy + eps, gx + DISCRETE_GOAL_EPS, gy + DISCRETE_GOAL_EPS]
 
-            y = output_vars(num_classes)
-            other = [j for j in range(num_classes) if j != forbidden_d]
-            output_constraint = functools.reduce(
-                lambda a, b: a | b, [y[j] > y[forbidden_d] for j in other]
+            status, result = run_crown_verification(
+                onnx_path, lower, upper, forbidden_d, num_classes, crown_config
             )
-
-            spec = VerificationSpec.build_spec(
-                input_vars=x, output_vars=y,
-                input_constraint=input_constraint, output_constraint=output_constraint,
-            )
-            result = ABCrownSolver(spec, onnx_path, config=crown_config).solve()
-            status = normalize_status(result.status)
 
             if status == "UNSAT":
                 counterexample = None
@@ -207,30 +159,18 @@ def verify_one_contract_discrete(
 
 
 # ---------------------------------------------------------------------------
-# CROWN configuration
+# CROWN configuration (thin wrapper over shared build_crown_config)
 # ---------------------------------------------------------------------------
 
-def build_crown_config(cfg: dict[str, Any], timeout_override: float | None = None) -> Any:
-    """
-    Build the alpha-beta-CROWN solver configuration from the loaded YAML config.
-
-    Args:
-        cfg:              Loaded YAML config dict.
-        timeout_override: If provided, overrides cfg["verification"]["timeout_sec"].
-                          Used by discrete mode to set a short per-goal timeout.
-    """
+def _build_crown_cfg(cfg: dict[str, Any], timeout_override: float | None = None) -> Any:
     pgd_order = cfg.get("pgd_order", "before")
-    timeout = timeout_override if timeout_override is not None \
-        else cfg["verification"]["timeout_sec"]
-    builder = (
-        ConfigBuilder.from_defaults()
-        .set(general__device="cpu")
-        .set(attack__pgd_order=pgd_order)
-        .set(bab__timeout=timeout)
+    timeout   = timeout_override if timeout_override is not None \
+                else cfg["verification"]["timeout_sec"]
+    return build_crown_config(
+        timeout=timeout,
+        pgd_order=pgd_order,
+        device="cpu",
     )
-    if pgd_order == "before":
-        builder = builder.set(attack__pgd_restarts=50)
-    return builder()
 
 
 # ---------------------------------------------------------------------------
@@ -238,7 +178,6 @@ def build_crown_config(cfg: dict[str, Any], timeout_override: float | None = Non
 # ---------------------------------------------------------------------------
 
 def result_marker(status: str) -> str:
-    """Return the console marker string for a contract result."""
     if status == "SAT":
         return "✓"
     if status == "UNSAT":
@@ -247,7 +186,6 @@ def result_marker(status: str) -> str:
 
 
 def print_summary(records: list[dict[str, Any]]) -> None:
-    """Print the final SAT / UNSAT / TIMEOUT tally."""
     counts = {s: sum(1 for r in records if r["status"] == s)
               for s in ("SAT", "UNSAT", "TIMEOUT")}
     print(f"\nSummary: {counts['SAT']} SAT, {counts['UNSAT']} UNSAT, "
@@ -259,24 +197,15 @@ def print_summary(records: list[dict[str, Any]]) -> None:
 # ---------------------------------------------------------------------------
 
 def save_report(records: list[dict[str, Any]], cfg: dict[str, Any], mode_str: str) -> None:
-    """
-    Write the full verification report to the JSON path set in cfg.
-
-    Args:
-        records:   List of per-contract result dicts.
-        cfg:       Loaded YAML config dict (must contain output_path).
-        mode_str:  Human-readable description of the verification mode,
-                   written to the "mode" field of the JSON report.
-    """
     counts = {s: sum(1 for r in records if r["status"] == s)
               for s in ("SAT", "UNSAT", "TIMEOUT")}
     report = {
-        "onnx_path":  cfg["onnx_path"],
-        "timestamp":  datetime.datetime.now().isoformat(),
-        "mode":       mode_str,
+        "onnx_path":   cfg["onnx_path"],
+        "timestamp":   datetime.datetime.now().isoformat(),
+        "mode":        mode_str,
         "timeout_sec": cfg["verification"]["timeout_sec"],
-        "summary":    {**counts, "total": len(records)},
-        "contracts":  records,
+        "summary":     {**counts, "total": len(records)},
+        "contracts":   records,
     }
     with open(cfg["output_path"], "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
@@ -292,11 +221,7 @@ def run_verification(cfg: dict[str, Any]) -> dict[str, Any]:
     Run A/G contract verification for every contract in the grid world.
 
     Dispatches to continuous or discrete mode based on cfg.get("discrete", False).
-    Discrete mode reads cfg.get("discrete_timeout", DISCRETE_GOAL_DEFAULT_TIMEOUT_SEC)
-    as the per-goal timeout.
-
-    Returns a metrics dict with SAT/UNSAT/TIMEOUT counts and wall time,
-    in addition to writing the full report JSON to cfg['output_path'].
+    Returns a metrics dict (SAT/UNSAT/TIMEOUT counts + wall time).
     """
     obstacles   = [tuple(obs) for obs in cfg["obstacles"]]
     grid_min    = cfg["grid"]["min"]
@@ -305,13 +230,13 @@ def run_verification(cfg: dict[str, Any]) -> dict[str, Any]:
     eps         = cfg["verification"]["eps"]
     discrete    = cfg.get("discrete", False)
     if discrete:
-        eps = 0.0  # exact integer drone position in discrete mode
+        eps = 0.0
 
     contracts = generate_contracts(obstacles, grid_min, grid_max)
 
     if discrete:
         discrete_timeout = cfg.get("discrete_timeout", DISCRETE_GOAL_DEFAULT_TIMEOUT_SEC)
-        crown_config = build_crown_config(cfg, timeout_override=discrete_timeout)
+        crown_config = _build_crown_cfg(cfg, timeout_override=discrete_timeout)
         mode_str = (f"discrete, {(grid_max - grid_min + 1) ** 2} integer goals, "
                     f"drone EPS={eps}, goal EPS={DISCRETE_GOAL_EPS}, "
                     f"timeout={discrete_timeout}s per goal")
@@ -320,11 +245,12 @@ def run_verification(cfg: dict[str, Any]) -> dict[str, Any]:
               f"timeout={discrete_timeout}s per goal)\n")
     else:
         timeout = cfg["verification"]["timeout_sec"]
-        crown_config = build_crown_config(cfg)
+        crown_config = _build_crown_cfg(cfg)
         mode_str = (f"single-call, goal=[{grid_min},{grid_max}]^2, "
                     f"drone EPS={eps}")
         print(f"Generated {len(contracts)} contracts  "
               f"(drone EPS={eps}, goal=[{grid_min},{grid_max}]^2, timeout={timeout}s)\n")
+
     print(f"{'#':<4} {'Description':<45} {'Status':<10} {'Marker'}")
     print("-" * 75)
 
@@ -391,7 +317,6 @@ def run_verification(cfg: dict[str, Any]) -> dict[str, Any]:
 
 
 def _self_rss_kb() -> int:
-    """Peak RSS of this process so far (KB)."""
     import resource  # noqa: PLC0415
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
@@ -413,8 +338,7 @@ if __name__ == "__main__":
     parser.add_argument("--discrete", action="store_true",
                         help=("Discrete verification mode: check each of the "
                               "(grid_max - grid_min + 1)^2 integer goal positions "
-                              "individually instead of the full continuous range. "
-                              "Bridges to the 2025_NEUS table approach."))
+                              "individually instead of the full continuous range."))
     parser.add_argument("--discrete-timeout", type=float,
                         default=DISCRETE_GOAL_DEFAULT_TIMEOUT_SEC,
                         help=(f"Per-goal timeout in seconds for discrete mode "

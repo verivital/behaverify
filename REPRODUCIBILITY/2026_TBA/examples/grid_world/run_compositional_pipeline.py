@@ -29,27 +29,31 @@ Individual flags override YAML values for one-off runs.
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import sys
 import time
 from pathlib import Path
 
 import yaml
 
-import json
-import os
+_HERE = Path(__file__).parent.resolve()
+_TBA  = (_HERE / "../../").resolve()   # 2026_TBA/
 
-from pipeline.run_nuxmv_verification   import run_nuxmv
-from pipeline.write_pipeline_report    import write_report
-from pipeline.convert_contracts_to_smv import run_smv_generation
-from pipeline.resolve_pipeline_paths   import setup
+# Add 2026_TBA/ to sys.path so that `import pipeline` finds 2026_TBA/pipeline/
+if str(_TBA) not in sys.path:
+    sys.path.insert(0, str(_TBA))
+
+from pipeline.symbolic.nuxmv.run_nuxmv_verification import run_nuxmv
+from pipeline.write_pipeline_report                import write_report
+from pipeline.resolve_pipeline_paths               import setup
+from convert_contracts_to_smv                      import run_smv_generation
 import verify_grid_world_contracts as _vc
+
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-
-_HERE = Path(__file__).parent.resolve()
-
 
 def _load_pipeline_config(path: Path = _HERE / "pipeline_config.yaml") -> dict:
     """Load pipeline_config.yaml. Paths inside are relative to grid_world/."""
@@ -67,7 +71,7 @@ _DEFAULT_NUXMV_CMD = (_HERE / _paths["nuxmv_cmd"]).resolve()
 _DEFAULT_METAMODEL = (_HERE / _paths["metamodel"]).resolve()
 _COUNTER_TEMPLATE  = (_HERE / _paths["counter_template"]).resolve()
 
-# SMV converter arguments — passed through to pipeline.smv, not hardcoded there
+# SMV converter arguments — passed through to convert_contracts_to_smv, not hardcoded there
 _SMV_CFG = {
     "neural_var": _smv["neural_var"],
     "pos_x":      _smv["pos_x"],
@@ -75,6 +79,7 @@ _SMV_CFG = {
     "domain":     _smv["domain"],
     "src_dir":    str((_HERE / "../../src").resolve()),
 }
+
 
 # ---------------------------------------------------------------------------
 # CLI
@@ -104,10 +109,6 @@ def _build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = _build_parser().parse_args()
 
-    # Ensure pipeline/ is importable when run from grid_world/
-    if str(_HERE) not in sys.path:
-        sys.path.insert(0, str(_HERE))
-
     pipeline_start = time.perf_counter()
 
     ctx = setup(args, _COUNTER_TEMPLATE)
@@ -131,17 +132,23 @@ def main() -> None:
         cfg["onnx_path"]   = os.path.relpath(ctx["onnx_path"])
         cfg["output_path"] = os.path.relpath(ctx["contracts_path"])
         contracts_metrics = _vc.run_verification(cfg)
+
     smv_metrics   = run_smv_generation(ctx, _SMV_CFG)
     nuxmv_metrics = run_nuxmv(ctx)
 
     write_report(
-        ctx,
+        ctx["report_path"],
         steps={
             "contracts":          contracts_metrics,
             "smv_generation":     smv_metrics,
             "nuxmv_verification": nuxmv_metrics,
         },
         total_wall_sec=time.perf_counter() - pipeline_start,
+        extra={
+            "network":   ctx["network_name"],
+            "onnx_path": str(ctx["onnx_path"]),
+            "tree_path": str(ctx["tree_path"]),
+        },
     )
 
 

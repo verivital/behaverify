@@ -5,8 +5,8 @@
 # near-accurate: 99.6% and 99.5%) using alpha-beta-CROWN with PGD attack
 # enabled (pgd_order=before, 50 restarts) and a 60s BaB timeout.
 #
-# Results are saved to contracts/continuous_goals/enabled_pgd/<name>_pgd60.json so original
-# BaB-only results in contracts/continuous_goals/disabled_pgd/ are preserved for comparison.
+# Results are saved to contracts/crown/continuous_goals/enabled_pgd/<name>_pgd60.json so original
+# BaB-only results in contracts/crown/continuous_goals/disabled_pgd/ are preserved for comparison.
 #
 # Run from:  REPRODUCIBILITY/2026_TBA/examples/grid_world/
 
@@ -28,8 +28,8 @@ for NAME in "${NETWORKS[@]}"; do
     echo "========================================"
     python3 verify_grid_world_contracts.py \
         --onnx   "./networks/${NAME}.onnx" \
-        --output "./contracts/continuous_goals/enabled_pgd/${NAME}_pgd60.json"
+        --output "./contracts/crown/continuous_goals/enabled_pgd/${NAME}_pgd60.json"
     echo ""
 done
 
-echo "All done. Results in contracts/continuous_goals/enabled_pgd/*_pgd60.json"
+echo "All done. Results in contracts/crown/continuous_goals/enabled_pgd/*_pgd60.json"

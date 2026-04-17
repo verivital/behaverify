@@ -14,7 +14,7 @@
 # (cut_ops.py divides by (upper-lower) without a zero-guard); if it crashes,
 # fall back to EPS=1e-5.
 #
-# Results are saved to contracts/discrete_goals/<name>_discrete.json
+# Results are saved to contracts/crown/discrete_goals/<name>_discrete.json
 #
 # Run from:  REPRODUCIBILITY/2026_TBA/examples/grid_world/
 
@@ -37,8 +37,8 @@ for NAME in "${NETWORKS[@]}"; do
     python3 verify_grid_world_contracts.py \
         --discrete \
         --onnx   "./networks/${NAME}.onnx" \
-        --output "./contracts/discrete_goals/${NAME}_discrete.json"
+        --output "./contracts/crown/discrete_goals/${NAME}_discrete.json"
     echo ""
 done
 
-echo "All done. Results in contracts/discrete_goals/*"
+echo "All done. Results in contracts/crown/discrete_goals/*"

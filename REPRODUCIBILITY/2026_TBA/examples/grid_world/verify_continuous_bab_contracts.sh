@@ -8,7 +8,7 @@
 # This is the baseline comparison for verify_continuous_pgd_contracts.sh.
 # Both use timeout_sec=60; the only variable is PGD enabled/disabled.
 #
-# Results are saved to contracts/continuous_goals/disabled_pgd/<name>.json
+# Results are saved to contracts/crown/continuous_goals/disabled_pgd/<name>.json
 #
 # Run from:  REPRODUCIBILITY/2026_TBA/examples/grid_world/
 
@@ -31,8 +31,8 @@ for NAME in "${NETWORKS[@]}"; do
     python3 verify_grid_world_contracts.py \
         --no-pgd \
         --onnx   "./networks/${NAME}.onnx" \
-        --output "./contracts/continuous_goals/disabled_pgd/${NAME}.json"
+        --output "./contracts/crown/continuous_goals/disabled_pgd/${NAME}.json"
     echo ""
 done
 
-echo "All done. Results in contracts/continuous_goals/disabled_pgd/*"
+echo "All done. Results in contracts/crown/continuous_goals/disabled_pgd/*"
