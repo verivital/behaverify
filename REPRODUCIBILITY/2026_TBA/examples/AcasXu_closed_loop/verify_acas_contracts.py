@@ -5,7 +5,7 @@ Verify A/G safety contracts for the ACAS Xu closed-loop NSBT using alpha-beta-CR
 
 Thin wrapper: ACAS-specific logic is limited to input-space construction
 (compute_nn_inputs, dangerous_xy iteration).  All CROWN invocation, config
-building, and status normalization are delegated to pipeline/crown/crown_verification.py.
+building, and status normalization are delegated to pipeline/neuro/crown/crown_verification.py.
 
 Contract semantics (range-based, analogous to grid-world single-call contracts):
   - Input region : nn_input_lower[i] <= x[i] <= nn_input_upper[i]  (5 inputs)
@@ -38,7 +38,7 @@ _TBA  = (_HERE / "../../").resolve()
 if str(_TBA) not in sys.path:
     sys.path.insert(0, str(_TBA))
 
-from pipeline.crown.crown_verification import (
+from pipeline.neuro.crown.crown_verification import (
     build_crown_config,
     normalize_status,
     run_crown_verification,

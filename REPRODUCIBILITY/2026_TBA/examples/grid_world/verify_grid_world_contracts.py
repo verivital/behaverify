@@ -40,7 +40,7 @@ _TBA  = (_HERE / "../../").resolve()
 if str(_TBA) not in sys.path:
     sys.path.insert(0, str(_TBA))
 
-from pipeline.crown.crown_verification import (
+from pipeline.neuro.crown.crown_verification import (
     build_crown_config,
     normalize_status,
     run_crown_verification,

@@ -43,7 +43,7 @@ grid_world/
 
 > **Shared pipeline modules** live in `2026_TBA/pipeline/` (not inside `grid_world/`).
 > `run_compositional_pipeline.py` imports from there via a `sys.path` insert.
-> This keeps NN-verifier logic (`pipeline/crown/`) and symbolic-checker logic
+> This keeps NN-verifier logic (`pipeline/neuro/crown/`) and symbolic-checker logic
 > (`pipeline/symbolic/nuxmv/`) reusable across both the grid-world and ACAS Xu examples.
 
 > **Why compositional has more output folders than monolithic:**

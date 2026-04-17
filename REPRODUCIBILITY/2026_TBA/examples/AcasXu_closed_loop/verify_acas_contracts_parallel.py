@@ -5,7 +5,7 @@ Parallel wrapper for verify_acas_contracts.py.
 Splits TIMEOUT contracts across N worker processes and merges results.
 
 Thin wrapper: ACAS-specific logic (compute_nn_inputs, dangerous_xy iteration)
-is kept here.  CROWN invocation is delegated to pipeline/crown/crown_verification.py
+is kept here.  CROWN invocation is delegated to pipeline/neuro/crown/crown_verification.py
 via lazy imports inside worker_fn (required for multiprocessing spawn context).
 
 Usage:
@@ -44,7 +44,7 @@ def worker_fn(args_tuple):
     if str(_tba) not in sys.path:
         sys.path.insert(0, str(_tba))
 
-    from pipeline.crown.crown_verification import (
+    from pipeline.neuro.crown.crown_verification import (
         build_crown_config,
         run_crown_verification,
     )
