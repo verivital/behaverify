@@ -1,7 +1,7 @@
-# grid_world_config.yaml
+# grid_world_domain_config.yaml
 # Shared configuration for the grid-world NSBT experiment.
 # Used by generate_grid_world_contracts.py, verify_grid_world_contracts.py,
-# and run_compositional_pipeline.py (via pipeline_config.yaml).
+# and run_compositional_pipeline.py (via pipeline_filepaths_config.yaml).
 
 # Grid boundaries (inclusive). The NN was trained on x, y in [grid_min, grid_max].
 grid:

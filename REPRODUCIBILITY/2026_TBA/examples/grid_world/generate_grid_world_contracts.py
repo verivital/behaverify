@@ -11,7 +11,7 @@ Contract schema (per obstacle o=(ox,oy), per entry direction d):
 
 Run standalone to preview contracts without verifying them:
     python generate_grid_world_contracts.py
-    python generate_grid_world_contracts.py --config grid_world_config.yaml
+    python generate_grid_world_contracts.py --config grid_world_domain_config.yaml
 """
 
 import argparse
@@ -60,7 +60,7 @@ def generate_contracts(
     return contracts
 
 
-def load_config(path: str = "grid_world_config.yaml") -> dict[str, Any]:
+def load_config(path: str = "grid_world_domain_config.yaml") -> dict[str, Any]:
     """Load grid-world configuration from a YAML file."""
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -70,8 +70,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Preview A/G contracts for the grid-world NSBT without running CROWN."
     )
-    parser.add_argument("--config", default="grid_world_config.yaml",
-                        help="Path to YAML config (default: grid_world_config.yaml)")
+    parser.add_argument("--config", default="grid_world_domain_config.yaml",
+                        help="Path to YAML config (default: grid_world_domain_config.yaml)")
     args = parser.parse_args()
 
     cfg = load_config(args.config)

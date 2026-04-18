@@ -15,14 +15,14 @@ Usage (from REPRODUCIBILITY/2026_TBA/examples/grid_world/):
       --onnx    networks/1000__6_18_0__0200_1.onnx \\
       --output  results/compositional/continuous_goals/enabled_pgd/1000__0200 \\
       [--tree       path/to/counter.tree]
-      [--config     grid_world_config.yaml]
+      [--config     grid_world_domain_config.yaml]
       [--nuxmv      ../../nuXmv_DL/bin/nuXmv]
       [--nuxmv-cmd  ../../commands/nuxmv_commands/command_combo_invar_ctl]
       [--metamodel  ../../metamodel/behaverify.tx]
       [--skip-contracts]
       [--contracts  path/to/contracts.json]
 
-All defaults are read from pipeline_config.yaml.
+All defaults are read from pipeline_filepaths_config.yaml.
 Individual flags override YAML values for one-off runs.
 """
 
@@ -55,8 +55,8 @@ import verify_grid_world_contracts as _vc
 # Configuration
 # ---------------------------------------------------------------------------
 
-def _load_pipeline_config(path: Path = _HERE / "pipeline_config.yaml") -> dict:
-    """Load pipeline_config.yaml. Paths inside are relative to grid_world/."""
+def _load_pipeline_config(path: Path = _HERE / "pipeline_filepaths_config.yaml") -> dict:
+    """Load pipeline_filepaths_config.yaml. Paths inside are relative to grid_world/."""
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 

@@ -36,8 +36,8 @@ grid_world/
 ├── run_compositional_pipeline.py      # Single-network end-to-end compositional pipeline
 ├── run_all_compositional_pipelines.sh # Batch: run compositional pipeline for all networks in a contracts folder
 ├── run_all_monolithic_pipelines.sh    # Batch: run monolithic pipeline for all 7 networks
-├── grid_world_config.yaml             # CROWN config: grid bounds, EPS, timeout
-├── pipeline_config.yaml               # Pipeline config: paths, nuXmv settings
+├── grid_world_domain_config.yaml             # CROWN config: grid bounds, EPS, timeout
+├── pipeline_filepaths_config.yaml               # Pipeline config: paths, nuXmv settings
 └── counter_template.tree              # Tree template for run_compositional_pipeline.py
 ```
 
@@ -200,7 +200,7 @@ Two distinct causes — check `steps.contracts` in `pipeline_report.json`:
   forbidden move for some real-valued input in the contract region. This is a real
   finding. See `results/pgd_unsat_report.md`.
 - **TIMEOUT contracts (PGD disabled or timeout too low):** abstraction is incomplete.
-  Re-run with PGD enabled or increase `timeout_sec` in `grid_world_config.yaml`.
+  Re-run with PGD enabled or increase `timeout_sec` in `grid_world_domain_config.yaml`.
 
 ### Doubled path in ONNX loading (e.g., `.../results/compositional/0995//home/...`)
 

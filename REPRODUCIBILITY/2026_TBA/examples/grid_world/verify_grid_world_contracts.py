@@ -19,7 +19,7 @@ Two verification modes are supported:
 Class index mapping (matches DSL declaration order):
   We=0  Ea=1  No=2  So=3  XX=4
 
-Configuration: grid_world_config.yaml
+Configuration: grid_world_domain_config.yaml
 Run from: REPRODUCIBILITY/2026_TBA/examples/grid_world/
 """
 
@@ -329,8 +329,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Verify grid-world A/G contracts via alpha-beta-CROWN."
     )
-    parser.add_argument("--config",  default="grid_world_config.yaml",
-                        help="Path to YAML config (default: grid_world_config.yaml)")
+    parser.add_argument("--config",  default="grid_world_domain_config.yaml",
+                        help="Path to YAML config (default: grid_world_domain_config.yaml)")
     parser.add_argument("--onnx",    required=True, help="Path to the ONNX network file")
     parser.add_argument("--output",  required=True, help="Path to write the contracts JSON")
     parser.add_argument("--no-pgd",  action="store_true",
