@@ -29,6 +29,12 @@ ONNX neural network models for the 7×7 grid world NSBT verification experiments
 | `0996__6_18_0__200_1.onnx`    | 99.6%    | 200      |
 | `0995__6_18_0__200_1.onnx`    | 99.5%    | 200      |
 
+> **Note:** The near-accurate models use `200` (3 digits) while the 100%-accurate models
+> use `0100`–`0300` (4 digits with leading zero). This inconsistency is intentional —
+> the near-accurate checkpoints were generated in an earlier training run that predates
+> the 4-digit padding convention, and `2025_NEUS` references these names in its
+> published reproduction script, so they cannot be renamed without breaking the 2025 paper.
+
 These 7 networks are the subset used in the 2026_TBA experiments. The full set of
 trained checkpoints (episodes 100–5000) and their raw PyTorch `.pth` weights live in
 `REPRODUCIBILITY/2025_NEUS/examples/grid_world/networks_all/` and `networks_pth/`.
