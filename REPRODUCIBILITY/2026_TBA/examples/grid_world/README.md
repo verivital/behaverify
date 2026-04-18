@@ -32,12 +32,13 @@ grid_world/
 ├── figures/               # Generated figures and scripts — see figures/README.md
 ├── generate_grid_world_contracts.py   # Generate contract specs from obstacle config (no CROWN)
 ├── convert_contracts_to_smv.py        # Convert verified contracts → contract-injected SMV
-├── verify_grid_world_contracts.py     # Verify contracts via alpha-beta-CROWN
+├── verify_grid_world_contracts.py     # Verify contracts via CROWN (called by the shell script below)
+├── verify_grid_world_contracts.sh     # Batch: verify all 7 NNs (--mode and --neuro flags)
 ├── run_compositional_pipeline.py      # Single-network end-to-end compositional pipeline
 ├── run_all_compositional_pipelines.sh # Batch: run compositional pipeline for all networks in a contracts folder
 ├── run_all_monolithic_pipelines.sh    # Batch: run monolithic pipeline for all 7 networks
-├── grid_world_domain_config.yaml             # CROWN config: grid bounds, EPS, timeout
-├── pipeline_filepaths_config.yaml               # Pipeline config: paths, nuXmv settings
+├── grid_world_domain_config.yaml      # Domain config: grid bounds, obstacles, EPS, timeout
+├── pipeline_filepaths_config.yaml     # Pipeline config: tool paths, SMV variable names
 └── counter_template.tree              # Tree template for run_compositional_pipeline.py
 ```
 
@@ -109,6 +110,10 @@ python verify_grid_world_contracts.py \
     --output contracts/crown/continuous_goals/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
 ```
 
+> The `_pgd60` suffix reflects `timeout_sec: 60` in `grid_world_domain_config.yaml`.
+> `verify_grid_world_contracts.sh` reads this value at runtime, so changing `timeout_sec`
+> automatically produces a different suffix (e.g., `_pgd120` for `timeout_sec: 120`).
+
 Then run the pipeline:
 
 ```bash
@@ -118,24 +123,25 @@ python run_compositional_pipeline.py \
     --contracts contracts/crown/continuous_goals/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
 ```
 
-### Batch PGD Run (all NNs)
+### Batch Verification (all NNs)
+
+All three verification modes (continuous PGD, continuous BaB, discrete) are handled by
+the unified `verify_grid_world_contracts.sh` script. The `--neuro` flag sets the NN verifier
+name used as the `contracts/<neuro>/` path prefix, making it easy to add future verifiers.
 
 ```bash
-./verify_continuous_pgd_contracts.sh
+# PGD-enabled (recommended) → contracts/crown/continuous_goals/enabled_pgd/
+./verify_grid_world_contracts.sh
+
+# BaB-only baseline (no PGD) → contracts/crown/continuous_goals/disabled_pgd/
+./verify_grid_world_contracts.sh --mode continuous-bab
+
+# Discrete integer-point check → contracts/crown/discrete_goals/
+./verify_grid_world_contracts.sh --mode discrete
+
+# Future verifier (nnv) → contracts/nnv/continuous_goals/enabled_pgd/
+./verify_grid_world_contracts.sh --neuro nnv
 ```
-
-Results are saved to `contracts/crown/continuous_goals/enabled_pgd/<name>_pgd60.json`.
-
-### Batch BaB-only Run (fair comparison, no PGD)
-
-Same networks and 60s timeout as the PGD run, but with `--no-pgd` (BaB only).
-Expect UNSAT contracts to become TIMEOUT — that is the finding.
-
-```bash
-./verify_continuous_bab_contracts.sh
-```
-
-Results are saved to `contracts/crown/continuous_goals/disabled_pgd/<name>.json`.
 
 ---
 
