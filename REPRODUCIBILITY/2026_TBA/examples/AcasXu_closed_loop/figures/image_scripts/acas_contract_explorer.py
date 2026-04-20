@@ -7,6 +7,16 @@ Lets you filter and select contracts, toggle between continuous / discrete /
 both verification modes, and drag an eps slider to see how the bounding box
 grows around the exact dangerous state points.
 
+Panel layout (2×2):
+  1 — Original physical space      2 — NN input space
+  3 — Verification result bar      4 — Contract metadata
+
+The verification result bar chart (panel 3) is only shown when eps matches a
+pre-computed CROWN result set:
+  eps = 0      → discrete results  (one CROWN call per dangerous state)
+  eps = 1e-4   → continuous+PGD results  (one CROWN call per bounding box)
+Any other eps value shows a disclaimer instead.
+
 Usage (from AcasXu_closed_loop/):
     python3 figures/image_scripts/acas_contract_explorer.py
 
@@ -29,6 +39,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
+try:
+    import onnxruntime as ort
+except ImportError as e:
+    raise SystemExit(
+        "onnxruntime is required: pip install onnxruntime"
+    ) from e
+
 # ---------------------------------------------------------------------------
 # Reach generate_acas_contracts.py (3 hops up from this script's location)
 # ---------------------------------------------------------------------------
@@ -36,6 +53,11 @@ import yaml
 _ROOT = Path(__file__).parent.parent.parent   # AcasXu_closed_loop/
 sys.path.insert(0, str(_ROOT))
 from generate_acas_contracts import compute_nn_inputs  # noqa: E402
+
+sys.path.insert(0, str(Path(__file__).parent))         # figures/image_scripts/
+from acas_output_property import (                      # noqa: E402
+    plot_output_panel, run_onnx, centroid, find_unsat_witness,
+)
 
 # ---------------------------------------------------------------------------
 # Model parameters
@@ -140,13 +162,25 @@ def _contract_html_table(rows: list[tuple[str, str]]) -> str:
 
 _ALL_CONTRACTS: list[dict] = []
 _SPECS_PATH: Path = (
-    _ROOT / "contracts/continuous_goals/contract_specs_eps1e4.json"
+    _ROOT / "contracts/crown/continuous_goals/contract_specs_eps1e4.json"
 )
+
+_RESULTS_DISCRETE: dict[int, dict] = {}     # contract id → result entry (eps=0)
+_RESULTS_CONTINUOUS: dict[int, dict] = {}   # contract id → result entry (eps=1e-4)
+_ONNX_SESSION = None                        # ort.InferenceSession, set in main()
+_RNG = np.random.default_rng(42)            # seeded for reproducible UNSAT witnesses
 
 
 def load_contracts(path: Path) -> list[dict]:
     with open(path) as f:
         return json.load(f)["contracts"]
+
+
+def load_results_dict(path: Path) -> dict[int, dict]:
+    """Load a CROWN results JSON and return {contract_id: result_entry}."""
+    with open(path) as f:
+        data = json.load(f)
+    return {c["id"]: c for c in data["contracts"]}
 
 
 def _nn_pts(contract: dict) -> list[tuple[float, float]]:
@@ -163,11 +197,6 @@ def _nn_pts(contract: dict) -> list[tuple[float, float]]:
 # ---------------------------------------------------------------------------
 # Filter helpers
 # ---------------------------------------------------------------------------
-
-def _heading_choices() -> list[str]:
-    headings = sorted({c["heading_own_var"] for c in _ALL_CONTRACTS})
-    return ["All"] + [f"{h}  ({h * DEGREE_MULTIPLIER}°)" for h in headings]
-
 
 def _advisory_choices() -> list[str]:
     advs = sorted({c["forbidden_advisory"] for c in _ALL_CONTRACTS})
@@ -322,52 +351,6 @@ def _draw_physical_original(ax: plt.Axes, contract: dict) -> None:
     ax.legend(fontsize=7, loc="upper right")
 
 
-def _draw_physical_normalized(ax: plt.Axes, contract: dict) -> None:
-    """
-    Panel 2 — Normalized physical space (magnitude-only coordinate frame).
-
-    This is the coordinate frame used when building the contract bounding box:
-    x_mag and y_mag are always positive magnitudes; the quadrant information
-    (x_sign, y_sign) is captured separately.  The ownship sits at the origin
-    with no heading context — that information lives in NN input 3.
-    """
-    heading_deg = contract["heading_own_var"] * DEGREE_MULTIPLIER
-    x_sign      = contract["x_sign"]
-    y_sign      = contract["y_sign"]
-    advisory    = contract["forbidden_advisory"]
-
-    ax.set_facecolor("#d4edda")
-    theta  = np.linspace(0, 2 * math.pi, 300)
-    radius = 1.5
-    ax.fill(radius * np.cos(theta), radius * np.sin(theta),
-            color="#c0392b", alpha=0.35, zorder=1,
-            label=f"Invariant (< {SAFETY_THRESHOLD} ft)")
-    ax.plot(radius * np.cos(theta), radius * np.sin(theta),
-            color="#c0392b", linewidth=1.5, zorder=2)
-
-    dx = [s[0] for s in contract["dangerous_xy"]]
-    dy = [s[1] for s in contract["dangerous_xy"]]
-    ax.scatter(dx, dy, s=70, color="#c0392b", zorder=5,
-               label=f"Dangerous states ({contract['n_states_covered']})")
-    ax.scatter(0, 0, s=70, color="#2471a3", zorder=6,
-               label="Ownship")
-
-    sign_x = "+" if x_sign == 1 else "−"
-    sign_y = "+" if y_sign == 1 else "−"
-    ax.set_xlim(-0.5, MAX_DIST_VAR + 0.5)
-    ax.set_ylim(-0.5, MAX_DIST_VAR + 0.5)
-    ax.set_xlabel("x_mag  (× 100 ft)", fontsize=9)
-    ax.set_ylabel("y_mag  (× 100 ft)", fontsize=9)
-    ax.set_title(
-        f"Normalized physical space\n"
-        f"heading={heading_deg}°  quad=({sign_x},{sign_y})\n"
-        f"forbidden: {ADVISORY_LABELS[advisory]}",
-        fontsize=9,
-    )
-    ax.set_aspect("equal")
-    ax.legend(fontsize=7, loc="upper right")
-
-
 def _axis_limits(contract: dict, eps: float) -> tuple[float, float, float, float]:
     lower = contract["nn_input_lower"]
     upper = contract["nn_input_upper"]
@@ -399,49 +382,20 @@ def _draw_nn_space(
 
     xlim0, xlim1, ylim0, ylim1 = _axis_limits(contract, eps)
 
-    if mode in ("Continuous", "Both"):
+    if mode == "Continuous":
         rect = mpatches.FancyBboxPatch(
             (bx0, by0), box_w, box_h,
             boxstyle="square,pad=0",
             linewidth=2.0,
             edgecolor="#2e86c1",
             facecolor="#d6eaf8",
-            alpha=0.55 if mode == "Both" else 0.65,
+            alpha=0.65,
             zorder=2,
             label=f"CROWN bounding box  (eps={eps:.0e})",
         )
         ax.add_patch(rect)
         ax.scatter([bx0, bx1], [by0, by1], s=25, color="#2e86c1",
                    marker="x", zorder=4, linewidths=1.5)
-
-    elif mode == "Discrete":
-        # Ghost box for spatial reference
-        ghost = mpatches.FancyBboxPatch(
-            (bx0, by0), box_w, box_h,
-            boxstyle="square,pad=0",
-            linewidth=1.5,
-            edgecolor="#2e86c1",
-            facecolor="#d6eaf8",
-            alpha=0.10,
-            linestyle="--",
-            zorder=1,
-            label="Continuous box (reference)",
-        )
-        ax.add_patch(ghost)
-
-    if mode in ("Discrete", "Both"):
-        xs = [p[0] for p in pts]
-        ys = [p[1] for p in pts]
-        n  = contract["n_states_covered"]
-        ax.scatter(xs, ys, s=80, color="#c0392b", zorder=5,
-                   label=f"Exact state queries ({n})")
-        if show_labels:
-            for k, (px, py) in enumerate(pts, start=1):
-                ax.annotate(str(k), xy=(px, py), xytext=(4, 4),
-                            textcoords="offset points", fontsize=7,
-                            color="#7b241c")
-
-    if mode == "Continuous":
         # Dangerous points inside the box
         ax.scatter([p[0] for p in pts], [p[1] for p in pts],
                    s=60, color="#c0392b", zorder=5,
@@ -452,18 +406,21 @@ def _draw_nn_space(
                 verticalalignment="bottom", horizontalalignment="right",
                 bbox=dict(boxstyle="round,pad=0.4", facecolor="white",
                           alpha=0.85, edgecolor="#aaaaaa"))
-    elif mode == "Discrete":
+
+    else:  # Discrete
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+        n  = contract["n_states_covered"]
+        ax.scatter(xs, ys, s=80, color="#c0392b", zorder=5,
+                   label=f"Exact state queries ({n})")
+        if show_labels:
+            for k, (px, py) in enumerate(pts, start=1):
+                ax.annotate(str(k), xy=(px, py), xytext=(4, 4),
+                            textcoords="offset points", fontsize=7,
+                            color="#7b241c")
         ax.text(0.97, 0.03,
                 f"{contract['n_states_covered']} CROWN calls\n"
                 "one per exact integer state",
-                transform=ax.transAxes, fontsize=8,
-                verticalalignment="bottom", horizontalalignment="right",
-                bbox=dict(boxstyle="round,pad=0.4", facecolor="white",
-                          alpha=0.85, edgecolor="#aaaaaa"))
-    else:  # Both
-        ax.text(0.97, 0.03,
-                f"Continuous: 1 call  (eps={eps:.2e})\n"
-                f"Discrete: {contract['n_states_covered']} calls",
                 transform=ax.transAxes, fontsize=8,
                 verticalalignment="bottom", horizontalalignment="right",
                 bbox=dict(boxstyle="round,pad=0.4", facecolor="white",
@@ -476,6 +433,74 @@ def _draw_nn_space(
     ax.set_title(f"NN input space  [{mode} mode]", fontsize=9)
     ax.legend(fontsize=7, loc="upper right")
     ax.grid(linestyle="--", linewidth=0.4, alpha=0.5)
+
+
+_EPS_CONTINUOUS = 1e-4
+_EPS_TOL        = 1e-6
+
+
+def _draw_bar_panel(ax: plt.Axes, contract: dict, eps: float) -> None:
+    """
+    Panel 3 — CROWN verification result bar chart.
+
+    Shown only when eps matches a pre-computed result set:
+      eps ≈ 0      → discrete results  (one CROWN call per dangerous state)
+      eps ≈ 1e-4   → continuous+PGD results  (one CROWN call per bounding box)
+    Any other eps value renders a disclaimer instead.
+    """
+    if eps < _EPS_TOL:
+        results    = _RESULTS_DISCRETE
+        mode_label = "discrete  (eps=0)"
+    elif abs(eps - _EPS_CONTINUOUS) < _EPS_TOL:
+        results    = _RESULTS_CONTINUOUS
+        mode_label = "continuous+PGD  (eps=1e-4)"
+    else:
+        ax.axis("off")
+        ax.text(
+            0.5, 0.5,
+            "Bar chart only available for\n"
+            "eps=0 (discrete) or eps=1e-4 (continuous PGD).\n"
+            "Adjust the slider to one of those values.",
+            transform=ax.transAxes,
+            ha="center", va="center", fontsize=10,
+            bbox=dict(boxstyle="round,pad=0.6", facecolor="#fff9c4",
+                      edgecolor="#f39c12", alpha=0.9),
+        )
+        return
+
+    result = results.get(contract["id"])
+    if result is None:
+        ax.axis("off")
+        ax.text(
+            0.5, 0.5,
+            f"No verification result found\nfor contract id={contract['id']}.",
+            transform=ax.transAxes,
+            ha="center", va="center", fontsize=10,
+            bbox=dict(boxstyle="round,pad=0.6", facecolor="#fdecea",
+                      edgecolor="#c0392b", alpha=0.9),
+        )
+        return
+
+    status        = result["status"]
+    forbidden_idx = result["forbidden_advisory_idx"]
+    lower         = contract["nn_input_lower"]
+    upper         = contract["nn_input_upper"]
+    n_states      = contract["n_states_covered"]
+
+    if status == "SAT":
+        input_vec = centroid(lower, upper)
+        scores    = run_onnx(_ONNX_SESSION, input_vec)
+    else:  # UNSAT
+        input_vec, scores = find_unsat_witness(
+            _ONNX_SESSION, lower, upper, forbidden_idx, 500, _RNG
+        )
+
+    plot_output_panel(
+        ax, scores, forbidden_idx,
+        contract["forbidden_advisory"], status,
+        contract["id"], input_vec, n_states,
+    )
+    ax.set_title(ax.get_title() + f"\n[{mode_label}]", fontsize=8)
 
 # ---------------------------------------------------------------------------
 # Main render function (called by Gradio)
@@ -495,7 +520,9 @@ def render(
     eps: float,
     show_labels: bool,
 ) -> tuple:
-    """Return (fig_orig, fig_norm, fig_nn, html) for the four Gradio panels."""
+    """Return (fig_orig, fig_nn, fig_bar, html) for the four Gradio panels."""
+    if mode == "Discrete":
+        eps = 0.0
     contract = _contract_from_choice(contract_choice)
     if contract is None:
         plt.close("all")
@@ -514,15 +541,15 @@ def render(
     _draw_physical_original(ax_orig, contract)
     fig_orig.tight_layout()
 
-    # Panel 2 — normalized physical space
-    fig_norm, ax_norm = plt.subplots(1, 1, figsize=(6, 5))
-    _draw_physical_normalized(ax_norm, contract)
-    fig_norm.tight_layout()
-
-    # Panel 3 — NN input space
+    # Panel 2 — NN input space
     fig_nn, ax_nn = plt.subplots(1, 1, figsize=(6, 5))
     _draw_nn_space(ax_nn, contract, pts, mode, eps, show_labels)
     fig_nn.tight_layout()
+
+    # Panel 3 — verification result bar chart
+    fig_bar, ax_bar = plt.subplots(1, 1, figsize=(6, 5))
+    _draw_bar_panel(ax_bar, contract, eps)
+    fig_bar.tight_layout()
 
     # Panel 4 — contract metadata as an HTML table with hover tooltips
     lower = contract["nn_input_lower"]
@@ -540,7 +567,7 @@ def render(
         ("NN input 5 (v_int)",   f"{lower[4]:.4f}"),
     ]
 
-    return fig_orig, fig_norm, fig_nn, _contract_html_table(table_rows)
+    return fig_orig, fig_nn, fig_bar, _contract_html_table(table_rows)
 
 # ---------------------------------------------------------------------------
 # Gradio UI
@@ -568,7 +595,9 @@ def build_ui() -> gr.Blocks:
             "Filter contracts by heading, quadrant, and forbidden advisory. "
             "Select a contract to visualize its input region under continuous "
             "and discrete verification modes. Drag the **eps** slider to see "
-            "how the bounding box grows around the exact dangerous state points."
+            "how the bounding box grows around the exact dangerous state points.\n\n"
+            "Set **eps=0** or **eps=1e-4** to load the CROWN verification result "
+            "bar chart in panel 3."
         )
 
         with gr.Row():
@@ -595,8 +624,8 @@ def build_ui() -> gr.Blocks:
 
                 gr.Markdown("### Display")
                 mode_radio = gr.Radio(
-                    ["Continuous", "Discrete", "Both"],
-                    value="Both", label="Verification mode")
+                    ["Continuous", "Discrete"],
+                    value="Continuous", label="Verification mode")
                 eps_sl = gr.Slider(
                     minimum=0.0, maximum=0.05, value=1e-4, step=1e-5,
                     label="eps (bounding box margin)",
@@ -608,9 +637,9 @@ def build_ui() -> gr.Blocks:
             with gr.Column(scale=3):
                 with gr.Row():
                     plot_orig = gr.Plot(label="1 — Original physical space")
-                    plot_norm = gr.Plot(label="2 — Normalized physical space")
+                    plot_nn   = gr.Plot(label="2 — NN input space")
                 with gr.Row():
-                    plot_nn    = gr.Plot(label="3 — NN input space")
+                    plot_bar  = gr.Plot(label="3 — Contract verification result (SAT / UNSAT)")
                     with gr.Column():
                         gr.Markdown("#### 4 — Contract Details")
                         gr.Markdown(
@@ -619,7 +648,7 @@ def build_ui() -> gr.Blocks:
                         )
                         info_html = gr.HTML()
 
-        render_outputs = [plot_orig, plot_norm, plot_nn, info_html]
+        render_outputs = [plot_orig, plot_nn, plot_bar, info_html]
 
         # ── Wire up filters → contract list ─────────────────────────────────
         filter_inputs = [heading_sl, quadrant_dd, advisory_dd, min_states_sl]
@@ -639,6 +668,14 @@ def build_ui() -> gr.Blocks:
                 outputs=render_outputs,
             )
 
+        # ── Disable eps slider when Discrete is selected (eps is always 0) ──
+        def _toggle_eps(mode: str):
+            if mode == "Discrete":
+                return gr.update(interactive=False, value=0.0)
+            return gr.update(interactive=True, value=1e-4)
+
+        mode_radio.change(fn=_toggle_eps, inputs=[mode_radio], outputs=[eps_sl])
+
         # ── Initial render ───────────────────────────────────────────────────
         demo.load(
             fn=render,
@@ -653,14 +690,27 @@ def build_ui() -> gr.Blocks:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    global _ALL_CONTRACTS, _SPECS_PATH
+    global _ALL_CONTRACTS, _SPECS_PATH, _RESULTS_DISCRETE, _RESULTS_CONTINUOUS, _ONNX_SESSION
 
     parser = argparse.ArgumentParser(
         description="Interactive ACAS Xu contract explorer (Gradio)."
     )
     parser.add_argument(
         "--specs", type=Path, default=_SPECS_PATH,
-        help="Path to contract specs JSON (default: continuous_goals/contract_specs_eps1e4.json)",
+        help="Path to contract specs JSON "
+             "(default: contracts/crown/continuous_goals/contract_specs_eps1e4.json)",
+    )
+    parser.add_argument(
+        "--results-discrete", type=Path,
+        default=_ROOT / "contracts/crown/discrete_goals/aprev_clear_crown_results.json",
+        dest="results_discrete",
+        help="CROWN results JSON for discrete mode (eps=0)",
+    )
+    parser.add_argument(
+        "--results-continuous", type=Path,
+        default=_ROOT / "contracts/crown/continuous_goals/enabled_pgd/aprev_clear_crown_results.json",
+        dest="results_continuous",
+        help="CROWN results JSON for continuous+PGD mode (eps=1e-4)",
     )
     parser.add_argument(
         "--port", type=int, default=7860,
@@ -682,6 +732,25 @@ def main() -> None:
         _ALL_CONTRACTS = nn1
 
     print(f"Loaded {len(_ALL_CONTRACTS)} contracts from {_SPECS_PATH}")
+
+    # Load verification results
+    disc_path = Path(args.results_discrete).resolve()
+    cont_path = Path(args.results_continuous).resolve()
+    _RESULTS_DISCRETE   = load_results_dict(disc_path)
+    _RESULTS_CONTINUOUS = load_results_dict(cont_path)
+    print(f"Discrete results:   {len(_RESULTS_DISCRETE)} entries from {disc_path}")
+    print(f"Continuous results: {len(_RESULTS_CONTINUOUS)} entries from {cont_path}")
+
+    # Load ONNX model — onnx_path in the results JSON is relative to _ROOT
+    with open(cont_path) as f:
+        cont_data = json.load(f)
+    onnx_rel  = cont_data["onnx_path"]
+    onnx_path = (_ROOT / onnx_rel).resolve()
+    if not onnx_path.exists():
+        onnx_path = Path(onnx_rel).resolve()
+    print(f"ONNX model: {onnx_path}")
+    _ONNX_SESSION = ort.InferenceSession(str(onnx_path))
+
     print(f"Serving on http://localhost:{args.port}")
 
     demo = build_ui()
