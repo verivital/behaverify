@@ -1,0 +1,44 @@
+% Naive SMV encoding: one SMV transition per internal BT step.
+\documentclass[border=6pt,tikz]{standalone}
+\usepackage{tikz}
+\usepackage{amsmath, amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usetikzlibrary{arrows.meta, positioning, decorations.pathreplacing}
+
+\tikzset{
+  state/.style    = {draw, circle, fill=blue!10, minimum size=7mm, inner sep=0pt, font=\small},
+  step/.style     = {draw, rounded corners=2pt, fill=orange!15, align=center,
+                     font=\scriptsize, minimum width=1.5cm, minimum height=0.65cm, inner sep=3pt},
+  flow/.style     = {-{Latex[length=2mm]}, line width=0.55pt, shorten >=1pt, shorten <=1pt},
+  note/.style     = {font=\scriptsize, text=black!70, align=center},
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance=0.4cm]
+
+\node[state] (n0) {$s_0$};
+\node[step, right=of n0] (a) {enter\\root};
+\node[state, right=of a] (n1) {$s_1$};
+\node[step, right=of n1] (b) {tick $c_1$};
+\node[state, right=of b] (n2) {$s_2$};
+\node[step, right=of n2] (c) {tick $c_2$};
+\node[state, right=of c] (n3) {$s_3$};
+\node[step, right=of n3] (d) {tick $a$};
+\node[state, right=of d] (n4) {$s_4$};
+\node[step, right=of n4] (e) {update\\blackboard};
+\node[state, right=of e] (n5) {$s_5$};
+
+\foreach \x/\y in {n0/a, a/n1, n1/b, b/n2, n2/c, c/n3, n3/d, d/n4, n4/e, e/n5}
+  \draw[flow] (\x) -- (\y);
+
+% Give the brace ~12pt of vertical margin below the chain to avoid
+% overlap with the round state nodes at the bottom of the chain.
+\draw[decorate, decoration={brace, amplitude=5pt, mirror},
+      thick, black!55]
+      ([yshift=-14pt]n0.south west) -- node[below=7pt, note]
+        {six SMV transitions encode one BT tick}
+      ([yshift=-14pt]n5.south east);
+
+\end{tikzpicture}
+\end{document}

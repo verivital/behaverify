@@ -1,0 +1,69 @@
+/* BehaVerify docs — small overrides on top of Furo. */
+
+.rst-class\:lead,
+.rst-class--lead {
+  font-size: 1.15rem;
+  color: var(--color-foreground-muted);
+  max-width: 52em;
+}
+
+.pipeline-hero {
+  display: block;
+  margin: 1.1rem auto 1.4rem;
+  max-width: 100%;
+  height: auto;
+  /* The TikZ source has a transparent background. Give it an explicit
+     white backdrop so black text stays legible under the Furo dark
+     theme. Matched in both themes for consistency. */
+  background: #ffffff;
+  padding: 1.0rem 1.0rem 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Mirror for inline Mermaid diagrams so they aren't invisible under the
+   Furo dark theme. Cover every surface Mermaid might be rendered into
+   (pre, div, figure) plus the inline <svg> it injects. */
+div.mermaid,
+pre.mermaid,
+figure.mermaid,
+.mermaid,
+.mermaid > svg {
+  background: #ffffff;
+  padding: 0.5rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Theory-page tree / encoding diagrams get the same white-card treatment
+   as the landing hero. */
+.pipeline-hero,
+img.pipeline-hero {
+  background: #ffffff;
+}
+
+/* Furo renders figure captions in italic by default which is hard to
+   read. Switch to regular-weight serif, same size. */
+figcaption,
+.figure .caption,
+figure > figcaption,
+.caption-text,
+figure figcaption span.caption-text {
+  font-style: normal;
+  color: var(--color-foreground-muted);
+}
+
+/* Compact the sphinx-design card grids used on index pages. */
+.sd-card.sd-shadow-sm {
+  min-height: 7.4em;
+}
+
+.sd-card-title {
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+/* Slightly tighter code blocks in admonitions. */
+.admonition pre {
+  font-size: 0.88rem;
+}
