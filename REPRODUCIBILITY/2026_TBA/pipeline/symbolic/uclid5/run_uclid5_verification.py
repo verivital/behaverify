@@ -14,17 +14,25 @@ from __future__ import annotations
 
 import re
 import subprocess
+import sys
 import time
+from pathlib import Path
 from typing import Any
+
+_HERE = Path(__file__).parent.resolve()
+_TBA  = (_HERE / "../../../").resolve()   # REPRODUCIBILITY/2026_TBA/
+if str(_TBA) not in sys.path:
+    sys.path.insert(0, str(_TBA))
 
 from pipeline.resolve_pipeline_paths import children_rss_kb
 
 
-# UCLID5 prints results like:
-#   UCLID5 finished with 1 verified, 0 failed
-#   or: 0 verified, 1 failed
-_VERIFIED_RE = re.compile(r"(\d+)\s+verified")
-_FAILED_RE   = re.compile(r"(\d+)\s+failed")
+# UCLID5 summary line formats observed:
+#   "51 assertions passed."   (actual output)
+#   "0 assertions failed."    (actual output)
+#   "1 verified, 0 failed"    (older/alternative format)
+_VERIFIED_RE = re.compile(r"(\d+)\s+(?:verified|assertions\s+passed)")
+_FAILED_RE   = re.compile(r"(\d+)\s+(?:failed|assertions\s+failed)")
 
 # Individual property lines:
 #   [PASSED] invariant safety_0
@@ -95,3 +103,32 @@ def run_uclid5(ctx: dict[str, Any]) -> dict[str, Any]:
           f"(verified={verdict['verified']}, failed={verdict['failed']})")
     print(f"  Output saved to: {ctx['uclid5_out_path']}")
     return metrics
+
+
+if __name__ == "__main__":
+    import argparse
+
+    from pipeline.write_pipeline_report import write_report
+
+    parser = argparse.ArgumentParser(
+        description="Run UCLID5 verification and save uclid5_output.txt + pipeline_report.json."
+    )
+    parser.add_argument("--ucl",     type=Path, required=True, help=".ucl model file")
+    parser.add_argument("--out-dir", type=Path, required=True, help="Output directory")
+    parser.add_argument("--bin",     default="uclid",           help="UCLID5 binary (default: uclid)")
+    args = parser.parse_args()
+
+    ctx = {
+        "uclid5_bin":      args.bin,
+        "ucl_path":        args.ucl,
+        "uclid5_out_path": args.out_dir / "uclid5_output.txt",
+    }
+
+    t0      = time.perf_counter()
+    metrics = run_uclid5(ctx)
+
+    write_report(
+        args.out_dir / "pipeline_report.json",
+        steps={"uclid5_verification": metrics},
+        total_wall_sec=time.perf_counter() - t0,
+    )

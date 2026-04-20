@@ -148,9 +148,12 @@ for CONTRACT_JSON in "${CONTRACTS_DIR}"/*.json; do
             --bmc-steps        "${BMC_STEPS}" \
             --skip-grammar-check
 
-        # Run uclid5 if the binary is on PATH
+        # Run uclid5 and save uclid5_output.txt + pipeline_report.json
         if command -v uclid &>/dev/null; then
-            uclid "${UCL_PATH}"
+            python3 ../../pipeline/symbolic/uclid5/run_uclid5_verification.py \
+                --ucl     "${UCL_PATH}" \
+                --out-dir "${OUTPUT}" \
+                --bin     uclid
         else
             echo "  uclid binary not found in PATH — .ucl model generated at ${UCL_PATH}"
             echo "  Build UCLID5 (sbt assembly in the uclid/ repo) then run: uclid ${UCL_PATH}"
