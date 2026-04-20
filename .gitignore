@@ -42,6 +42,7 @@ REPRODUCIBILITY/**/smv/**
 src/behaverify.egg-info/
 build/
 alpha-beta-CROWN/
+uclid/
 nuXmv_DL/
 nuXmv_extracted/
 *.7z
