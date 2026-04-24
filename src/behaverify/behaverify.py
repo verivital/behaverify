@@ -23,6 +23,11 @@ from behaverify.counter_trace import counter_trace
 from behaverify.grid_world_draw.parse_nuxmv_output import handle_file as grid_world_draw_nuxmv_output
 from behaverify.grid_world_draw.parse_python_output import handle_file as grid_world_draw_python_output
 from behaverify.behaverify_gui import main as gui_main
+try:
+    from behaverify.agent_expander import maybe_expand as _maybe_expand_multiagent
+except ImportError:
+    def _maybe_expand_multiagent(path):
+        return path
 
 __version__ = '1.0.0'
 
@@ -535,6 +540,7 @@ For detailed documentation: https://github.com/verivital/behaverify
             help='Overwrite existing output files/directories')
         args = arg_parser.parse_args(argv)
         verify_input(args.model_file)
+        args.model_file = _maybe_expand_multiagent(args.model_file)
         verify_location('cpp', args.location, args.overwrite)
         output_name = args.output_name if args.output_name is not None else os.path.splitext(os.path.basename(args.model_file))[0]
         dsl_to_cpp(metamodel_file, args.model_file, output_name, os.path.join(args.location, 'cpp'), args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
@@ -630,6 +636,7 @@ For detailed documentation: https://github.com/verivital/behaverify
             help='Overwrite existing output files/directories')
         args = arg_parser.parse_args(argv)
         verify_input(args.model_file)
+        args.model_file = _maybe_expand_multiagent(args.model_file)
         verify_location('haskell', args.location, args.overwrite)
         output_name = args.output_name if args.output_name is not None else os.path.splitext(os.path.basename(args.model_file))[0]
         dsl_to_haskell(metamodel_file, args.model_file, os.path.join(args.location, 'haskell'), output_name, args.max_iter, args.recursion_limit, args.no_checks)
@@ -712,6 +719,7 @@ Examples:
             help='Print verification results summary to console')
         args = arg_parser.parse_args(argv)
         verify_input(args.model_file)
+        args.model_file = _maybe_expand_multiagent(args.model_file)
         verify_location('nuxmv', args.location, args.overwrite)
         input_file = args.model_file
         # output_file = set_output(args.location, input_file, args.output_name, extra_directory = 'nuxmv', extension = ('.smv' if args.generate else '.txt'))
@@ -771,6 +779,7 @@ Examples:
             help='Overwrite existing output files/directories')
         args = arg_parser.parse_args(argv)
         verify_input(args.model_file)
+        args.model_file = _maybe_expand_multiagent(args.model_file)
         verify_location('python', args.location, args.overwrite)
         output_name = args.output_name if args.output_name is not None else os.path.splitext(os.path.basename(args.model_file))[0]
         dsl_to_python(metamodel_file, args.model_file, output_name, os.path.join(args.location, 'python'), args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)

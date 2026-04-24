@@ -1,0 +1,117 @@
+configuration {}
+enumerations {'We', 'Ea', 'No', 'So', 'XX'}
+constants {min_x := 0, max_x := 3, min_y := 0, max_y := 1}
+
+variables {
+    variable { env x_pos VAR [min_x, max_x] [agents] assign{result{agents[i].start_x}}}
+    variable { env y_pos VAR [min_y, max_y] [agents] assign{result{agents[i].start_y}}}
+}
+
+environment_update {
+    variable_statement { x_pos[i]
+        assign {
+            case {(eq, act[i], 'Ea')} result {(min, max_x, (add, x_pos[i], 1))}
+            case {(eq, act[i], 'We')} result {(max, min_x, (sub, x_pos[i], 1))}
+            result {x_pos[i]}
+        }
+    }
+    variable_statement { y_pos[i]
+        assign {
+            case {(eq, act[i], 'No')} result {(min, max_y, (add, y_pos[i], 1))}
+            case {(eq, act[i], 'So')} result {(max, min_y, (sub, y_pos[i], 1))}
+            result {y_pos[i]}
+        }
+    }
+}
+
+checks {}
+
+#{ PathClear checks reference both robots and cannot be templated.
+   The condition uses x_pos[r0]/x_pos[r1] indexed syntax, which the
+   expander resolves to x_pos_r0/x_pos_r1 in the flat output.
+   read_variables lists the array base names; the expander expands
+   them to all per-agent instances. }#
+environment_checks {
+    environment_check { PathClear_r0
+        arguments {} read_variables {x_pos, y_pos}
+        condition {(not, (and, (eq, x_pos[r1], (add, x_pos[r0], 1)), (eq, y_pos[r1], y_pos[r0])))}}
+    environment_check { PathClear_r1
+        arguments {} read_variables {x_pos, y_pos}
+        condition {(not, (and, (eq, x_pos[r0], (sub, x_pos[r1], 1)), (eq, y_pos[r0], y_pos[r1])))}}
+}
+
+actions {}
+sub_trees {}
+
+agent_types {
+    agent_type { Robot
+        parameters {
+            start_x : [min_x, max_x]
+            start_y : [min_y, max_y]
+            goal_x  : [min_x, max_x]
+            goal_y  : [min_y, max_y]
+            forward_dir : {'We', 'Ea', 'No', 'So', 'XX'}
+        }
+        variables {
+            variable { bl act VAR {'We', 'Ea', 'No', 'So', 'XX'} assign{result{'XX'}}}
+        }
+        environment_checks {
+            environment_check { AtGoal
+                arguments {} read_variables {x_pos[self], y_pos[self]}
+                condition {(and, (eq, x_pos[self], goal_x), (eq, y_pos[self], goal_y))}}
+            environment_check { OnUpperRow
+                arguments {} read_variables {y_pos[self]}
+                condition {(gt, y_pos[self], min_y)}}
+        }
+        actions {
+            action { MoveForward
+                arguments {} local_variables {} read_variables {} write_variables {act}
+                initial_values {}
+                update {
+                    variable_statement {act assign{result{forward_dir}}}
+                    return_statement {result{success}}
+                }
+            }
+            action { StepSouth
+                arguments {} local_variables {} read_variables {} write_variables {act}
+                initial_values {}
+                update {
+                    variable_statement {act assign{result{'So'}}}
+                    return_statement {result{success}}
+                }
+            }
+            action { StepNorth
+                arguments {} local_variables {} read_variables {} write_variables {act}
+                initial_values {}
+                update {
+                    variable_statement {act assign{result{'No'}}}
+                    return_statement {result{success}}
+                }
+            }
+        }
+        tree {
+            composite { RobotRoot selector children {
+                AtGoal {}
+                composite { TryForward sequence children { PathClear {} MoveForward {} }}
+                composite { Sidestep selector children {
+                    composite { SidestepSouth sequence children { OnUpperRow {} StepSouth {} }}
+                    StepNorth {}
+                }}
+            }}
+        }
+    }
+}
+
+agents {
+    agent { r0 Robot start_x := 1, start_y := max_y, goal_x := max_x, goal_y := max_y, forward_dir := 'Ea' }
+    agent { r1 Robot start_x := 2, start_y := max_y, goal_x := min_x, goal_y := max_y, forward_dir := 'We' }
+}
+
+tick_prerequisite {(True)}
+
+specifications {
+    #{  AG AF (robot reaches its goal) - expected FALSE due to livelock }#
+    CTLSPEC {(forall, i, agents, (always_globally, (always_finally, (and, (eq, x_pos[i] at -1, goal_x[i]), (eq, y_pos[i] at -1, goal_y[i])))))}
+    #{  AG EF (robot can reach its goal) - expected TRUE (goal is reachable on some path) }#
+    CTLSPEC {(always_globally, (exists_finally, (and, (eq, x_pos_r0 at -1, max_x), (eq, y_pos_r0 at -1, max_y))))}
+}

@@ -1,0 +1,140 @@
+configuration {}
+enumerations {'We', 'Ea', 'No', 'So', 'XX'}
+constants {min_x := 0, max_x := 3, min_y := 0, max_y := 1}
+
+variables {
+    variable { bl act1 VAR {'We', 'Ea', 'No', 'So', 'XX'} assign{result{'XX'}}}
+    variable { bl act2 VAR {'We', 'Ea', 'No', 'So', 'XX'} assign{result{'XX'}}}
+    variable { env x_d1 VAR [min_x, max_x] assign{result{1}}}
+    variable { env y_d1 VAR [min_y, max_y] assign{result{max_y}}}
+    variable { env x_d2 VAR [min_x, max_x] assign{result{2}}}
+    variable { env y_d2 VAR [min_y, max_y] assign{result{max_y}}}
+}
+
+environment_update {
+    variable_statement { x_d1
+        assign {
+            case {(eq, act1, 'Ea')} result {(min, max_x, (add, x_d1, 1))}
+            case {(eq, act1, 'We')} result {(max, min_x, (sub, x_d1, 1))}
+            result {x_d1}}}
+    variable_statement { y_d1
+        assign {
+            case {(eq, act1, 'No')} result {(min, max_y, (add, y_d1, 1))}
+            case {(eq, act1, 'So')} result {(max, min_y, (sub, y_d1, 1))}
+            result {y_d1}}}
+    variable_statement { x_d2
+        assign {
+            case {(eq, act2, 'Ea')} result {(min, max_x, (add, x_d2, 1))}
+            case {(eq, act2, 'We')} result {(max, min_x, (sub, x_d2, 1))}
+            result {x_d2}}}
+    variable_statement { y_d2
+        assign {
+            case {(eq, act2, 'No')} result {(min, max_y, (add, y_d2, 1))}
+            case {(eq, act2, 'So')} result {(max, min_y, (sub, y_d2, 1))}
+            result {y_d2}}}
+}
+
+checks {}
+
+environment_checks {
+    environment_check { AtGoal1
+        arguments {} read_variables {x_d1, y_d1}
+        condition {(and, (eq, x_d1, max_x), (eq, y_d1, max_y))}}
+    environment_check { AtGoal2
+        arguments {} read_variables {x_d2, y_d2}
+        condition {(and, (eq, x_d2, min_x), (eq, y_d2, max_y))}}
+    environment_check { PathClear1
+        arguments {} read_variables {x_d1, y_d1, x_d2, y_d2}
+        condition {(not, (and, (eq, x_d2, (add, x_d1, 1)), (eq, y_d2, y_d1)))}}
+    environment_check { PathClear2
+        arguments {} read_variables {x_d1, y_d1, x_d2, y_d2}
+        condition {(not, (and, (eq, x_d1, (sub, x_d2, 1)), (eq, y_d1, y_d2)))}}
+    environment_check { OnUpperRow1
+        arguments {} read_variables {y_d1}
+        condition {(gt, y_d1, min_y)}}
+    environment_check { OnUpperRow2
+        arguments {} read_variables {y_d2}
+        condition {(gt, y_d2, min_y)}}
+}
+
+actions {
+    action { MoveForward1
+        arguments {} local_variables {} read_variables {} write_variables {act1}
+        initial_values {}
+        update {
+            variable_statement {act1 assign{result{'Ea'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { MoveForward2
+        arguments {} local_variables {} read_variables {} write_variables {act2}
+        initial_values {}
+        update {
+            variable_statement {act2 assign{result{'We'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { StepSouth1
+        arguments {} local_variables {} read_variables {} write_variables {act1}
+        initial_values {}
+        update {
+            variable_statement {act1 assign{result{'So'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { StepNorth1
+        arguments {} local_variables {} read_variables {} write_variables {act1}
+        initial_values {}
+        update {
+            variable_statement {act1 assign{result{'No'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { StepSouth2
+        arguments {} local_variables {} read_variables {} write_variables {act2}
+        initial_values {}
+        update {
+            variable_statement {act2 assign{result{'So'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { StepNorth2
+        arguments {} local_variables {} read_variables {} write_variables {act2}
+        initial_values {}
+        update {
+            variable_statement {act2 assign{result{'No'}}}
+            return_statement {result{success}}
+        }
+    }
+}
+
+sub_trees {}
+
+tree {
+    composite { Root parallel policy success_on_all children {
+        composite { Robot1 selector children {
+            AtGoal1 {}
+            composite { TryForward1 sequence children { PathClear1 {} MoveForward1 {} }}
+            composite { Sidestep1 selector children {
+                composite { SidestepSouth1 sequence children { OnUpperRow1 {} StepSouth1 {} }}
+                StepNorth1 {}
+            }}
+        }}
+        composite { Robot2 selector children {
+            AtGoal2 {}
+            composite { TryForward2 sequence children { PathClear2 {} MoveForward2 {} }}
+            composite { Sidestep2 selector children {
+                composite { SidestepSouth2 sequence children { OnUpperRow2 {} StepSouth2 {} }}
+                StepNorth2 {}
+            }}
+        }}
+    }}
+}
+
+tick_prerequisite {(True)}
+
+specifications {
+    CTLSPEC {(always_globally, (always_finally, (and, (eq, x_d1 at -1, max_x), (eq, y_d1 at -1, max_y))))}
+    CTLSPEC {(always_globally, (always_finally, (and, (eq, x_d2 at -1, min_x), (eq, y_d2 at -1, max_y))))}
+    CTLSPEC {(always_globally, (exists_finally, (and, (eq, x_d1 at -1, max_x), (eq, y_d1 at -1, max_y))))}
+}

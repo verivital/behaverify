@@ -36,7 +36,13 @@ BehaviorModel:
     'sub_trees' '{'
     sub_trees *= sub_tree
     '}' ('end_sub_trees')?
-    'tree' '{' root = node '}' ('end_tree')?
+    ('agent_types' '{'
+    agent_types *= agent_type_def
+    '}' ('end_agent_types')?)?
+    ('agents' '{'
+    agents *= agent_instance
+    '}' ('end_agents')?)?
+    ('tree' '{' root = node '}' ('end_tree')?)?
     'tick_prerequisite' '{'
     tick_condition = code_statement
     '}' ('end_tick_prerequisite')?
@@ -188,6 +194,8 @@ node:
           ('default' '{' default_value = assign_value '}' ('end_default')?
           ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))))
           |
+          ('[' agents_array = 'agents' ']' (assign = assign_value))
+          |
           (assign = assign_value)
         )
       )
@@ -270,7 +278,7 @@ statement:
     variable_statement:
     'variable_statement' '{'
     instant ?= 'instant'
-    variable = [variable]
+    ((indexed_var_name = ID '[' indexed_var_idx = ID ']') | (variable = [variable]))
     (((constant_index = 'constant_index' assigns += loop_array_index) | (constant_index = '' assigns += loop_array_index))
     | ((iterative_assign = 'iterative_assign' ',' index_var_name = ID iterative_assign_conditionals *= iterative_assign_conditional)? assign = assign_value))
     '}' ('end_variable_statement')?
@@ -334,6 +342,8 @@ statement:
     code_statement:
     ('(' function_call = function ')') |
     ('(' code_statement = code_statement ')') |
+    (agent_param_ref = 'agents' '[' agent_param_index = ID ']' '.' agent_param_name = ID) |
+    (indexed_var = ID '[' indexed_var_index = ID ']' ('at' read_at_idx = code_statement)?) |
     (atom = constant_or_reference ('node' node_name = code_statement)? ('at' read_at = code_statement)? ('trace' trace_num = code_statement)?)
 ;
     //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------  
@@ -350,14 +360,16 @@ statement:
 ;
     //if is 3 args, COND, TRUE, FALSE
     function_names://these need to be ordered so that something like eq is AFTER equiv, otherwise equiv will match eq and cause problems.
-    //start of ctl specific
+    //start of ctl specific (exists_* must come before 'exists' agent quantifier)
     'exists_globally' | 'exists_next' | 'exists_finally' | 'exists_until' | 'always_globally' | 'always_next' | 'always_finally' | 'always_until' |
     //start of ltl specific
-    'next' | 'globally' | 'finally' | 'until' | 'release' | 'previous' | 'not_previous_not' | 'historically' | 'once' | 'since' | 'triggered' | 
+    'next' | 'globally' | 'finally' | 'until' | 'release' | 'previous' | 'not_previous_not' | 'historically' | 'once' | 'since' | 'triggered' |
     //these functions permit the continuation of ltl/ctl specific functions
     'not' | 'and' | 'or' | 'xor' | 'xnor' | 'implies' | 'equivalent' |
     //the rest.
-    'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count'
+    'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count' |
+    //agent quantifiers (after exists_* to avoid prefix ambiguity)
+    'forall' | 'exists'
 ;
     bounded_function_names:
     'globally_bounded' | 'finally_bounded' | 'until_bounded' | 'release_bounded' | 'historically_bounded' | 'once_bounded' | 'since_bounded' | 'triggered_bounded'
@@ -370,4 +382,111 @@ specification:
     (spec_type = 'LTLSPEC' '{' code_statement = code_statement '}' ('end_LTLSPEC')?) |
     (spec_type = 'CTLSPEC' '{' code_statement = code_statement '}' ('end_CTLSPEC')?) |
     (spec_type = 'INVARSPEC' '{' code_statement = code_statement '}' ('end_INVARSPEC')?)
+;
+    //--------------------SEC:AGENT_TYPES--------------------------
+    // agent_var_ref: flexible variable reference used in agent_type templates
+    // (allows indexed refs like x_pos[self] that cannot be cross-refs)
+    agent_var_ref:
+    (indexed_name = ID '[' index = ID ']') | (plain_name = ID)
+;
+    // agent_parameter_def: one parameter declaration inside agent_type
+    agent_parameter_def:
+    name = ID ':' domain = variable_domain
+;
+    // agent_variable_statement: like variable_statement but variable by plain name (no cross-ref)
+    agent_variable_statement:
+    'variable_statement' '{'
+    instant ?= 'instant'
+    var_name = ID
+    (assign = assign_value)
+    '}' ('end_variable_statement')?
+;
+    // agent_statement: statement variant for agent_type action update bodies
+    agent_statement:
+    (variable_statement = agent_variable_statement)
+;
+    // agent_template_check: environment_check inside agent_type
+    // Uses agent_var_ref for read_variables (no cross-refs needed)
+    agent_template_check:
+    'environment_check' '{'
+    name = ID
+    'arguments' '{' arguments *= argument_declaration[','] '}' ('end_arguments')?
+    'read_variables' '{' read_vars_raw *= agent_var_ref[','] '}' ('end_read_variables')?
+    'condition' '{' condition = code_statement '}' ('end_condition')?
+    '}' ('end_environment_check')?
+;
+    // agent_template_action: action inside agent_type
+    agent_template_action:
+    'action' '{'
+    name = ID
+    'arguments' '{' arguments *= argument_declaration[','] '}' ('end_arguments')?
+    'local_variables' '{' local_vars_raw *= agent_var_ref[','] '}' ('end_local_variables')?
+    'read_variables' '{' read_vars_raw *= agent_var_ref[','] '}' ('end_read_variables')?
+    'write_variables' '{' write_vars_raw *= agent_var_ref[','] '}' ('end_write_variables')?
+    'initial_values' '{'
+    init_statements *= agent_variable_statement
+    '}' ('end_initial_values')?
+    'update' '{'
+    pre_update_statements *= agent_statement
+    return_statement = return_statement
+    post_update_statements *= agent_statement
+    '}' ('end_update')?
+    '}' ('end_action')?
+;
+    // agent_leaf_node: leaf node inside agent_type tree (no cross-refs)
+    agent_leaf_node:
+    (node_name = ID ':')?
+    leaf_name = ID
+    '{'
+    arguments *= code_statement[',']
+    '}'
+;
+    // agent_composite_node: composite node inside agent_type tree
+    agent_composite_node:
+    'composite' '{'
+    name = ID
+    ((node_type = 'parallel' 'policy'
+    (parallel_policy = 'success_on_all' | parallel_policy = 'success_on_one'))
+    |
+    (node_type = 'sequence') | (node_type = 'selector'))
+    (memory = 'with_partial_memory' | memory = 'with_true_memory' | memory = '')
+    'children' '{'
+    children += agent_node
+    '}' ('end_children')?
+    '}' ('end_composite')?
+;
+    // agent_node: node variant for inside agent_type tree
+    agent_node:
+    agent_composite_node | agent_leaf_node
+;
+    // agent_type_def: full agent_type block with parameters + template
+    agent_type_def:
+    'agent_type' '{'
+    name = ID
+    'parameters' '{'
+    parameters *= agent_parameter_def
+    '}' ('end_parameters')?
+    ('variables' '{'
+    agent_variables *= variable
+    '}' ('end_variables')?)?
+    ('environment_checks' '{'
+    agent_environment_checks *= agent_template_check
+    '}' ('end_environment_checks')?)?
+    ('actions' '{'
+    agent_actions *= agent_template_action
+    '}' ('end_actions')?)?
+    'tree' '{' agent_root = agent_node '}' ('end_tree')?
+    '}' ('end_agent_type')?
+;
+    // agent_param_assignment: parameter value supplied in agent { } block
+    agent_param_assignment:
+    name = ID ':=' value = constant_or_reference
+;
+    // agent_instance: one agent instantiation in the agents { } block
+    agent_instance:
+    'agent' '{'
+    name = ID
+    type_name = ID
+    param_assignments *= agent_param_assignment[',']
+    '}'
 ;

@@ -1,0 +1,327 @@
+configuration {}
+enumerations {'Move', 'Stay'}
+constants {num_pos := 6}
+
+variables {
+    variable { bl act0 VAR {'Move', 'Stay'} assign{result{'Stay'}}}
+    variable { bl act1 VAR {'Move', 'Stay'} assign{result{'Stay'}}}
+    variable { bl act2 VAR {'Move', 'Stay'} assign{result{'Stay'}}}
+    variable { bl act3 VAR {'Move', 'Stay'} assign{result{'Stay'}}}
+    variable { bl act4 VAR {'Move', 'Stay'} assign{result{'Stay'}}}
+    variable { env x_pos0 VAR [0, 5] assign{result{0}}}
+    variable { env x_pos1 VAR [0, 5] assign{result{1}}}
+    variable { env x_pos2 VAR [0, 5] assign{result{2}}}
+    variable { env x_pos3 VAR [0, 5] assign{result{3}}}
+    variable { env x_pos4 VAR [0, 5] assign{result{4}}}
+}
+
+environment_update {
+    variable_statement { x_pos0
+        assign {
+            case {(eq, act0, 'Move')} result {(mod, (add, x_pos0, 1), num_pos)}
+            result {x_pos0}
+        }
+    }
+    variable_statement { x_pos1
+        assign {
+            case {(eq, act1, 'Move')} result {(mod, (add, x_pos1, 1), num_pos)}
+            result {x_pos1}
+        }
+    }
+    variable_statement { x_pos2
+        assign {
+            case {(eq, act2, 'Move')} result {(mod, (add, x_pos2, 1), num_pos)}
+            result {x_pos2}
+        }
+    }
+    variable_statement { x_pos3
+        assign {
+            case {(eq, act3, 'Move')} result {(mod, (add, x_pos3, 1), num_pos)}
+            result {x_pos3}
+        }
+    }
+    variable_statement { x_pos4
+        assign {
+            case {(eq, act4, 'Move')} result {(mod, (add, x_pos4, 1), num_pos)}
+            result {x_pos4}
+        }
+    }
+}
+
+checks {}
+
+environment_checks {
+    #{  Goals: r0->3, r1->4, r2->5, r3->0, r4->5 (one hop, parks at free slot) }#
+    environment_check { AtGoal0
+        arguments {} read_variables {x_pos0}
+        condition {(eq, x_pos0, 3)}}
+    environment_check { AtGoal1
+        arguments {} read_variables {x_pos1}
+        condition {(eq, x_pos1, 4)}}
+    environment_check { AtGoal2
+        arguments {} read_variables {x_pos2}
+        condition {(eq, x_pos2, 5)}}
+    environment_check { AtGoal3
+        arguments {} read_variables {x_pos3}
+        condition {(eq, x_pos3, 0)}}
+    environment_check { AtGoal4
+        arguments {} read_variables {x_pos4}
+        condition {(eq, x_pos4, 5)}}
+    #{  PathClear: next clockwise position must be free of all four other robots.
+        or is variadic in BehaVerify so all four checks fit in one (or, ...). }#
+    environment_check { PathClear0
+        arguments {} read_variables {x_pos0, x_pos1, x_pos2, x_pos3, x_pos4}
+        condition {(not, (or,
+            (eq, x_pos1, (mod, (add, x_pos0, 1), num_pos)),
+            (eq, x_pos2, (mod, (add, x_pos0, 1), num_pos)),
+            (eq, x_pos3, (mod, (add, x_pos0, 1), num_pos)),
+            (eq, x_pos4, (mod, (add, x_pos0, 1), num_pos))))}}
+    environment_check { PathClear1
+        arguments {} read_variables {x_pos0, x_pos1, x_pos2, x_pos3, x_pos4}
+        condition {(not, (or,
+            (eq, x_pos0, (mod, (add, x_pos1, 1), num_pos)),
+            (eq, x_pos2, (mod, (add, x_pos1, 1), num_pos)),
+            (eq, x_pos3, (mod, (add, x_pos1, 1), num_pos)),
+            (eq, x_pos4, (mod, (add, x_pos1, 1), num_pos))))}}
+    environment_check { PathClear2
+        arguments {} read_variables {x_pos0, x_pos1, x_pos2, x_pos3, x_pos4}
+        condition {(not, (or,
+            (eq, x_pos0, (mod, (add, x_pos2, 1), num_pos)),
+            (eq, x_pos1, (mod, (add, x_pos2, 1), num_pos)),
+            (eq, x_pos3, (mod, (add, x_pos2, 1), num_pos)),
+            (eq, x_pos4, (mod, (add, x_pos2, 1), num_pos))))}}
+    environment_check { PathClear3
+        arguments {} read_variables {x_pos0, x_pos1, x_pos2, x_pos3, x_pos4}
+        condition {(not, (or,
+            (eq, x_pos0, (mod, (add, x_pos3, 1), num_pos)),
+            (eq, x_pos1, (mod, (add, x_pos3, 1), num_pos)),
+            (eq, x_pos2, (mod, (add, x_pos3, 1), num_pos)),
+            (eq, x_pos4, (mod, (add, x_pos3, 1), num_pos))))}}
+    environment_check { PathClear4
+        arguments {} read_variables {x_pos0, x_pos1, x_pos2, x_pos3, x_pos4}
+        condition {(not, (or,
+            (eq, x_pos0, (mod, (add, x_pos4, 1), num_pos)),
+            (eq, x_pos1, (mod, (add, x_pos4, 1), num_pos)),
+            (eq, x_pos2, (mod, (add, x_pos4, 1), num_pos)),
+            (eq, x_pos3, (mod, (add, x_pos4, 1), num_pos))))}}
+}
+
+actions {
+    action { Move0
+        arguments {} local_variables {} read_variables {} write_variables {act0}
+        initial_values {}
+        update {
+            variable_statement {act0 assign{result{'Move'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { Move1
+        arguments {} local_variables {} read_variables {} write_variables {act1}
+        initial_values {}
+        update {
+            variable_statement {act1 assign{result{'Move'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { Move2
+        arguments {} local_variables {} read_variables {} write_variables {act2}
+        initial_values {}
+        update {
+            variable_statement {act2 assign{result{'Move'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { Move3
+        arguments {} local_variables {} read_variables {} write_variables {act3}
+        initial_values {}
+        update {
+            variable_statement {act3 assign{result{'Move'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { Move4
+        arguments {} local_variables {} read_variables {} write_variables {act4}
+        initial_values {}
+        update {
+            variable_statement {act4 assign{result{'Move'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayGoal0
+        arguments {} local_variables {} read_variables {} write_variables {act0}
+        initial_values {}
+        update {
+            variable_statement {act0 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayGoal1
+        arguments {} local_variables {} read_variables {} write_variables {act1}
+        initial_values {}
+        update {
+            variable_statement {act1 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayGoal2
+        arguments {} local_variables {} read_variables {} write_variables {act2}
+        initial_values {}
+        update {
+            variable_statement {act2 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayGoal3
+        arguments {} local_variables {} read_variables {} write_variables {act3}
+        initial_values {}
+        update {
+            variable_statement {act3 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayGoal4
+        arguments {} local_variables {} read_variables {} write_variables {act4}
+        initial_values {}
+        update {
+            variable_statement {act4 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayWait0
+        arguments {} local_variables {} read_variables {} write_variables {act0}
+        initial_values {}
+        update {
+            variable_statement {act0 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayWait1
+        arguments {} local_variables {} read_variables {} write_variables {act1}
+        initial_values {}
+        update {
+            variable_statement {act1 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayWait2
+        arguments {} local_variables {} read_variables {} write_variables {act2}
+        initial_values {}
+        update {
+            variable_statement {act2 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayWait3
+        arguments {} local_variables {} read_variables {} write_variables {act3}
+        initial_values {}
+        update {
+            variable_statement {act3 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { SetStayWait4
+        arguments {} local_variables {} read_variables {} write_variables {act4}
+        initial_values {}
+        update {
+            variable_statement {act4 assign{result{'Stay'}}}
+            return_statement {result{success}}
+        }
+    }
+}
+
+sub_trees {}
+
+tree {
+    composite { Root parallel policy success_on_all children {
+        composite { Robot0 selector children {
+            composite { AtGoalSeq0 sequence children {
+                AtGoal0 {}
+                SetStayGoal0 {}
+            }}
+            composite { TryMove0 sequence children {
+                PathClear0 {}
+                Move0 {}
+            }}
+            SetStayWait0 {}
+        }}
+        composite { Robot1 selector children {
+            composite { AtGoalSeq1 sequence children {
+                AtGoal1 {}
+                SetStayGoal1 {}
+            }}
+            composite { TryMove1 sequence children {
+                PathClear1 {}
+                Move1 {}
+            }}
+            SetStayWait1 {}
+        }}
+        composite { Robot2 selector children {
+            composite { AtGoalSeq2 sequence children {
+                AtGoal2 {}
+                SetStayGoal2 {}
+            }}
+            composite { TryMove2 sequence children {
+                PathClear2 {}
+                Move2 {}
+            }}
+            SetStayWait2 {}
+        }}
+        composite { Robot3 selector children {
+            composite { AtGoalSeq3 sequence children {
+                AtGoal3 {}
+                SetStayGoal3 {}
+            }}
+            composite { TryMove3 sequence children {
+                PathClear3 {}
+                Move3 {}
+            }}
+            SetStayWait3 {}
+        }}
+        composite { Robot4 selector children {
+            composite { AtGoalSeq4 sequence children {
+                AtGoal4 {}
+                SetStayGoal4 {}
+            }}
+            composite { TryMove4 sequence children {
+                PathClear4 {}
+                Move4 {}
+            }}
+            SetStayWait4 {}
+        }}
+    }}
+}
+
+tick_prerequisite {(True)}
+
+specifications {
+    #{  Safety: no two robots occupy the same position (C(5,2) = 10 pairs) }#
+    INVARSPEC {(and,
+        (neq, x_pos0 at -1, x_pos1 at -1),
+        (neq, x_pos0 at -1, x_pos2 at -1),
+        (neq, x_pos0 at -1, x_pos3 at -1),
+        (neq, x_pos0 at -1, x_pos4 at -1),
+        (neq, x_pos1 at -1, x_pos2 at -1),
+        (neq, x_pos1 at -1, x_pos3 at -1),
+        (neq, x_pos1 at -1, x_pos4 at -1),
+        (neq, x_pos2 at -1, x_pos3 at -1),
+        (neq, x_pos2 at -1, x_pos4 at -1),
+        (neq, x_pos3 at -1, x_pos4 at -1))}
+
+    #{  AG AF: robots always eventually reach their goals
+        r0->3, r1->4, r2->5, r3->0 expected FALSE (deadlocked after tick 5)
+        r4->5 expected TRUE (reaches goal at tick 0, parks permanently) }#
+    CTLSPEC {(always_globally, (always_finally, (eq, x_pos0 at -1, 3)))}
+    CTLSPEC {(always_globally, (always_finally, (eq, x_pos1 at -1, 4)))}
+    CTLSPEC {(always_globally, (always_finally, (eq, x_pos2 at -1, 5)))}
+    CTLSPEC {(always_globally, (always_finally, (eq, x_pos3 at -1, 0)))}
+    CTLSPEC {(always_globally, (always_finally, (eq, x_pos4 at -1, 5)))}
+
+    #{  AG EF: from every state each robot can eventually reach its goal
+        All four blocked robots expected FALSE — r4 permanently occupies position 5,
+        stranding r2 (whose goal is 5) and r3 (whose path passes through 5),
+        which in turn block r1 then r0. No execution path escapes the deadlock. }#
+    CTLSPEC {(always_globally, (exists_finally, (eq, x_pos0 at -1, 3)))}
+    CTLSPEC {(always_globally, (exists_finally, (eq, x_pos1 at -1, 4)))}
+    CTLSPEC {(always_globally, (exists_finally, (eq, x_pos2 at -1, 5)))}
+    CTLSPEC {(always_globally, (exists_finally, (eq, x_pos3 at -1, 0)))}
+}

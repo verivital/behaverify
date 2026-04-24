@@ -1,0 +1,130 @@
+configuration {}
+enumerations {'Move', 'Stay'}
+constants {num_pos := 4}
+
+variables {
+    variable { env x_pos VAR [0, 3] [agents] assign{result{agents[i].start_pos}}}
+}
+
+environment_update {
+    variable_statement { x_pos[i]
+        assign {
+            case {(eq, act[i], 'Move')} result {(mod, (add, x_pos[i], 1), num_pos)}
+            result {x_pos[i]}
+        }
+    }
+}
+
+checks {}
+
+#{  PathClear checks reference other agents' positions and cannot be templated.
+    Each robot's PathClear checks both other robots' positions against the
+    next clockwise slot. The expander resolves x_pos[r0] -> x_pos_r0 etc.
+    via step 8b substitution. The tree template references PathClear {} which
+    expands to PathClear_r0 / PathClear_r1 / PathClear_r2 per agent. }#
+environment_checks {
+    environment_check { PathClear_r0
+        arguments {} read_variables {x_pos}
+        condition {(not, (or,
+            (eq, x_pos[r1], (mod, (add, x_pos[r0], 1), num_pos)),
+            (eq, x_pos[r2], (mod, (add, x_pos[r0], 1), num_pos))))}}
+    environment_check { PathClear_r1
+        arguments {} read_variables {x_pos}
+        condition {(not, (or,
+            (eq, x_pos[r0], (mod, (add, x_pos[r1], 1), num_pos)),
+            (eq, x_pos[r2], (mod, (add, x_pos[r1], 1), num_pos))))}}
+    environment_check { PathClear_r2
+        arguments {} read_variables {x_pos}
+        condition {(not, (or,
+            (eq, x_pos[r0], (mod, (add, x_pos[r2], 1), num_pos)),
+            (eq, x_pos[r1], (mod, (add, x_pos[r2], 1), num_pos))))}}
+}
+
+actions {}
+sub_trees {}
+
+agent_types {
+    agent_type { Robot
+        parameters {
+            start_pos : [0, 3]
+            goal_pos  : [0, 3]
+        }
+        variables {
+            variable { bl act VAR {'Move', 'Stay'} assign{result{'Stay'}}}
+        }
+        environment_checks {
+            environment_check { AtGoal
+                arguments {} read_variables {x_pos[self]}
+                condition {(eq, x_pos[self], goal_pos)}}
+        }
+        actions {
+            action { Move
+                arguments {} local_variables {} read_variables {} write_variables {act}
+                initial_values {}
+                update {
+                    variable_statement {act assign{result{'Move'}}}
+                    return_statement {result{success}}
+                }
+            }
+            #{  SetStayGoal: resets act when robot reaches its goal, so the
+                environment_update does not advance it past the goal on the
+                next tick (mod arithmetic has no clamping). }#
+            action { SetStayGoal
+                arguments {} local_variables {} read_variables {} write_variables {act}
+                initial_values {}
+                update {
+                    variable_statement {act assign{result{'Stay'}}}
+                    return_statement {result{success}}
+                }
+            }
+            #{  SetStayWait: fallback when PathClear fails. Clears a stale
+                Move from a prior tick so the environment_update does not
+                advance a blocked robot. }#
+            action { SetStayWait
+                arguments {} local_variables {} read_variables {} write_variables {act}
+                initial_values {}
+                update {
+                    variable_statement {act assign{result{'Stay'}}}
+                    return_statement {result{success}}
+                }
+            }
+        }
+        tree {
+            composite { RobotRoot selector children {
+                composite { AtGoalSeq sequence children {
+                    AtGoal {}
+                    SetStayGoal {}
+                }}
+                composite { TryMove sequence children {
+                    PathClear {}
+                    Move {}
+                }}
+                SetStayWait {}
+            }}
+        }
+    }
+}
+
+agents {
+    agent { r0 Robot start_pos := 0, goal_pos := 2 }
+    agent { r1 Robot start_pos := 1, goal_pos := 0 }
+    agent { r2 Robot start_pos := 2, goal_pos := 3 }
+}
+
+tick_prerequisite {(True)}
+
+specifications {
+    #{  Safety: no two robots occupy the same position }#
+    INVARSPEC {(forall, i, agents, (forall, j, agents,
+        (implies, (neq, i, j), (neq, x_pos[i] at -1, x_pos[j] at -1))))}
+
+    #{  AG AF: every robot always eventually reaches its goal
+        Expected FALSE — r0 and r1 are permanently blocked after r2 parks }#
+    CTLSPEC {(forall, i, agents, (always_globally, (always_finally,
+        (eq, x_pos[i] at -1, goal_pos[i]))))}
+
+    #{  AG EF: from every state each robot can eventually reach its goal
+        Expected FALSE — from the deadlocked state no path exists for r0/r1 }#
+    CTLSPEC {(forall, i, agents, (always_globally, (exists_finally,
+        (eq, x_pos[i] at -1, goal_pos[i]))))}
+}

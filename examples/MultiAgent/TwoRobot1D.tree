@@ -1,0 +1,70 @@
+configuration {}
+enumerations {'We', 'Ea', 'XX'}
+constants {min_val := 0, max_val := 4}
+
+variables {
+    variable { bl act1 VAR {'We', 'Ea', 'XX'} assign{result{'XX'}}}
+    variable { bl act2 VAR {'We', 'Ea', 'XX'} assign{result{'XX'}}}
+    variable { env x_d1 VAR [min_val, max_val] assign{result{min_val}}}
+    variable { env x_d2 VAR [min_val, max_val] assign{result{max_val}}}
+}
+
+environment_update {
+    variable_statement { x_d1
+        assign {
+            case {(eq, act1, 'We')} result {(max, min_val, (sub, x_d1, 1))}
+            case {(eq, act1, 'Ea')} result {(min, max_val, (add, x_d1, 1))}
+            result {x_d1}}}
+    variable_statement { x_d2
+        assign {
+            case {(eq, act2, 'We')} result {(max, min_val, (sub, x_d2, 1))}
+            case {(eq, act2, 'Ea')} result {(min, max_val, (add, x_d2, 1))}
+            result {x_d2}}}
+}
+
+checks {}
+
+environment_checks {
+    environment_check { AtGoal1
+        arguments {} read_variables {x_d1}
+        condition {(eq, x_d1, max_val)}}
+    environment_check { AtGoal2
+        arguments {} read_variables {x_d2}
+        condition {(eq, x_d2, min_val)}}
+}
+
+actions {
+    action { Move1
+        arguments {} local_variables {} read_variables {} write_variables {act1}
+        initial_values {}
+        update {
+            variable_statement {act1 assign{result{'We', 'Ea'}}}
+            return_statement {result{success}}
+        }
+    }
+    action { Move2
+        arguments {} local_variables {} read_variables {} write_variables {act2}
+        initial_values {}
+        update {
+            variable_statement {act2 assign{result{'We', 'Ea'}}}
+            return_statement {result{success}}
+        }
+    }
+}
+
+sub_trees {}
+
+tree {
+    composite { Root parallel policy success_on_all children {
+        composite { Robot1 selector children { AtGoal1 {} Move1 {} }}
+        composite { Robot2 selector children { AtGoal2 {} Move2 {} }}
+    }}
+}
+
+tick_prerequisite {(True)}
+
+specifications {
+    INVARSPEC {(not, (eq, x_d1 at -1, x_d2 at -1))}
+    CTLSPEC {(always_globally, (exists_finally, (eq, x_d1 at -1, max_val)))}
+    CTLSPEC {(always_globally, (exists_finally, (eq, x_d2 at -1, min_val)))}
+}

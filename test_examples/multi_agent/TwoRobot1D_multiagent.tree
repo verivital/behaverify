@@ -1,0 +1,74 @@
+configuration {}
+enumerations {'We', 'Ea', 'XX'}
+constants {min_val := 0, max_val := 4}
+
+variables {
+    variable { env x_pos VAR [min_val, max_val] [agents]
+        assign { result { agents[i].start_x } }}
+}
+
+environment_update {
+    variable_statement { x_pos[i]
+        assign {
+            case {(eq, act[i], 'We')} result {(max, min_val, (sub, x_pos[i], 1))}
+            case {(eq, act[i], 'Ea')} result {(min, max_val, (add, x_pos[i], 1))}
+            result {x_pos[i]}
+        }
+    }
+}
+
+checks {}
+
+environment_checks {}
+
+actions {}
+
+sub_trees {}
+
+agent_types {
+    agent_type { Robot
+        parameters {
+            start_x : [min_val, max_val]
+            goal_x  : [min_val, max_val]
+        }
+        variables {
+            variable { bl act VAR {'We', 'Ea', 'XX'} assign{result{'XX'}}}
+        }
+        environment_checks {
+            environment_check { AtGoal
+                arguments {} read_variables {x_pos[self]}
+                condition {(eq, x_pos[self], goal_x)}
+            }
+        }
+        actions {
+            action { Move
+                arguments {} local_variables {} read_variables {} write_variables {act}
+                initial_values {}
+                update {
+                    variable_statement {act assign{result{'We', 'Ea'}}}
+                    return_statement {result{success}}
+                }
+            }
+        }
+        tree {
+            composite { RobotRoot selector children {
+                AtGoal {}
+                Move {}
+            }}
+        }
+    }
+}
+
+agents {
+    agent { r0 Robot start_x := min_val, goal_x := max_val }
+    agent { r1 Robot start_x := max_val, goal_x := min_val }
+}
+
+tick_prerequisite {(True)}
+
+specifications {
+    INVARSPEC {(forall, i, agents, (forall, j, agents,
+        (implies, (neq, i, j), (neq, x_pos[i] at -1, x_pos[j] at -1))))}
+    CTLSPEC {(forall, i, agents, (always_globally, (exists_finally,
+        (eq, x_pos[i] at -1, goal_x[i]))))}
+}
