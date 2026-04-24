@@ -83,7 +83,7 @@ turn below.
 Sequence
 ^^^^^^^^
 
-.. figure:: /_static/img/bt-sequence.svg
+.. figure:: /_static/img/bt-sequence.png
    :alt: A Sequence composite with three children; the first two are
          conditions (ovals), the third an action (rectangle).
    :class: pipeline-hero
@@ -101,7 +101,7 @@ classical conjunctions of pre-condition checks followed by an action
 Selector (Fallback)
 ^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/img/bt-selector.svg
+.. figure:: /_static/img/bt-selector.png
    :alt: A Selector composite with two condition children and one
          action child.
    :class: pipeline-hero
@@ -117,7 +117,7 @@ strategies (e.g. *try A, else try B, else fail*).
 Parallel
 ^^^^^^^^
 
-.. figure:: /_static/img/bt-parallel.svg
+.. figure:: /_static/img/bt-parallel.png
    :alt: A Parallel composite with two condition children and one
          action child that all tick together.
    :class: pipeline-hero
@@ -155,7 +155,7 @@ control how often it is ticked. BehaVerify's DSL supports four kinds.
 Inverter
 ^^^^^^^^
 
-.. figure:: /_static/img/bt-inverter.svg
+.. figure:: /_static/img/bt-inverter.png
    :alt: An inverter decorator with a single child node.
    :class: pipeline-hero
    :width: 28%
@@ -169,7 +169,7 @@ decorator is well-defined on non-terminating children.
 Repeat (N)
 ^^^^^^^^^^
 
-.. figure:: /_static/img/bt-repeat.svg
+.. figure:: /_static/img/bt-repeat.png
    :alt: A repeat(N) decorator with a single child node.
    :class: pipeline-hero
    :width: 28%
@@ -183,7 +183,7 @@ early and is returned as the decorator's own status.
 Status override (X_is_Y)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/img/bt-xisy.svg
+.. figure:: /_static/img/bt-xisy.png
    :alt: An X_is_Y status-override decorator with a single child node.
    :class: pipeline-hero
    :width: 28%
@@ -198,7 +198,7 @@ pick any :math:`X, Y \in \{\mathrm{SUCCESS}, \mathrm{FAILURE},
 One-shot
 ^^^^^^^^
 
-.. figure:: /_static/img/bt-oneshot.svg
+.. figure:: /_static/img/bt-oneshot.png
    :alt: A one-shot decorator with a single child node.
    :class: pipeline-hero
    :width: 28%
@@ -235,7 +235,7 @@ on different blackboard states. Numbers on the top-right of each
 evaluated child mark the evaluation order; greyed children were
 skipped by the selector's short-circuit rule.
 
-.. figure:: /_static/img/bt-tick-example.svg
+.. figure:: /_static/img/bt-tick-example.png
    :alt: Three consecutive ticks of a selector tree, numbering the
          evaluation order and colouring each visited node by its
          per-tick status.

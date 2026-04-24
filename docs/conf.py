@@ -64,6 +64,7 @@ exclude_patterns = [
     "**/README.md",
     "_templates/.gitkeep",
     "_static/tikz",  # raw TeX source, not docs content
+    "DEPLOYMENT.md",  # maintainer-only doc, intentionally not in any toctree
 ]
 
 suppress_warnings = [

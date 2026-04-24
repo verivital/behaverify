@@ -41,7 +41,7 @@ verifies:
 
 The chain decomposes as:
 
-.. figure:: /_static/img/soundness-chain.svg
+.. figure:: /_static/img/soundness-chain.png
    :alt: Soundness chain from .tree to T models phi with five numbered
          claims labelling each preservation step.
    :class: pipeline-hero
