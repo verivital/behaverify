@@ -35,7 +35,7 @@ import numpy as np
 
 _HERE    = Path(__file__).parent.resolve()                                            # figures/image_scripts/
 _NEUS    = (_HERE / "../../../../../2025_NEUS/examples/grid_world/results").resolve() # REPRODUCIBILITY/2025_NEUS/...
-_COMP    = (_HERE / "../../results/compositional/discrete_goals").resolve()            # grid_world/results/...
+_COMP    = (_HERE / "../../results/compositional/discrete_goals/crown_nuXmv").resolve() # grid_world/results/...
 _OUT_DIR = (_HERE / "..").resolve()                                                    # figures/
 
 # ---------------------------------------------------------------------------
@@ -127,8 +127,8 @@ ax_bar.bar(x + width / 2, comp_nuxmv, width, color=C_COMP_NX,  label="Compositio
 
 ax_bar.set_ylabel("Time (seconds)", fontsize=11)
 ax_bar.set_title(
-    "Symbolic Verification Time — Monolithic vs. Compositional (Discrete, ε = 0)",
-    fontsize=12, fontweight="bold", pad=10,
+    "Grid World Symbolic Verification Times: Monolithic vs. Compositional (Discrete, ε = 0)",
+    fontsize=12, pad=10,
 )
 ax_bar.set_xticks(x)
 ax_bar.set_xticklabels([lbl for _, lbl, _, _ in NETWORKS], fontsize=9)
