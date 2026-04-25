@@ -23,7 +23,7 @@ docs\make.bat html
 ## Landing-page pipeline figure
 
 Authored in TikZ at `_static/tikz/pipeline.tex`; rendered artefacts
-(`_static/img/pipeline.svg` / `.png`) are committed so the Sphinx build
+(`_static/img/pipeline.png`) are committed so the Sphinx build
 does not require a TeX installation. To regenerate after editing the
 `.tex` source, run `make -C docs tikz`.
 

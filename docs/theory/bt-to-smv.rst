@@ -11,7 +11,7 @@ Behavior Tree → SMV Translation
 Encoding at a glance
 --------------------
 
-.. figure:: /_static/img/encoding-naive.svg
+.. figure:: /_static/img/encoding-naive.png
    :alt: Naive encoding: six SMV transitions encode one BT tick.
    :class: pipeline-hero
    :width: 95%
@@ -20,7 +20,7 @@ Encoding at a glance
    ticking each child, bubbling statuses up, updating the
    blackboard --- is its own SMV transition.
 
-.. figure:: /_static/img/encoding-ff.svg
+.. figure:: /_static/img/encoding-ff.png
    :alt: Fast-forwarding encoding: one SMV transition encodes one BT tick.
    :class: pipeline-hero
    :width: 70%

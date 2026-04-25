@@ -8,7 +8,7 @@ BehaVerify: Formal Verification for Behavior Trees
    runtime, and a publication-quality diagram --- from a single
    ``.tree`` source file.
 
-.. image:: _static/img/pipeline.svg
+.. image:: _static/img/pipeline.png
    :alt: BehaVerify end-to-end pipeline: inputs (.tree, .onnx, .smv)
          flow through a TextX parser, model builder, and internal IR;
          the IR is lowered by six code generators (nuxmv, python, cpp,
