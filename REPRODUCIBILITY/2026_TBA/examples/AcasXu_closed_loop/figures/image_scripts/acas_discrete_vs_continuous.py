@@ -18,7 +18,7 @@ Usage:
     python3 figures/image_scripts/acas_discrete_vs_continuous.py --contract-id 42
 
 Defaults:
-    --specs        ../../contracts/continuous_goals/contract_specs_eps1e4.json
+    --specs        ../../contracts/crown/continuous_goals/contract_specs_eps1e4.json
     --output       ../acas_discrete_vs_continuous.png
     --contract-id  (auto: first contract with n_states_covered >= 5)
 """
@@ -294,7 +294,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--specs", type=Path,
-        default=here / "../../contracts/continuous_goals/contract_specs_eps1e4.json",
+        default=here / "../../contracts/crown/continuous_goals/contract_specs_eps1e4.json",
     )
     parser.add_argument(
         "--output", type=Path,
@@ -331,7 +331,7 @@ def main() -> None:
     plot_discrete(ax_disc, contract, pts, xlim_pair, ylim_pair)
 
     fig.suptitle(
-        "ACAS Xu A/G Contract — Continuous vs. Discrete Verification",
+        "ACAS Xu A/G Contract: Continuous vs. Discrete Verification",
         fontsize=12, fontweight="bold", y=1.01,
     )
 
