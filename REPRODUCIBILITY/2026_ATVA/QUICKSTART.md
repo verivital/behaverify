@@ -30,7 +30,7 @@ Only needs to be done once (or after code changes).
 ### Step 2: Run experiments
 
 ```bash
-docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/examples behaverify_2026_atva_img
+docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/output behaverify_2026_atva_img
 ```
 
 This runs `BehaVerify_2026_ATVA.sh` inside the container. Results are written
@@ -105,7 +105,7 @@ Results land in `examples/*/results/` and `examples/*/LaTeX/`.
 
 ## Reproducing Individual Tables
 
-### Table 2 — Fastforwarding vs. Naive ablation
+### Table 2: Fastforwarding vs. Naive ablation
 
 ```bash
 cd REPRODUCIBILITY/2026_ATVA/scripts/build_scripts
@@ -117,7 +117,7 @@ cd ../encoding_timing_scripts
 
 Results: `examples/EncodingComparison/results/`
 
-### Table 3 — BT2Fiacre drone comparison
+### Table 3: BT2Fiacre drone comparison
 
 ```bash
 cd REPRODUCIBILITY/2026_ATVA/scripts/build_scripts
@@ -128,6 +128,25 @@ cd ../encoding_timing_scripts
 ```
 
 Results: `examples/BT2Fiacre/results/`
+
+### Table 3: Results Matching Lookup Table
+
+**Source models used for the table (indices 0 and 3 only):**
+
+| drone3 column | droneNew column |
+|---|---|
+| `examples/BT2Fiacre/drone3_height.tree` → `tree/drone3_0.tree` | `examples/BT2Fiacre/droneNew_height.tree` → `tree/drone3_3.tree` |
+
+| Table row | Result file | What to extract |
+|---|---|---|
+| Prep. / drone3 | `results/translation_drone3_0.txt` | `total:` |
+| Prep. / droneNew | `results/translation_drone3_3.txt` | `total:` |
+| Check Height / drone3 | `results/SILENT_INVAR_full_opt_drone3_0.txt` | second `elapse:` |
+| Check Height / droneNew | `results/SILENT_INVAR_full_opt_drone3_3.txt` | second `elapse:` |
+| Reach. states / drone3 | `results/STATES_full_opt_drone3_0.txt` | first log₂ in reachable line |
+| Total states / drone3 | `results/STATES_full_opt_drone3_0.txt` | second log₂ in reachable line |
+| Reach. states / droneNew | `results/STATES_full_opt_drone3_3.txt` | first log₂ |
+| Total states / droneNew | `results/STATES_full_opt_drone3_3.txt` | second log₂ |
 
 ---
 
@@ -149,7 +168,7 @@ For more details, see [README.md](README.md).
 ```bash
 # From repo root — build once, run anytime
 docker build -f REPRODUCIBILITY/2026_ATVA/Dockerfile.local -t behaverify_2026_atva_img .
-docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/examples behaverify_2026_atva_img
+docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/output behaverify_2026_atva_img
 
 # View results
 ls REPRODUCIBILITY/2026_ATVA/docker_results/
