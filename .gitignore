@@ -39,6 +39,10 @@ REPRODUCIBILITY/**/haskell/**
 REPRODUCIBILITY/**/dense_fixed/**
 REPRODUCIBILITY/**/sparse_random/**
 REPRODUCIBILITY/**/smv/**
+REPRODUCIBILITY/**/smv_fastforwarding/**
+REPRODUCIBILITY/**/smv_naive/**
+REPRODUCIBILITY/**/tree/**
+REPRODUCIBILITY/**/*-Concise
 src/behaverify.egg-info/
 build/
 alpha-beta-CROWN/

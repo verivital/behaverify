@@ -209,7 +209,8 @@ This section is intentionally lengthy. If you are not interested in the details 
 		git clone https://github.com/verivital/behaverify
 19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
 
-		sudo chmod -R +x ./REPRODUCIBILITY/2026_FM/*.sh
+		sudo chmod +x ./REPRODUCIBILITY/2026_FM/BehaVerify_2026_FM.sh
+		find ./REPRODUCIBILITY/2026_FM/scripts -name "*.sh" -exec chmod +x {} \;
 20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2026\_FM/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
@@ -270,7 +271,8 @@ git clone https://github.com/verivital/behaverify
 
 Please navigate to the top level of our repository and run the following
 ```
-sudo chmod -R +x ./REPRODUCIBILITY/2026_FM/*.sh
+sudo chmod +x ./REPRODUCIBILITY/2026_FM/BehaVerify_2026_FM.sh
+find ./REPRODUCIBILITY/2026_FM/scripts -name "*.sh" -exec chmod +x {} \;
 ```
 
 You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2026\_FM/

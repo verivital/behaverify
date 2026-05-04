@@ -47,7 +47,7 @@ encoding_comparison_step=1
 cd "${this_script_location}/scripts/build_scripts"
 ./exp_encoding_comparison_create.sh $python_behaverify $encoding_comparison_min $encoding_comparison_max $encoding_comparison_step
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_encoding_comparison_run.sh $encoding_comparison_min $encoding_comparison_max $encoding_comparison_step
+./exp_encoding_comparison_run.sh $encoding_comparison_min $encoding_comparison_max $encoding_comparison_step 5m
 
 # Table 3: BT2Fiacre drone comparison (Section 4.2)
 # Section 4.3: BT2BIP MarsRover and TrainControl
