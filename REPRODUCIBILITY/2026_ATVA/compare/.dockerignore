@@ -1,0 +1,16 @@
+# .dockerignore for the compare/ image.
+# Keep the build context tiny: BehaVerify source + the ATVA reproducibility
+# folder (which carries examples, scripts, metamodel, requirements, nuXmv).
+
+*
+
+!pyproject.toml
+!src/**
+
+!REPRODUCIBILITY/2026_ATVA/**
+REPRODUCIBILITY/2026_ATVA/docker_results/**
+REPRODUCIBILITY/2026_ATVA/compare/output/**
+
+# Don't ship binary nuXmv from the host; the Dockerfile re-downloads it
+# fresh and chmods it inside the image.
+REPRODUCIBILITY/2026_ATVA/nuXmv
