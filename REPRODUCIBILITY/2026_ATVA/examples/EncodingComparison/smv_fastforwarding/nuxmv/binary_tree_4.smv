@@ -1,0 +1,315 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+LTLSPEC G(((system.AtMaxA.status = success) -> G((!((system.AtMaxA.status = failure)) & !((system.At0A.status = success)) & !((system.Dec.status = success)) & !((system.Dec.status = failure)) & !((system.Inc.status = success)) & !((system.Inc.status = failure))))));
+CTLSPEC AG(((system.AtMaxA.status = success) -> AG((!((system.AtMaxA.status = failure)) & !((system.At0A.status = success)) & !((system.Dec.status = success)) & !((system.Dec.status = failure)) & !((system.Inc.status = success)) & !((system.Inc.status = failure))))));
+INVARSPEC (system.vv_stage_0 < 16);
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        resume_from_here_in_subtree__Root := -3;
+        Root.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        vv_stage_1 :=
+            case
+                !(Dec.active) : vv_stage_0;
+                rv_stage_1 : vv_stage_0;
+                TRUE : max(0, (vv_stage_0 - 1));
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        At0A : At0A_module(vv_stage_0);
+        AtMaxA : AtMaxA_module(vv_stage_0);
+        Dec : Dec_module(rv_stage_1);
+        SelDec : composite_selector_without_memory_3(At0A, AtMaxA, Dec);
+        AtV0 : AtV0_module(vv_stage_1);
+        AtV1 : AtV1_module(vv_stage_1);
+        Sel0 : composite_selector_without_memory_2(AtV0, AtV1);
+        AtV2 : AtV2_module(vv_stage_1);
+        AtV3 : AtV3_module(vv_stage_1);
+        Sel1 : composite_selector_without_memory_2(AtV2, AtV3);
+        Sel2 : composite_selector_without_memory_2(Sel0, Sel1);
+        AtV4 : AtV4_module(vv_stage_1);
+        AtV5 : AtV5_module(vv_stage_1);
+        Sel3 : composite_selector_without_memory_2(AtV4, AtV5);
+        AtV6 : AtV6_module(vv_stage_1);
+        AtV7 : AtV7_module(vv_stage_1);
+        Sel4 : composite_selector_without_memory_2(AtV6, AtV7);
+        Sel5 : composite_selector_without_memory_2(Sel3, Sel4);
+        Sel6 : composite_selector_without_memory_2(Sel2, Sel5);
+        AtV8 : AtV8_module(vv_stage_1);
+        AtV9 : AtV9_module(vv_stage_1);
+        Sel7 : composite_selector_without_memory_2(AtV8, AtV9);
+        AtV10 : AtV10_module(vv_stage_1);
+        AtV11 : AtV11_module(vv_stage_1);
+        Sel8 : composite_selector_without_memory_2(AtV10, AtV11);
+        Sel9 : composite_selector_without_memory_2(Sel7, Sel8);
+        AtV12 : AtV12_module(vv_stage_1);
+        AtV13 : AtV13_module(vv_stage_1);
+        Sel10 : composite_selector_without_memory_2(AtV12, AtV13);
+        AtV14 : AtV14_module(vv_stage_1);
+        AtV15 : AtV15_module(vv_stage_1);
+        Sel11 : composite_selector_without_memory_2(AtV14, AtV15);
+        Sel12 : composite_selector_without_memory_2(Sel10, Sel11);
+        Sel13 : composite_selector_without_memory_2(Sel9, Sel12);
+        Sel14 : composite_selector_without_memory_2(Sel6, Sel13);
+        AtMaxB : AtMaxB_module(vv_stage_1);
+        Inc : Inc_module(rv_stage_2);
+        SelInc : composite_selector_without_memory_2(AtMaxB, Inc);
+        Root : composite_sequence_without_memory_3(SelDec, Sel14, SelInc);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        vv_stage_0 : 0..16;
+        rv_stage_0 : boolean;
+        rv_stage_1 : boolean;
+        rv_stage_2 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(vv_stage_0) := 0;
+        init(rv_stage_0) := FALSE;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(vv_stage_0) :=
+            case
+                !(Inc.active) : vv_stage_1;
+                rv_stage_2 : min(16, (vv_stage_1 + 1));
+                TRUE : vv_stage_1;
+            esac;
+        next(rv_stage_0) := rv_stage_2;
+        rv_stage_1 :=
+            case
+                !(Dec.active) : rv_stage_0;
+                TRUE : {TRUE, FALSE};
+            esac;
+        rv_stage_2 :=
+            case
+                !(Inc.active) : rv_stage_1;
+                TRUE : {TRUE, FALSE};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        Root := 0;
+        SelDec := 1;
+        At0A := 2;
+        AtMaxA := 3;
+        Dec := 4;
+        Sel14 := 5;
+        Sel6 := 6;
+        Sel2 := 7;
+        Sel0 := 8;
+        AtV0 := 9;
+        AtV1 := 10;
+        Sel1 := 11;
+        AtV2 := 12;
+        AtV3 := 13;
+        Sel5 := 14;
+        Sel3 := 15;
+        AtV4 := 16;
+        AtV5 := 17;
+        Sel4 := 18;
+        AtV6 := 19;
+        AtV7 := 20;
+        Sel13 := 21;
+        Sel9 := 22;
+        Sel7 := 23;
+        AtV8 := 24;
+        AtV9 := 25;
+        Sel8 := 26;
+        AtV10 := 27;
+        AtV11 := 28;
+        Sel12 := 29;
+        Sel10 := 30;
+        AtV12 := 31;
+        AtV13 := 32;
+        Sel11 := 33;
+        AtV14 := 34;
+        AtV15 := 35;
+        SelInc := 36;
+        AtMaxB := 37;
+        Inc := 38;
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
+MODULE At0A_module(vv_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_0 = 0)) ? success : failure;
+MODULE AtMaxA_module(vv_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_0 = 16)) ? success : failure;
+MODULE Dec_module(rv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                rv_stage_1 : success;
+                TRUE : failure;
+            esac;
+MODULE AtV0_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 0)) ? success : failure;
+MODULE AtV1_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 1)) ? success : failure;
+MODULE AtV2_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 2)) ? success : failure;
+MODULE AtV3_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 3)) ? success : failure;
+MODULE AtV4_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 4)) ? success : failure;
+MODULE AtV5_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 5)) ? success : failure;
+MODULE AtV6_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 6)) ? success : failure;
+MODULE AtV7_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 7)) ? success : failure;
+MODULE AtV8_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 8)) ? success : failure;
+MODULE AtV9_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 9)) ? success : failure;
+MODULE AtV10_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 10)) ? success : failure;
+MODULE AtV11_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 11)) ? success : failure;
+MODULE AtV12_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 12)) ? success : failure;
+MODULE AtV13_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 13)) ? success : failure;
+MODULE AtV14_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 14)) ? success : failure;
+MODULE AtV15_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 15)) ? success : failure;
+MODULE AtMaxB_module(vv_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((vv_stage_1 = 16)) ? success : failure;
+MODULE Inc_module(rv_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                rv_stage_2 : success;
+                TRUE : failure;
+            esac;

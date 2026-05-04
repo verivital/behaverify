@@ -1,0 +1,137 @@
+--1--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:20
+Total Transitions:23
+Time Used:0.0072248s
+Memory Used:8478.312KB
+
+--2--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:43
+Total Transitions:50
+Time Used:0.0071539s
+Memory Used:8458.984KB
+
+--3--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:101
+Total Transitions:116
+Time Used:0.0082381s
+Memory Used:8485.256KB
+
+--4--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:265
+Total Transitions:296
+Time Used:0.010643s
+Memory Used:8490.744KB
+
+--5--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:785
+Total Transitions:848
+Time Used:0.0228618s
+Memory Used:8668.976KB
+
+--6--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:2593
+Total Transitions:2720
+Time Used:0.0947757s
+Memory Used:9681.6KB
+
+--7--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:9281
+Total Transitions:9536
+Time Used:0.5850696s
+Memory Used:14092.712KB
+
+--8--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:34945
+Total Transitions:35456
+Time Used:4.0969194s
+Memory Used:28263.432KB
+
+--9--
+=======================================================
+Assertion: BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))
+********Verification Result********
+The Assertion (BehaviorTree() |= G ( AtMaxA_s-> G (!( AtMaxA_f)&&!( At0A_s)&&!( Dec_s)&&!( Dec_f)&&!( Inc_s)&&!( Inc_f)))) is VALID.
+********Verification Setting********
+Admissible Behavior: All
+Method: Refinement Based Safety Analysis using DFS - The LTL formula is a safety property!
+System Abstraction: False
+********Verification Statistics********
+Visited States:135425
+Total Transitions:136448
+Time Used:34.4003299s
+Memory Used:105792.128KB
+
+--10--
+QProcess: Destroyed while process ("mono") is still running

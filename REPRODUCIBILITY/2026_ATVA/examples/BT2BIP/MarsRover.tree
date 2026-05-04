@@ -1,0 +1,126 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+}
+
+variables {
+    variable { bl panelsout VAR BOOLEAN assign{result{True, False}}}
+    variable { env storm VAR BOOLEAN assign{result{True, False}}}
+    variable { env lowpower VAR BOOLEAN assign{result{True, False}}}
+    variable { env dataready VAR BOOLEAN assign{result{True, False}}}
+}
+
+environment_update {
+    variable_statement {
+	storm
+	assign{result{True, False}}
+    }
+    variable_statement {
+	lowpower
+	assign{result{True, False}}
+    }
+    variable_statement {
+	dataready
+	assign{result{True, False}}
+    }
+}
+
+checks {
+}
+
+environment_checks {
+    environment_check {
+	LowPower
+	arguments {}
+	read_variables {}
+	condition {lowpower}
+    }
+    environment_check {
+	Storm
+	arguments {}
+	read_variables {}
+	condition {storm}
+    }
+    environment_check {
+	DataReady
+	arguments {}
+	read_variables {}
+	condition {dataready}
+    }
+}
+
+actions {
+    action {
+	UnfoldPanels
+	arguments {} local_variables {} read_variables {} write_variables {panelsout}
+	initial_values {}
+	update{
+	    variable_statement {
+		panelsout
+		assign{result{True}}
+	    }
+	    return_statement {result{success}}
+	}
+    }
+    action {
+	Hibernate
+	arguments {} local_variables {} read_variables {} write_variables {panelsout}
+	initial_values {}
+	update{
+	    variable_statement {
+		panelsout
+		assign{result{False}}
+	    }
+	    return_statement {result{success}}
+	}
+    }
+    action {
+	Send
+	arguments {} local_variables {} read_variables {} write_variables {}
+	initial_values {}
+	update{
+	    return_statement {result{success}}
+	}
+    }
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite {
+	Root selector children {
+	    composite {
+		Seq1 sequence children {
+		    LowPower {}
+		    UnfoldPanels {}
+		}
+	    }
+	    composite {
+		Seq2 sequence children {
+		    Storm {}
+		    Hibernate {}
+		}
+	    }
+	    composite {
+		Seq3 sequence children {
+		    DataReady {}
+		    Send {}
+		}
+	    }
+	}
+    }
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+    INVARSPEC {(implies, storm at 0, (success, Hibernate))}
+    INVARSPEC {(implies, storm at 0, (not, panelsout at -1))}
+}
