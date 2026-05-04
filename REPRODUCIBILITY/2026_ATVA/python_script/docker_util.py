@@ -3,7 +3,7 @@ import tarfile
 import io
 import docker
 
-VENUE = '2026_FM'
+VENUE = '2026_ATVA'
 USER = 'BehaVerify_' + VENUE
 HOME_DIR = '/home/' + USER
 TEST_DIR = HOME_DIR + '/behaverify/REPRODUCIBILITY/' + VENUE

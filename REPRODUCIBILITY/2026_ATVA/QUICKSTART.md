@@ -1,6 +1,6 @@
-# FM 2026 Reproducibility - Quick Start Guide
+# ATVA 2026 Reproducibility - Quick Start Guide
 
-This guide provides the fastest path to reproducing FM 2026 results.
+This guide provides the fastest path to reproducing ATVA 2026 results.
 For detailed explanations, see [README.md](README.md).
 
 ---
@@ -20,7 +20,7 @@ For detailed explanations, see [README.md](README.md).
 ### Step 1: Set Up Docker Environment
 
 ```bash
-cd REPRODUCIBILITY/2026_FM
+cd REPRODUCIBILITY/2026_ATVA
 python python_script/setup.py
 ```
 
@@ -57,7 +57,7 @@ python python_script/reproduce.py --extract-only
 ## Directory Structure
 
 ```
-REPRODUCIBILITY/2026_FM/
+REPRODUCIBILITY/2026_ATVA/
 ├── python_script/          # Python scripts for Docker automation
 │   ├── setup.py            # Step 1: Set up Docker environment
 │   ├── reproduce.py        # Step 2: Run experiments & extract results
@@ -80,7 +80,7 @@ REPRODUCIBILITY/2026_FM/
 ├── MoVe4BT/                # MoVe4BT comparison setup
 ├── Dockerfile              # Docker build file (GitHub version)
 ├── Dockerfile.local        # Docker build file (local development)
-├── BehaVerify_2026_FM.sh   # Main experiment script
+├── BehaVerify_2026_ATVA.sh   # Main experiment script
 └── README.md               # Full documentation
 ```
 
@@ -112,7 +112,7 @@ After running, results appear in `results/examples/`:
 Use `run_behaverify.py` to run BehaVerify on any `.tree` file from your host machine:
 
 ```bash
-cd REPRODUCIBILITY/2026_FM
+cd REPRODUCIBILITY/2026_ATVA
 
 # Generate .smv file only
 python python_script/run_behaverify.py path/to/your_tree.tree
@@ -167,13 +167,13 @@ For more control, you can work directly inside the container:
 
 ```bash
 # Start an interactive shell in the container
-docker exec -it behaverify_2026_fm bash
+docker exec -it behaverify_2026_atva bash
 
 # Navigate to the source directory
-cd /home/BehaVerify_2026_FM/behaverify/REPRODUCIBILITY/2026_FM/src
+cd /home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/src
 
 # Run BehaVerify directly
-/home/BehaVerify_2026_FM/python_venvs/behaverify/bin/python3 dsl_to_nuxmv.py \
+/home/BehaVerify_2026_ATVA/python_venvs/behaverify/bin/python3 dsl_to_nuxmv.py \
     ../metamodel/behaverify.tx \
     ../examples/BT2BIP/MarsRover.tree \
     ./MarsRover.smv
@@ -240,7 +240,7 @@ For more details, see the [full README](README.md).
 
 ```bash
 # Full reproduction (both steps)
-cd REPRODUCIBILITY/2026_FM
+cd REPRODUCIBILITY/2026_ATVA
 python python_script/setup.py
 python python_script/reproduce.py
 

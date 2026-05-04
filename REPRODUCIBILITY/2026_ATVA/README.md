@@ -1,4 +1,4 @@
-This README is meant to provide information about reproducing results used in FM 2026. However, it can also be used as a more general installation guide for BehaVerify, though eventually it may be inadequate for this purpose as it will not be updated along with BehaVerify, in order to ensure it remains useful for its primary purpose, reproduction of results for FM 2026.
+This README is meant to provide information about reproducing results used in ATVA 2026. However, it can also be used as a more general installation guide for BehaVerify, though eventually it may be inadequate for this purpose as it will not be updated along with BehaVerify, in order to ensure it remains useful for its primary purpose, reproduction of results for ATVA 2026.
 
 version\_info\_pip.txt contains all python package information for BehaVerify. verion\_info\_pip\_graphs\_only.txt contains all python package information for amking necessary graphs and the like. version\_info\_apt.txt contains all other version information.
 
@@ -209,12 +209,12 @@ This section is intentionally lengthy. If you are not interested in the details 
 		git clone https://github.com/verivital/behaverify
 19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
 
-		sudo chmod +x ./REPRODUCIBILITY/2026_FM/BehaVerify_2026_FM.sh
-		find ./REPRODUCIBILITY/2026_FM/scripts -name "*.sh" -exec chmod +x {} \;
+		sudo chmod +x ./REPRODUCIBILITY/2026_ATVA/BehaVerify_2026_ATVA.sh
+		find ./REPRODUCIBILITY/2026_ATVA/scripts -name "*.sh" -exec chmod +x {} \;
 20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2026\_FM/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
-		sudo chmod +x ./REPRODUCIBILITY/2026_FM/nuXmv
+		sudo chmod +x ./REPRODUCIBILITY/2026_ATVA/nuXmv
 
 
 You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
@@ -271,15 +271,15 @@ git clone https://github.com/verivital/behaverify
 
 Please navigate to the top level of our repository and run the following
 ```
-sudo chmod +x ./REPRODUCIBILITY/2026_FM/BehaVerify_2026_FM.sh
-find ./REPRODUCIBILITY/2026_FM/scripts -name "*.sh" -exec chmod +x {} \;
+sudo chmod +x ./REPRODUCIBILITY/2026_ATVA/BehaVerify_2026_ATVA.sh
+find ./REPRODUCIBILITY/2026_ATVA/scripts -name "*.sh" -exec chmod +x {} \;
 ```
 
 You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2026\_FM/
 
 Please navigate to the top level of our repository and run the following
 ```
-sudo chmod +x ./REPRODUCIBILITY/2026_FM/nuXmv
+sudo chmod +x ./REPRODUCIBILITY/2026_ATVA/nuXmv
 ```
 
 You are now ready to run the scripts locally. 
@@ -292,6 +292,6 @@ You are now ready to run the scripts locally.
 Note that each script will erase all the relevant results before running, to ensure that the results which exist after the script runs are accurate to that script. Thus if you wish to save the results, please move them before running another script.
 
 ```
-./BehaVerify_2026_FM.sh ./
+./BehaVerify_2026_ATVA.sh ./
 ```
 

@@ -63,9 +63,9 @@ tool_comparison_max=10
 tool_comparison_step=1
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_tool_comparisons_2026_FM_create.sh $python_behaverify $tool_comparison_min $tool_comparison_max $tool_comparison_step
+./exp_tool_comparisons_2026_ATVA_create.sh $python_behaverify $tool_comparison_min $tool_comparison_max $tool_comparison_step
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_tool_comparisons_2026_FM_run.sh $tool_comparison_min $tool_comparison_max $tool_comparison_step
+./exp_tool_comparisons_2026_ATVA_run.sh $tool_comparison_min $tool_comparison_max $tool_comparison_step
 
 cd "${this_script_location}"
 $python_behaverify ./src/dsl_to_latex.py ./metamodel/behaverify.tx \

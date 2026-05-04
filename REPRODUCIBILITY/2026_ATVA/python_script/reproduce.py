@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple reproduction script for FM 2026 experiments.
+Simple reproduction script for ATVA 2026 experiments.
 
 Usage:
     python reproduce.py                  # Run experiments, output to ./results/
@@ -8,7 +8,7 @@ Usage:
     python reproduce.py --extract-only   # Only extract results (don't re-run tests)
 
 This script:
-1. Runs all FM 2026 experiments inside the Docker container
+1. Runs all ATVA 2026 experiments inside the Docker container
 2. Extracts results to the specified output directory
 """
 import argparse
@@ -76,12 +76,12 @@ def run_experiments(output_dir):
     print('Starting container...')
     container.start()
 
-    print('Running FM 2026 experiments...')
+    print('Running ATVA 2026 experiments...')
     print('(This may take 30-60 minutes depending on your system)')
     print()
 
     command = f'{TEST_DIR}/{USER}.sh {TEST_DIR} {BEHAVERIFY_VENV} {RESULTS_VENV}'
-    serene_exec(container, command, 'FM 2026 Experiments', True)
+    serene_exec(container, command, 'ATVA 2026 Experiments', True)
 
     # Extract results
     print()
@@ -114,7 +114,7 @@ def run_experiments(output_dir):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Run FM 2026 reproducibility experiments',
+        description='Run ATVA 2026 reproducibility experiments',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog='''
 Examples:
@@ -129,7 +129,7 @@ Examples:
                         help='Only extract results without running experiments')
     args = parser.parse_args()
 
-    # Resolve output directory relative to REPRODUCIBILITY/2026_FM/
+    # Resolve output directory relative to REPRODUCIBILITY/2026_ATVA/
     base_dir = os.path.dirname(script_dir)
     if not os.path.isabs(args.output_dir):
         output_dir = os.path.join(base_dir, args.output_dir)
@@ -137,7 +137,7 @@ Examples:
         output_dir = args.output_dir
 
     print('='*60)
-    print('BehaVerify FM 2026 - Reproduce Experiments')
+    print('BehaVerify ATVA 2026 - Reproduce Experiments')
     print('='*60)
     print(f'Output directory: {output_dir}')
     print()

@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/BehaVerify_2026_FM/behaverify/REPRODUCIBILITY/2026_FM/examples/EncodingComparison
+cd /home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/examples/EncodingComparison
 
 rm -f States-Fastforwarding-Concise States-Naive-Concise
 

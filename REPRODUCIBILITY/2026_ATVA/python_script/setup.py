@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple setup script for FM 2026 reproducibility.
+Simple setup script for ATVA 2026 reproducibility.
 
 Usage:
     python setup.py                          # Download nuXmv automatically
@@ -8,8 +8,8 @@ Usage:
     python setup.py --nuxmv-url URL          # Download from custom URL
 
 This script:
-1. Builds the Docker image (behaverify_2026_fm_img)
-2. Creates the Docker container (behaverify_2026_fm)
+1. Builds the Docker image (behaverify_2026_atva_img)
+2. Creates the Docker container (behaverify_2026_atva)
 3. Installs nuXmv inside the container
 """
 import argparse
@@ -27,7 +27,7 @@ DEFAULT_NUXMV_URL = 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-li
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Set up BehaVerify Docker environment for FM 2026 reproducibility',
+        description='Set up BehaVerify Docker environment for ATVA 2026 reproducibility',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog='''
 Examples:
@@ -48,7 +48,7 @@ Examples:
     dockerfile_path = os.path.dirname(script_dir)
 
     print('='*60)
-    print('BehaVerify FM 2026 - Docker Setup')
+    print('BehaVerify ATVA 2026 - Docker Setup')
     print('='*60)
     print(f'Dockerfile location: {dockerfile_path}')
 
