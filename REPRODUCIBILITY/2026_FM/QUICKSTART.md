@@ -67,9 +67,9 @@ REPRODUCIBILITY/2026_FM/
 ├── examples/               # Behavior tree examples (DSL source files)
 │   ├── BT2BIP/             # MarsRover, TrainControl examples
 │   ├── BT2Fiacre/          # Drone3 examples
-│   ├── MoVe4BT/            # Binary tree benchmarks
+│   ├── EncodingComparison/ # FF vs. Naive binary-tree benchmark (Table 2)
 │   ├── NetworkExample/     # Neural network integration examples
-│   └── DrunkenDrone/       # Additional drone example
+│   └── DrunkenDrone/       # DrunkenDrone example (Figure 1)
 ├── scripts/                # Shell scripts for running tests
 │   ├── build_scripts/      # nuXmv file generation scripts
 │   ├── encoding_timing_scripts/  # Verification timing scripts
@@ -92,13 +92,13 @@ After running, results appear in `results/examples/`:
 
 | Directory | Contents |
 |-----------|----------|
-| `MoVe4BT/` | Binary tree benchmarks (1-10), timing comparisons |
+| `EncodingComparison/` | FF vs. Naive ablation results (Table 2), N=1–10 |
 | `BT2BIP/` | MarsRover & TrainControl verification results |
-| `BT2Fiacre/` | Drone3 verification, counterexample traces |
-| `NetworkExample/` | Neural network integration verification |
+| `BT2Fiacre/` | Drone3 verification, counterexample traces (Table 3) |
+| `NetworkExample/` | NSBT repo example verification results |
 
 **Key output files:**
-- `MoVe4BT/processed_data/2026-FM-MoVe4BT-Timing.png` - Timing comparison graph
+- `EncodingComparison/results/*.txt` - CTL/LTL/STATES timing files for Table 2 (FF and Naive columns)
 - `BT2Fiacre/processed_data/0_*.png` - Counterexample trace visualizations
 - `*/results/*.txt` - Verification results (CTL, LTL, INVAR proofs)
 - `*/LaTeX/*.tex` - Behavior tree visualizations

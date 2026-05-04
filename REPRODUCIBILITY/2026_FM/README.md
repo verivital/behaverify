@@ -8,12 +8,11 @@ In case you are reading this somewhere outside of the repository, our repository
 
 1. Prerequisites and Information -> this section will explain what you need and what assumptions we make.
 2. Running Tests using Docker -> this section will explain how to run the tests using Docker.
-3. MoVe4BT Information -> this section will provide information about MoVe4BT. Unfortunately, we were not able to find a way to use it from the command-line.
-4. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
-5. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
-6. Docker Tests with Details -> this section will explain how to run the tests using Docker.
-7. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
-8. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
+3. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
+4. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
+5. Docker Tests with Details -> this section will explain how to run the tests using Docker.
+6. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
+7. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
 
 Finally, note that this is a .md file, and as such, we escape various characters. If you are reading this using a text editor, please make sure to keep this in mind.
 
@@ -56,35 +55,6 @@ python3 ./python_script/build_and_run.py ./ ./MyOutput nuXmv --local
 
 ---
 
-# MoVe4BT Information
-
-Our FM paper compared to MoVe4BT. See https://move4bt.github.io/ . We found that installing the tool using the instruction at https://move4bt.github.io/manual was fairly painless, but your experience may vary. Unfortunately, we did not find a way to run the tool from the command-line, so we cannot automate the process in Docker.
-
-
-0. We ran MoVe4BT through Docker-Webtop. We include our compose file and an install script we used within the docker-webtop in **MoVe4BT/**. We suggest running it in this fashion, or at least using the install script provided. Note that the compose file does have a line that needs to be replaced (select where the data will be stored).
-1. After following those instructions and launching MoVe4BT, please press the editor button.
-2. Then click Load Tree on the left side of the GUI.
-3. Please Load an xml file from **/examples/MoVe4BT/xml**.
-4. The file may take a while to load, especially for the bigger examples.
-5. Click verification.
-6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen. Should it produce a blank screen, check the command-line to see if it printed a message.
-
-As mentioned above, MoVe4BT loads models stored in xml files. The code for generating the files is in **examples/MoVe4BT/create\_binary\_tree\_MoVe4BT\_xml.py**. Run using the following command
-
-```
-python3 create_binary_tree_MoVe4BT_xml.py /path/to/output/location min max step
-```
-
-Where the path is where the files will be outputted (must be a folder, do not include final slash), min is the smallest size file to generate, max is the largest (inclusive) and step is the step size. Therefore, the command used to generate the used xml files is
-
-```
-python3 create_binary_tree_MoVe4BT_xml.py /path/to/output/location 1 10 1
-```
-
-This will be ran as part of the results script.
-
----
-
 # Interpreting and Comparing Results
 
 Suppose you ran
@@ -92,7 +62,7 @@ Suppose you ran
 python3 ./python_script/build_and_run.py ./ ./MyOutput 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz'
 ```
 
-Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders within this, named **BT2BIP**, **BT2Fiacre**, **MoVe4BT**, **DrunkenDrone**, and **NetworkExample**. Additionally, there will be a script named **clean\_all.sh**, which you can safely ignore. Within each folder there will be a folder name **LaTeX**. This will contain a standalone .tex document that will generate a simple pdf document with the relevant Behavior Tree. For our paper, we generated insert versions of these documents (doesn't contain package imports, document class, etc, just the tikz figure).
+Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders within this, named **BT2BIP**, **BT2Fiacre**, **EncodingComparison**, **DrunkenDrone**, and **NetworkExample**. Additionally, there will be a script named **clean\_all.sh**, which you can safely ignore. Within each folder there will be a folder name **LaTeX**. This will contain a standalone .tex document that will generate a simple pdf document with the relevant Behavior Tree. For our paper, we generated insert versions of these documents (doesn't contain package imports, document class, etc, just the tikz figure).
 
 - **BT2BIP**
     - **results**
@@ -105,28 +75,25 @@ Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders wit
 	- **smv/full\_opt\_drone3\_0.txt** -> This has the .smv file for use for the drone3 example. Search this file for MODULE define\_nodes. This will have a list of nodes numbered from 0 to 35, showing there are 36 nodes total.
 	- **results**
 	    - **INVAR\_full\_opt\_drone3_0.txt** -> Proof the height on our drone3 does not exceed 60.
-	    - **SILENT\_INVAR\_full\_opt\_drone3_0.txt** -> Timing result for Table 2, Check Height, B-Drone3.
+	    - **SILENT\_INVAR\_full\_opt\_drone3_0.txt** -> Timing result for Table 3, Check Height, drone3.
 	    - **INVAR\_full\_opt\_drone3_3.txt** -> Proof the height on our droneNew does not exceed 60.
-	    - **SILENT\_INVAR\_full\_opt\_drone3_3.txt** -> Timing result for Table 2, Check Height, B-DroneNew.
-		- **translation\_drone3\_0.txt** -> Timing result for Table 2, Prep., B-Drone3.
-		- **translation\_drone3\_3.txt** -> Timing result for Table 2, Prep., B-DroneNew.
+	    - **SILENT\_INVAR\_full\_opt\_drone3_3.txt** -> Timing result for Table 3, Check Height, droneNew.
+		- **translation\_drone3\_0.txt** -> Timing result for Table 3, Prep., drone3.
+		- **translation\_drone3\_3.txt** -> Timing result for Table 3, Prep., droneNew.
 	    - **INVAR\_full\_opt\_drone3_2.txt** -> Counterexample trace used to generate the images in processed\_data.
-- **MoVe4BT**
-    - **smv/full\_opt\_binary\_tree\_1.smv** -> This has the .smv file for use for the binary tree example. Search this file for MODULE define\_nodes. This will have a list of nodes numbered from 0 to 10, showing there are 11 nodes total.
-    - **smv/full\_opt\_binary\_tree\_10.smv** -> This has the .smv file for use for the binary tree example. Search this file for MODULE define\_nodes. This will have a list of nodes numbered from 0 to 2054, showing there are 2055 nodes total.
-    - **CTL-BehaVerify-Concise**, **LTL-BehaVerify-Concise**, **LTL-MoVe4BT-Concise** -> These files contain manually copied timing results that are then used by graph\_result.py to create the image in **processed\_data**. See below for how to check each of them against your current run.
+- **EncodingComparison**
 	- **results**
-	    - **SILENT\_LTL\_full\_opt\_binary\_tree\_*.txt** -> Timing result for BehaVerify LTL; goes from 1 to 10.
-	    - **SILENT\_CTL\_full\_opt\_binary\_tree\_*.txt** -> Timing result for BehaVerify LTL; goes from 1 to 10.
-		- The MoVe4BT results must be run separately, because it doesn't have a CLI. See earlier for how to run MoVe4BT.
+	    - **CTL\_FF\_binary\_tree\_N.txt** / **CTL\_Naive\_binary\_tree\_N.txt** -> CTL timing for Table 2, FF and Naive columns, tree depth N.
+	    - **LTL\_FF\_binary\_tree\_N.txt** / **LTL\_Naive\_binary\_tree\_N.txt** -> LTL timing for Table 2, FF and Naive columns, tree depth N.
+	    - **STATES\_FF\_binary\_tree\_N.txt** / **STATES\_Naive\_binary\_tree\_N.txt** -> State-space counts for Table 2, FF and Naive columns, tree depth N.
 - **NetworkExample**
     - **results**
-	    - **translation\_network\_0.txt** -> Timing result for Table 3, Trans., 1.0000 Acc.
-	    - **translation\_network\_1.txt** -> Timing result for Table 3, Trans., 0.9995 Acc.
-	    - **SILENT\_CTL\_full\_opt\_network\_0.txt** -> Timing result for Table 3, CTL, 1.0000 Acc.
-	    - **SILENT\_CTL\_full\_opt\_network\_1.txt** -> Timing result for Table 3, CTL, 0.9995 Acc.
-	    - **SILENT\_INVAR\_full\_opt\_network\_0.txt** -> Timing result for Table 3, Invar, 1.0000 Acc.
-	    - **SILENT\_INVAR\_full\_opt\_network\_1.txt** -> Timing result for Table 3, Invar, 0.9995 Acc.
+	    - **translation\_network\_0.txt** -> Translation timing for NSBT repo example, 1.0000 Acc.
+	    - **translation\_network\_1.txt** -> Translation timing for NSBT repo example, 0.9995 Acc.
+	    - **SILENT\_CTL\_full\_opt\_network\_0.txt** -> CTL verification timing for NSBT repo example, 1.0000 Acc.
+	    - **SILENT\_CTL\_full\_opt\_network\_1.txt** -> CTL verification timing for NSBT repo example, 0.9995 Acc.
+	    - **SILENT\_INVAR\_full\_opt\_network\_0.txt** -> INVAR verification timing for NSBT repo example, 1.0000 Acc.
+	    - **SILENT\_INVAR\_full\_opt\_network\_1.txt** -> INVAR verification timing for NSBT repo example, 0.9995 Acc.
 		- **INVAR\_full\_opt\_network\_0.txt** -> Proof the 1.0000 Acc satisfies the Invar Specification.
 		- **INVAR\_full\_opt\_network\_1.txt** -> Proof the 0.9995 Acc satisfies the Invar Specification.
 		- **CTL\_full\_opt\_network\_0.txt** -> Proof the 1.0000 Acc satisfies the CTL Specification.
