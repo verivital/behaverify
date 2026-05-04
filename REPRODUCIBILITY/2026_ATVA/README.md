@@ -7,12 +7,11 @@ In case you are reading this somewhere outside of the repository, our repository
 # About this File and its Layout
 
 1. Prerequisites and Information -> this section will explain what you need and what assumptions we make.
-2. Running Tests using Docker -> this section will explain how to run the tests using Docker.
+2. Running Tests using Docker -> see QUICKSTART.md for the recommended Docker path.
 3. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
 4. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
-5. Docker Tests with Details -> this section will explain how to run the tests using Docker.
-6. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
-7. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
+5. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
+6. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
 
 Finally, note that this is a .md file, and as such, we escape various characters. If you are reading this using a text editor, please make sure to keep this in mind.
 
@@ -36,22 +35,7 @@ Per the licensing agreement of nuXmv (see https://nuxmv.fbk.eu/downloads/LICENSE
 
 # Running Tests With Docker
 
-The tests can be run using docker.
-
-Build Script:
-```
-python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/output NUXMV_URL
-```
-	
-Build Example:
-```
-python3 ./python_script/build_and_run.py ./ ./MyOutput 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz'
-```
-
-Alternatively, if you have downloaded nuXmv and placed in the same folder:
-```
-python3 ./python_script/build_and_run.py ./ ./MyOutput nuXmv --local
-```
+See [QUICKSTART.md](QUICKSTART.md) for the recommended Docker setup and reproduction steps.
 
 ---
 
@@ -110,40 +94,6 @@ Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders wit
    OpenBLAS blas_thread_init: pthread_create failed for thread 1 of 16: Operation not permitted
    ```
    Note that this error would not prevent the scripts from completing; it would only prevent the generation of graphs and tables. The internet suggests upgrading your docker version (we tested using docker version 20.10.24, build 297e128).
-
----
-# Step by Step Docker instructions
-
-This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker in more detail.
-
-### 1. Creation of the Docker Image and Container
-
-```
-python3 reinstall.py /path/to/Dockerfile/folder NUXMV_URL
-```
-
-Example:
-```
-python3 ./python_script/reinstall.py ./ 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz'
-```
-
-Alternatively, if you have downloaded nuXmv and placed in the same folder:
-```
-python3 ./python_script/reinstall.py ./ nuXmv --local
-```
-
-This will create a docker image named behaverify_2026_atva_img with the tag latest. It will then also create a container named behaverify_2026_atva from that image. It will also either download nuXmv from the URL or copy it in.
-
-### 2. Reproducing Results
-
-```
-python3 generate.py /path/to/output
-```
-
-Example:
-```
-python3 ./python_script/generate.py ./MyOutput
-```
 
 ---
 

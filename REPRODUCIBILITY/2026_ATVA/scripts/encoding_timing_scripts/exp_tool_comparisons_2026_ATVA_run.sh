@@ -74,7 +74,7 @@ path_name="../../examples/BT2Fiacre"
 exp_name="drone3"
 echo "${path_name} ${exp_name}" > ./exp_info
 
-range_string="0 1 2 3 4 5 6"
+range_string="0 2 3"  # 0=drone3_height (Table 3), 2=drone3 battery counterexample (Section 4.2), 3=droneNew_height (Table 3)
 echo "${range_string}" > ./range_info
 
 #encodings="no_opt last_opt first_opt full_opt"

@@ -23,7 +23,7 @@ WORKDIR /home/$USER
 # Switch to the non-root user
 USER $USER
 
-RUN sudo apt-get install wget git python3 pip python3-venv -y
+RUN sudo apt-get install wget git python3 pip python3-venv python3-tk -y
 RUN sudo apt-get install graphviz -y
 
 ADD https://api.github.com/repos/verivital/behaverify/git/refs/heads/main version.json

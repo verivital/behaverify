@@ -8,49 +8,34 @@ For detailed explanations, see [README.md](README.md).
 ## Prerequisites
 
 1. **Docker** installed and running (user can run without sudo)
-2. **Python 3** with the `docker` package:
-   ```bash
-   pip install docker
-   ```
+2. **nuXmv 2.1.0** binary placed at `REPRODUCIBILITY/2026_ATVA/nuXmv`
+   - Download: https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz
+   - Extract the binary from `nuXmv-2.1.0-linux64/nuXmv-2.1.0-Linux/bin/nuXmv` — no file extension
 
 ---
 
-## Two-Step Reproduction
+## Reproducing Results (Two Commands)
 
-### Step 1: Set Up Docker Environment
+Run from the **repository root** (`behaverify/`):
 
-```bash
-cd REPRODUCIBILITY/2026_ATVA
-python python_script/setup.py
-```
-
-This builds the Docker image, creates the container, and downloads nuXmv automatically.
-
-**Alternative options:**
-```bash
-# Use a local nuXmv binary:
-python python_script/setup.py --nuxmv ./nuXmv
-
-# Skip nuXmv (container can still generate .smv files):
-python python_script/setup.py --skip-nuxmv
-```
-
-### Step 2: Run Experiments & Extract Results
+### Step 1: Build the Docker image
 
 ```bash
-python python_script/reproduce.py
+docker build -f REPRODUCIBILITY/2026_ATVA/Dockerfile.local -t behaverify_2026_atva_img .
 ```
 
-Results will be extracted to `./results/`. This takes **30-60 minutes**.
+This installs all dependencies and packages BehaVerify from the frozen local source.
+Only needs to be done once (or after code changes).
 
-**Alternative options:**
+### Step 2: Run experiments
+
 ```bash
-# Specify output directory:
-python python_script/reproduce.py ./MyOutput
-
-# Extract results without re-running (if tests already ran):
-python python_script/reproduce.py --extract-only
+docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/examples behaverify_2026_atva_img
 ```
+
+This runs `BehaVerify_2026_ATVA.sh` inside the container. Results are written
+directly to `REPRODUCIBILITY/2026_ATVA/docker_results/` on your host as the
+script runs. Takes **30–60 minutes**.
 
 ---
 
@@ -58,168 +43,91 @@ python python_script/reproduce.py --extract-only
 
 ```
 REPRODUCIBILITY/2026_ATVA/
-├── python_script/          # Python scripts for Docker automation
-│   ├── setup.py            # Step 1: Set up Docker environment
-│   ├── reproduce.py        # Step 2: Run experiments & extract results
-│   ├── run_behaverify.py   # Run BehaVerify on your own .tree files
-│   ├── docker_util.py      # Docker utility functions
-│   └── ...
-├── examples/               # Behavior tree examples (DSL source files)
-│   ├── BT2BIP/             # MarsRover, TrainControl examples
-│   ├── BT2Fiacre/          # Drone3 examples
-│   ├── EncodingComparison/ # FF vs. Naive binary-tree benchmark (Table 2)
-│   ├── NetworkExample/     # Neural network integration examples
-│   └── DrunkenDrone/       # DrunkenDrone example (Figure 1)
-├── scripts/                # Shell scripts for running tests
-│   ├── build_scripts/      # nuXmv file generation scripts
-│   ├── encoding_timing_scripts/  # Verification timing scripts
-│   └── test_scripts/       # Individual test runners
-├── src/                    # BehaVerify source code
-├── metamodel/              # DSL grammar (behaverify.tx)
-├── requirements/           # Python dependencies
-├── MoVe4BT/                # MoVe4BT comparison setup
-├── Dockerfile              # Docker build file (GitHub version)
-├── Dockerfile.local        # Docker build file (local development)
-├── BehaVerify_2026_ATVA.sh   # Main experiment script
-└── README.md               # Full documentation
+├── BehaVerify_2026_ATVA.sh      # Main experiment script (runs everything)
+├── Dockerfile                   # Docker build file (artifact reviewer path, pulls from GitHub)
+├── Dockerfile.local             # Docker build file (local dev path, uses local files)
+├── examples/                    # Behavior tree source files
+│   ├── BT2BIP/                  # MarsRover, TrainControl examples
+│   ├── BT2Fiacre/               # Drone3 examples
+│   ├── EncodingComparison/      # FF vs. Naive binary-tree benchmark (Table 2)
+│   ├── NetworkExample/          # Neural network integration examples
+│   └── DrunkenDrone/            # DrunkenDrone example (Figure 1)
+├── scripts/                     # Shell scripts for running experiments
+│   ├── build_scripts/           # SMV file generation scripts
+│   ├── encoding_timing_scripts/ # Verification timing scripts
+│   └── test_scripts/            # Individual nuXmv test runners
+├── src/                         # Frozen BehaVerify source snapshot
+├── metamodel/                   # DSL grammar (behaverify.tx)
+├── requirements/                # Python dependencies
+└── README.md                    # Full documentation
 ```
 
 ---
 
 ## Results Overview
 
-After running, results appear in `results/examples/`:
+After running, results appear in `docker_results/`:
 
 | Directory | Contents |
 |-----------|----------|
 | `EncodingComparison/` | FF vs. Naive ablation results (Table 2), N=1–10 |
-| `BT2BIP/` | MarsRover & TrainControl verification results |
+| `BT2BIP/` | MarsRover & TrainControl verification results (Section 4.3) |
 | `BT2Fiacre/` | Drone3 verification, counterexample traces (Table 3) |
 | `NetworkExample/` | NSBT repo example verification results |
+| `DrunkenDrone/` | LaTeX source for Figure 1 |
 
 **Key output files:**
-- `EncodingComparison/results/*.txt` - CTL/LTL/STATES timing files for Table 2 (FF and Naive columns)
-- `BT2Fiacre/processed_data/0_*.png` - Counterexample trace visualizations
-- `*/results/*.txt` - Verification results (CTL, LTL, INVAR proofs)
-- `*/LaTeX/*.tex` - Behavior tree visualizations
+- `EncodingComparison/results/*_{FF,NAIVE}_binary_tree_N.txt` — CTL/LTL/STATES timing for Table 2
+- `BT2Fiacre/results/INVAR_full_opt_drone3_{0,2,3}.txt` — INVAR results for Table 3 and Section 4.2
+- `BT2Fiacre/processed_data/0_*.png` — Counterexample trace images (Section 4.2 footnote)
+- `*/LaTeX/*.tex` — Behavior tree TikZ diagrams
 
 ---
 
-## Running BehaVerify on Your Own Examples
+## Running Locally (Without Docker)
 
-### From the Host (Recommended)
-
-Use `run_behaverify.py` to run BehaVerify on any `.tree` file from your host machine:
+If you have BehaVerify installed locally with nuXmv available:
 
 ```bash
 cd REPRODUCIBILITY/2026_ATVA
 
-# Generate .smv file only
-python python_script/run_behaverify.py path/to/your_tree.tree
+# Enable scripts (first time only)
+chmod +x BehaVerify_2026_ATVA.sh
+find scripts/ -name "*.sh" -exec chmod +x {} \;
 
-# Generate and run nuXmv verification (all specs)
-python python_script/run_behaverify.py path/to/your_tree.tree --verify
-
-# Run specific verification types
-python python_script/run_behaverify.py path/to/your_tree.tree --verify --ctl
-python python_script/run_behaverify.py path/to/your_tree.tree --verify --ltl
-python python_script/run_behaverify.py path/to/your_tree.tree --verify --invar
-
-# Custom output directory
-python python_script/run_behaverify.py path/to/your_tree.tree -o ./my_results --verify
+# Run everything
+./BehaVerify_2026_ATVA.sh ./
 ```
 
-**Example with included MarsRover example:**
-```bash
-python python_script/run_behaverify.py examples/BT2BIP/MarsRover.tree --verify --invar
-```
+Results land in `examples/*/results/` and `examples/*/LaTeX/`.
 
-This will:
-1. Copy your `.tree` file into the Docker container
-2. Run BehaVerify to generate a nuXmv model (`.smv` file)
-3. Run nuXmv verification (if `--verify` specified)
-4. Copy all results back to your host machine
+---
 
-**Output files created:**
-- `YourTree.smv` - nuXmv model file
-- `YourTree_CTL.txt` - CTL verification results (if `--ctl`)
-- `YourTree_LTL.txt` - LTL verification results (if `--ltl`)
-- `YourTree_INVAR.txt` - INVAR verification results (if `--invar`)
+## Reproducing Individual Tables
 
-### run_behaverify.py Options
-
-| Option | Description |
-|--------|-------------|
-| `input_file` | Path to `.tree` DSL file (required) |
-| `-o, --output` | Output directory (default: `<input>_output/`) |
-| `--verify` | Run nuXmv verification after generating `.smv` |
-| `--ctl` | Run CTL specification check |
-| `--ltl` | Run LTL specification check |
-| `--invar` | Run INVAR specification check |
-| `--keep-last-stage` | Keep last stage optimization |
-| `--do-not-trim` | Do not trim the model |
-| `--behave-only` | Behavior only mode |
-| `--recursion-limit` | Python recursion limit for large trees (default: 10000) |
-
-### Inside the Docker Container (Advanced)
-
-For more control, you can work directly inside the container:
+### Table 2 — Fastforwarding vs. Naive ablation
 
 ```bash
-# Start an interactive shell in the container
-docker exec -it behaverify_2026_atva bash
+cd REPRODUCIBILITY/2026_ATVA/scripts/build_scripts
+./exp_encoding_comparison_create.sh python3 1 10 1
 
-# Navigate to the source directory
-cd /home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/src
-
-# Run BehaVerify directly
-/home/BehaVerify_2026_ATVA/python_venvs/behaverify/bin/python3 dsl_to_nuxmv.py \
-    ../metamodel/behaverify.tx \
-    ../examples/BT2BIP/MarsRover.tree \
-    ./MarsRover.smv
-
-# Run nuXmv on the generated .smv file
-../nuXmv ./MarsRover.smv
+cd ../encoding_timing_scripts
+./exp_encoding_comparison_run.sh 1 10 1 5m
 ```
 
-### DSL File Structure
+Results: `examples/EncodingComparison/results/`
 
-A minimal `.tree` file:
-```
-configuration {
-    use_reals: True
-}
-variables {
-    variable { my_var VAR INT [0, 10] }
-}
-actions {
-    action {
-        my_action
-        arguments {}
-        local_variables {}
-        read_variables {}
-        write_variables { my_var }
-        initial_values { (assign, my_var, 0) }
-        update {
-            (assign, my_var, (addition, my_var, 1))
-            success
-        }
-    }
-}
-main_tree {
-    composite {
-        sequence
-        children {
-            my_action {}
-        }
-    }
-}
-specifications {
-    CTLSPEC { (always, (less_than_or_equal, my_var, 10)) }
-}
+### Table 3 — BT2Fiacre drone comparison
+
+```bash
+cd REPRODUCIBILITY/2026_ATVA/scripts/build_scripts
+./exp_tool_comparisons_2026_ATVA_create.sh python3 1 10 1
+
+cd ../encoding_timing_scripts
+./exp_tool_comparisons_2026_ATVA_run.sh 1 10 1
 ```
 
-See `examples/` for more complete examples and the `metamodel/behaverify.tx` grammar.
+Results: `examples/BT2Fiacre/results/`
 
 ---
 
@@ -228,25 +136,21 @@ See `examples/` for more complete examples and the `metamodel/behaverify.tx` gra
 | Issue | Solution |
 |-------|----------|
 | Docker permission denied | Run `sudo usermod -aG docker $USER` and restart |
-| nuXmv download fails | Use `--nuxmv ./nuXmv` with manually downloaded binary |
+| `nuXmv: not found` inside container | Ensure `nuXmv` binary is at `REPRODUCIBILITY/2026_ATVA/nuXmv` before building |
+| Scripts: permission denied | Run `find scripts/ -name "*.sh" -exec chmod +x {} \;` |
 | Tests timeout | Increase Docker memory allocation |
-| No PNG files generated | Update Docker version (tested with 20.10.24+) |
 
-For more details, see the [full README](README.md).
+For more details, see [README.md](README.md).
 
 ---
 
 ## Quick Reference
 
 ```bash
-# Full reproduction (both steps)
-cd REPRODUCIBILITY/2026_ATVA
-python python_script/setup.py
-python python_script/reproduce.py
+# From repo root — build once, run anytime
+docker build -f REPRODUCIBILITY/2026_ATVA/Dockerfile.local -t behaverify_2026_atva_img .
+docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/examples behaverify_2026_atva_img
 
 # View results
-ls results/examples/
-
-# Run BehaVerify on your own .tree file
-python python_script/run_behaverify.py my_tree.tree --verify
+ls REPRODUCIBILITY/2026_ATVA/docker_results/
 ```

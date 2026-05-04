@@ -17,35 +17,29 @@ RUN apt-get update && apt-get install -y sudo \
     && echo "$USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER \
     && chmod 0440 /etc/sudoers.d/$USER
 
-# Set the working directory
 WORKDIR /home/$USER
-
-# Switch to the non-root user
 USER $USER
 
-RUN sudo apt-get install wget git python3 pip python3-venv -y
+RUN sudo apt-get install wget git python3 pip python3-venv python3-tk -y
 RUN sudo apt-get install graphviz -y
 
-# Create directory structure
-RUN mkdir -p /home/$USER/behaverify/REPRODUCIBILITY/$VENUE
+# Install behaverify from local frozen source (gives us -m behaverify with --use_encoding support)
+RUN mkdir -p /home/$USER/behaverify
+COPY --chown=$USER:$USER pyproject.toml /home/$USER/behaverify/pyproject.toml
+COPY --chown=$USER:$USER src /home/$USER/behaverify/src
 
-# Copy local REPRODUCIBILITY folder (build context should be main behaverify repo)
-# This includes examples, scripts, metamodel, requirements, etc.
-COPY --chown=$USER:$USER REPRODUCIBILITY/$VENUE /home/$USER/behaverify/REPRODUCIBILITY/$VENUE
-
-# Copy latest src/ from main repo to replace REPRODUCIBILITY version
-# This ensures we use the most up-to-date behaverify source code
-COPY --chown=$USER:$USER src /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/src
-
-RUN echo $USER > /home/$USER/user.txt
-
-# Create Python virtual environments
 RUN python3 -m venv /home/$USER/python_venvs/behaverify
 RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install --upgrade pip
-RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/core.txt
-RUN python3 -m venv /home/$USER/python_venvs/results
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install --upgrade pip
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/drawing.txt
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/graphing.txt
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -e /home/$USER/behaverify
 
-WORKDIR /home/$USER
+# Copy REPRODUCIBILITY folder and install remaining dependencies
+COPY --chown=$USER:$USER REPRODUCIBILITY/$VENUE /home/$USER/behaverify/REPRODUCIBILITY/$VENUE
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/core.txt
+
+# Copy nuXmv binary
+COPY --chown=$USER:$USER REPRODUCIBILITY/$VENUE/nuXmv /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/nuXmv
+RUN chmod +x /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/nuXmv
+
+WORKDIR /home/$USER/behaverify/REPRODUCIBILITY/$VENUE
+
+CMD ["/bin/bash", "-c", "./BehaVerify_2026_ATVA.sh ./"]
