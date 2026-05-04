@@ -40,6 +40,8 @@ RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USE
 COPY --chown=$USER:$USER REPRODUCIBILITY/$VENUE/nuXmv /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/nuXmv
 RUN chmod +x /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/nuXmv
 
+ENV PATH="/home/BehaVerify_2026_ATVA/python_venvs/behaverify/bin:$PATH"
+
 WORKDIR /home/$USER/behaverify/REPRODUCIBILITY/$VENUE
 
 CMD ["/bin/bash", "-c", "./BehaVerify_2026_ATVA.sh ./"]

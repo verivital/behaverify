@@ -30,12 +30,20 @@ Only needs to be done once (or after code changes).
 ### Step 2: Run experiments
 
 ```bash
-docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/output behaverify_2026_atva_img
+docker run --name behaverify_atva_run behaverify_2026_atva_img
 ```
 
-This runs `BehaVerify_2026_ATVA.sh` inside the container. Results are written
-directly to `REPRODUCIBILITY/2026_ATVA/docker_results/` on your host as the
-script runs. Takes **30–60 minutes**.
+This runs `BehaVerify_2026_ATVA.sh` inside the container. Takes **30–60 minutes**.
+
+### Step 3: Extract results
+
+```bash
+mkdir -p REPRODUCIBILITY/2026_ATVA/docker_results
+docker cp behaverify_atva_run:/home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/examples ./REPRODUCIBILITY/2026_ATVA/docker_results
+docker rm behaverify_atva_run
+```
+
+Results land in `REPRODUCIBILITY/2026_ATVA/docker_results/examples/`.
 
 ---
 
@@ -115,7 +123,9 @@ cd ../encoding_timing_scripts
 ./exp_encoding_comparison_run.sh 1 10 1 5m
 ```
 
-Results: `examples/EncodingComparison/results/`
+Results: The four files containing timing results used in Table 2 are all in `examples/EncodingComparison/`: `CTL-Fastforwarding-Concise`, `CTL-Naive-Concise`, `LTL-Fastforwarding-Concise`, and `LTL-Naive-Concise`.
+
+More detailed results are available under `examples/EncodingComparison/results/`
 
 ### Table 3: BT2Fiacre drone comparison
 
@@ -157,6 +167,7 @@ Results: `examples/BT2Fiacre/results/`
 | Docker permission denied | Run `sudo usermod -aG docker $USER` and restart |
 | `nuXmv: not found` inside container | Ensure `nuXmv` binary is at `REPRODUCIBILITY/2026_ATVA/nuXmv` before building |
 | Scripts: permission denied | Run `find scripts/ -name "*.sh" -exec chmod +x {} \;` |
+| `cp: cannot create directory '/output': Permission denied` | Do not use `-v` volume mounts for output — use `docker cp` as shown in Step 3 |
 | Tests timeout | Increase Docker memory allocation |
 
 For more details, see [README.md](README.md).
@@ -168,8 +179,11 @@ For more details, see [README.md](README.md).
 ```bash
 # From repo root — build once, run anytime
 docker build -f REPRODUCIBILITY/2026_ATVA/Dockerfile.local -t behaverify_2026_atva_img .
-docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/output behaverify_2026_atva_img
+docker run --name behaverify_atva_run behaverify_2026_atva_img
+mkdir -p REPRODUCIBILITY/2026_ATVA/docker_results
+docker cp behaverify_atva_run:/home/BehaVerify_2026_ATVA/behaverify/REPRODUCIBILITY/2026_ATVA/examples ./REPRODUCIBILITY/2026_ATVA/docker_results
+docker rm behaverify_atva_run
 
 # View results
-ls REPRODUCIBILITY/2026_ATVA/docker_results/
+ls REPRODUCIBILITY/2026_ATVA/docker_results/examples/
 ```

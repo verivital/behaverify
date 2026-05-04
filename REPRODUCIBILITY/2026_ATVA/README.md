@@ -43,10 +43,10 @@ See [QUICKSTART.md](QUICKSTART.md) for the recommended Docker setup and reproduc
 
 Suppose you ran
 ```
-python3 ./python_script/build_and_run.py ./ ./MyOutput 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz'
+docker run -v $(pwd)/REPRODUCIBILITY/2026_ATVA/docker_results:/output behaverify_2026_atva_img
 ```
 
-Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders within this, named **BT2BIP**, **BT2Fiacre**, **EncodingComparison**, **DrunkenDrone**, and **NetworkExample**. Additionally, there will be a script named **clean\_all.sh**, which you can safely ignore. Within each folder there will be a folder name **LaTeX**. This will contain a standalone .tex document that will generate a simple pdf document with the relevant Behavior Tree. For our paper, we generated insert versions of these documents (doesn't contain package imports, document class, etc, just the tikz figure).
+Then the results will be in **docker\_results/examples/**. There should be 5 folders within this, named **BT2BIP**, **BT2Fiacre**, **EncodingComparison**, **DrunkenDrone**, and **NetworkExample**. Additionally, there will be a script named **clean\_all.sh**, which you can safely ignore. Within each folder there will be a folder name **LaTeX**. This will contain a standalone .tex document that will generate a simple pdf document with the relevant Behavior Tree. For our paper, we generated insert versions of these documents (doesn't contain package imports, document class, etc, just the tikz figure).
 
 - **BT2BIP**
     - **results**
