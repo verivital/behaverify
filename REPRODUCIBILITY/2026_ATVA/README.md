@@ -132,7 +132,7 @@ Alternatively, if you have downloaded nuXmv and placed in the same folder:
 python3 ./python_script/reinstall.py ./ nuXmv --local
 ```
 
-This will create a docker image named behaverify\_2026\_fm\_img with the tag latest. It will then also create a container named behaverify\_2026\_fm from that image. It will also either download nuXmv from the URL or copy it in.
+This will create a docker image named behaverify_2026_atva_img with the tag latest. It will then also create a container named behaverify_2026_atva from that image. It will also either download nuXmv from the URL or copy it in.
 
 ### 2. Reproducing Results
 
@@ -186,7 +186,7 @@ This section is intentionally lengthy. If you are not interested in the details 
 11. git<br />git is used to download our repository. If you would prefer to manually download our repository, you can skip this step.
 
 		sudo apt install git
-12. (OPTIONAL) Haskell prerequisites<br />These are prerequisites required by Haskell. **THESE STEPS ARE UNNECESSARY FOR FM RESULTS**
+12. (OPTIONAL) Haskell prerequisites<br />These are prerequisites required by Haskell. **THESE STEPS ARE UNNECESSARY FOR ATVA RESULTS**
 
 		sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
 13. (OPTIONAL) Additional Haskell prerequisite<br />
@@ -211,7 +211,7 @@ This section is intentionally lengthy. If you are not interested in the details 
 
 		sudo chmod +x ./REPRODUCIBILITY/2026_ATVA/BehaVerify_2026_ATVA.sh
 		find ./REPRODUCIBILITY/2026_ATVA/scripts -name "*.sh" -exec chmod +x {} \;
-20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2026\_FM/
+20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2026_ATVA/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
 		sudo chmod +x ./REPRODUCIBILITY/2026_ATVA/nuXmv
@@ -249,7 +249,7 @@ sudo apt install graphviz
 sudo apt install git
 ```
 	
-(OPTIONAL) These are prerequisites for Haskell, which is not used in the FM tests.
+(OPTIONAL) These are prerequisites for Haskell, which is not used in the ATVA tests.
 ```
 sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
 sudo apt install libgmp3-dev
@@ -275,7 +275,7 @@ sudo chmod +x ./REPRODUCIBILITY/2026_ATVA/BehaVerify_2026_ATVA.sh
 find ./REPRODUCIBILITY/2026_ATVA/scripts -name "*.sh" -exec chmod +x {} \;
 ```
 
-You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2026\_FM/
+You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2026_ATVA/
 
 Please navigate to the top level of our repository and run the following
 ```
