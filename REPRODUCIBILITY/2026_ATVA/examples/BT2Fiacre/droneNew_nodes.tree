@@ -1,0 +1,517 @@
+configuration {}
+enumerations {
+    'good', 'low', 'critical',
+    'off', 'on', 'failed',
+    'none', 'land', 'takeoff', 'fly',
+    'done'
+}
+constants {
+    points := 15
+}
+variables {
+    variable { bl droneStatus VAR {'off', 'on', 'failed'} assign{result{'off'}}}
+    variable { bl camStatus VAR {'off', 'on', 'failed'} assign{result{'off'}}}
+    variable { bl mode VAR {'off', 'on', 'done'} assign{result{'off'}}}
+    variable { bl camT VAR BOOLEAN assign{result{False}}}
+    variable { bl move VAR {'none', 'land', 'takeoff', 'fly'} assign{result{'none'}}}
+    variable { bl xyz DEFINE INT array (mult, 3, (add, 2, points)) default{assign{result{0}}} constant_index
+	index_of{0}assign{result{-10}}
+	index_of{1}assign{result{-10}}
+	index_of{2}assign{result{5}}
+	(loop, i, [0, 2] such_that True,
+	    (loop, j, [0, 4] such_that True,
+		(loop, k, [0, 2] such_that True,
+		    index_of{(add, (mult, i, 15), (mult, j, 3), k, 3)}assign{
+			case{(eq, k, 2)}result{(mult, (add, i, 1), 20)}
+			case{(and, (eq, j, 0), (eq, k, 0))}result{-30}
+			case{(and, (eq, j, 0), (eq, k, 1))}result{-30}
+			case{(and, (eq, j, 1), (eq, k, 0))}result{-15}
+			case{(and, (eq, j, 1), (eq, k, 1))}result{30}
+			case{(and, (eq, j, 2), (eq, k, 0))}result{0}
+			case{(and, (eq, j, 2), (eq, k, 1))}result{-30}
+			case{(and, (eq, j, 3), (eq, k, 0))}result{15}
+			case{(and, (eq, j, 3), (eq, k, 1))}result{30}
+			case{(and, (eq, j, 4), (eq, k, 0))}result{30}
+			case{(and, (eq, j, 4), (eq, k, 1))}result{-30}
+			result{0}
+		    }
+		)
+	    )
+	)
+	index_of{48}assign{result{0}}
+	index_of{49}assign{result{0}}
+	index_of{50}assign{result{60}}
+    }
+    variable { bl ind VAR [0, (add, points, 1)] assign{result{0}}}
+    variable { bl x_g DEFINE INT assign{result{(index, xyz, (add, 0, (mult, 3, ind)))}}}
+    variable { bl y_g DEFINE INT assign{result{(index, xyz, (add, 1, (mult, 3, ind)))}}}
+    variable { bl z_g DEFINE INT assign{result{(index, xyz, (add, 2, (mult, 3, ind)))}}}
+    variable { env x_a VAR [-30, 30] assign{result{0}}}
+    variable { env y_a VAR [-30, 30] assign{result{0}}}
+    variable { env z_a VAR [0, 80] assign{result{0}}}
+    variable { env battery VAR {'good', 'low', 'critical'} assign{result{'good'}}}
+    variable { env loc VAR BOOLEAN assign{result{True, False}}}
+}
+
+environment_update {
+    variable_statement {
+	loc
+	assign{result{True, False}}
+    }
+    variable_statement {
+	battery
+	assign{
+	    case{(and, (eq, x_a, -10), (eq, y_a, -10), (eq, z_a, 0), (eq, battery, 'critical'))}result{'good', 'low', 'critical'}
+	    case{(and, (eq, x_a, -10), (eq, y_a, -10), (eq, z_a, 0), (eq, battery, 'low'))}result{'good', 'low'}
+	    case{(and, (eq, x_a, -10), (eq, y_a, -10), (eq, z_a, 0), (eq, battery, 'good'))}result{'good'}
+	    case{(and, (eq, droneStatus, 'on'), (eq, battery, 'good'))} result{'good', 'low'}
+	    case{(and, (eq, droneStatus, 'on'), (eq, battery, 'low'))} result{'low', 'critical'}
+	    result{battery}
+	}
+    }
+    variable_statement {
+	x_a
+	assign {
+	    case{(and, (eq, move, 'fly'), (lt, x_a, x_g))}result{(add, x_a, 1)}
+	    case{(and, (eq, move, 'fly'), (gt, x_a, x_g))}result{(sub, x_a, 1)}
+	    result{x_a}
+	}
+    }
+    variable_statement {
+	y_a
+	assign {
+	    case{(and, (eq, move, 'fly'), (lt, y_a, y_g))}result{(add, y_a, 1)}
+	    case{(and, (eq, move, 'fly'), (gt, y_a, y_g))}result{(sub, y_a, 1)}
+	    result{y_a}
+	}
+    }
+    variable_statement {
+	z_a
+	assign {
+	    case{(and, (eq, move, 'fly'), (lt, z_a, z_g))}result{(add, z_a, 1)}
+	    case{(and, (eq, move, 'fly'), (gt, z_a, z_g))}result{(sub, z_a, 1)}
+	    case{(and, (eq, move, 'takeoff'), (lt, z_a, 5))}result{(add, z_a, 1)}
+	    case{(and, (eq, move, 'land'), (gt, z_a, 0))}result{(sub, z_a, 1)}
+	    result{z_a}
+	}
+    }
+}
+
+checks {
+    check {
+	CheckCam
+	arguments{}
+	read_variables{camT}
+	condition{camT}
+    }
+    check {
+	MaxP
+	arguments {}
+	read_variables {ind}
+	condition{(eq, (add, 1, points), ind)}
+    }
+    check {
+	Landing
+	arguments {}
+	read_variables {move}
+	condition{(eq, (move), 'land')}
+    }
+    check {
+	Started
+	arguments {}
+	read_variables {mode}
+	condition{(neq, mode, 'off')}
+    }
+    check {
+	NotDone
+	arguments {}
+	read_variables {mode}
+	condition{(neq, mode, 'done')}
+    }
+}
+
+environment_checks {
+    environment_check{
+	BCritical
+	arguments{}
+	read_variables{}
+	condition{(eq, battery, 'critical')}
+    }
+    environment_check{
+	BLow
+	arguments{}
+	read_variables{}
+	condition{(eq, battery, 'low')}
+    }
+    environment_check{
+	LBad
+	arguments{}
+	read_variables{}
+	condition{(not, loc)}
+    }
+    environment_check {
+	AtP
+	arguments{}
+	read_variables{x_g, y_g, z_g}
+	condition{(and, (eq, x_a, x_g), (eq, y_a, y_g), (eq, z_a, z_g))}
+    }
+    environment_check {
+	Landed
+	arguments{}
+	read_variables{}
+	condition{(eq, z_a, 0)}
+    }
+    environment_check {
+	Tookoff
+	arguments{}
+	read_variables{}
+	condition{(gte, z_a, 5)}
+    }
+}
+
+actions {
+    action{
+	Start
+	arguments {} local_variables {} read_variables {} write_variables {droneStatus, camStatus, camT, move, mode} initial_values{}
+	update {
+	    variable_statement {
+		camT
+		assign{result{False}}
+	    }
+	    variable_statement {
+		move
+		assign{result{'none'}}
+	    }
+	    variable_statement {
+		camStatus
+		assign{
+		    case{(eq, camStatus, 'failed')}result{'failed'}
+		    case{(eq, camStatus, 'on')}result{'on'}
+		    result{'on', 'failed', 'off'}
+		}
+	    }
+	    variable_statement {
+		droneStatus
+		assign{
+		    case{(eq, droneStatus, 'failed')}result{'failed'}
+		    case{(eq, droneStatus, 'on')}result{'on'}
+		    result{'on', 'failed', 'off'}
+		}
+	    }
+	    variable_statement {
+		mode
+		assign{
+		    case{(and, (eq, droneStatus, 'on'), (eq, camStatus, 'on'))}result{'on'}
+		    result{'off'}
+		}
+	    }
+	    return_statement{
+		case{(and, (eq, droneStatus, 'on'), (eq, camStatus, 'on'))} result{success}
+		case{(or, (eq, droneStatus, 'failed'), (eq, camStatus, 'failed'))} result{failure}
+		result{running}
+	    }
+	}
+    }
+    action {
+	Land
+	arguments {} local_variables {} read_variables {} write_variables {move} initial_values{}
+	update {
+	    variable_statement {
+		move
+		assign{result{'land'}}
+	    }
+	    return_statement{result{running}}
+	}
+    }
+    action {
+	GoTo
+	arguments {} local_variables {} read_variables {} write_variables {move} initial_values{}
+	update {
+	    variable_statement {
+		move
+		assign{result{'fly'}}
+	    }
+	    return_statement{result{running}}
+	}
+    }
+    action {
+	Takeoff
+	arguments {} local_variables {} read_variables {} write_variables {move} initial_values {}
+	update {
+	    variable_statement {
+		move
+		assign{result{'takeoff'}}
+	    }
+	    return_statement{result{running}}
+	}
+    }
+    action {
+	Shutdown
+	arguments {} local_variables {} read_variables {} write_variables {droneStatus, camStatus, move, mode, camT} initial_values {}
+	update {
+	    variable_statement {
+		camT
+		assign{result{False}}
+	    }
+	    variable_statement {
+		move
+		assign{result{'none'}}
+	    }
+	    variable_statement {
+		camStatus
+		assign{
+		    case{(eq, camStatus, 'failed')}result{'failed'}
+		    case{(eq, camStatus, 'off')}result{'off'}
+		    result{'on', 'failed', 'off'}
+		}
+	    }
+	    variable_statement {
+		droneStatus
+		assign{
+		    case{(eq, droneStatus, 'failed')}result{'failed'}
+		    case{(eq, droneStatus, 'off')}result{'off'}
+		    result{'on', 'failed', 'off'}
+		}
+	    }
+	    variable_statement {
+		mode
+		assign{
+		    case{(and, (eq, droneStatus, 'off'), (eq, camStatus, 'off'))}result{'off'}
+		    result{'done'}
+		}
+	    }
+	    return_statement{
+		case{(or, (eq, droneStatus, 'failed'), (eq, camStatus, 'failed'))} result{failure}
+		result{running}
+	    }
+	}
+    }
+    action {
+	Report
+	arguments {} local_variables {} read_variables {} write_variables {camT, mode} initial_values {}
+	update {
+	    return_statement{case{camT}result{success}result{failure}}
+	    variable_statement{
+		camT
+		assign{result{False}}
+	    }
+	    variable_statement{
+		mode
+		assign{result{'done'}}
+	    }
+	}
+    }
+    action {
+	CameraTrack
+	arguments {} local_variables {} read_variables {} write_variables {camT} initial_values {}
+	update {
+	    variable_statement{
+		camT
+		assign{result{True, False}}
+	    }
+	    return_statement{case{camT}result{success}result{failure}}
+	}
+    }
+    action {
+	SetP
+	arguments {p := INT} local_variables {} read_variables {} write_variables {ind} initial_values {}
+	update {
+	    variable_statement{
+		ind
+		assign{result{p}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	SetMinP
+	arguments {} local_variables {} read_variables {} write_variables {ind} initial_values {}
+	update {
+	    variable_statement{
+		ind
+		assign{
+		    case{(eq, ind, 0)}result{1}
+		    result{ind}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	IncP
+	arguments {} local_variables {} read_variables {} write_variables {ind} initial_values {}
+	update {
+	    variable_statement{
+		ind
+		assign{result{(min, (add, points, 1), (add, ind, 1))}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite {
+	Drone sequence children{
+	    composite {
+		StartSel selector children{
+		    Started {}
+		    Start {}#{}#
+		}
+	    }
+	    composite {
+		ShutdownSel selector children{
+		    NotDone {}
+		    Shutdown {} #{}#
+		}
+	    }
+	    composite {
+		Main selector children{
+		    composite {
+			LandingSeq sequence children {
+			    Landing {} #{}#
+			    composite {
+				LandSel selector children {
+				    Landed {} #{}#
+				    Land {} #{}#
+				}
+			    }
+			}
+		    }
+		    composite {
+			ESeq sequence children {
+			    composite {
+				ESel selector children {
+				    BCritical {} #{}#
+				    LBad {} #{}#
+				}
+			    }
+			    ELand : Land {} #{}#
+			}
+		    }
+		    composite {
+			FlightSeq sequence children {
+			    composite {
+				TakeoffSel selector children {
+				    Tookoff{} #{}#
+				    Takeoff{} #{}#
+				}
+			    }
+			    composite {
+				MoveSel selector children {   
+				    composite {
+					LSeq sequence children {
+					    BLow {} #{}#
+					    SetP0 : SetP {0} #{}#
+					    composite {
+						LSel selector children {
+						    AtP0 : AtP {} #{}#
+						    GoTo0 : GoTo {} #{}#
+						}
+					    }
+					    LLand : Land {} #{}#
+					}
+				    }
+				    composite {
+					MoveSeq sequence children {
+					    composite {
+						ObjSel selector children{
+						    CameraTrack {} #{}#
+						    composite {
+							PointSeq sequence children{
+							    SetMinP {} #{}#
+							    composite {
+								PointSel selector children {
+								    AtP {} #{}#
+								    IncP {} #{}#
+								}
+							    }
+							    composite {
+								FinalSel selector children {
+								    MaxP {} #{}#
+								    GoToP : GoTo {} #{}#
+								}
+							    }
+							}
+						    }
+						}
+					    }
+					    SetPMax : SetP {(add, 1, points)}
+					    composite {
+						MaxSel selector children {
+						    AtPMax : AtP {} #{}#
+						    GoToMax : GoTo {} #{}#
+						}
+					    }
+					    GLand : Land {} #{}#
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	    Report {} #{}#
+	}
+    }
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+    INVARSPEC{(active, Drone)}INVARSPEC{(not, (active, Drone))}INVARSPEC{(not, (success, Drone))}INVARSPEC{(not, (failure, Drone))}INVARSPEC{(not, (running, Drone))}
+    INVARSPEC{(active, StartSel)}INVARSPEC{(not, (active, StartSel))}INVARSPEC{(not, (success, StartSel))}INVARSPEC{(not, (failure, StartSel))}INVARSPEC{(not, (running, StartSel))}
+    INVARSPEC{(active, Started)}INVARSPEC{(not, (active, Started))}INVARSPEC{(not, (success, Started))}INVARSPEC{(not, (failure, Started))}INVARSPEC{(not, (running, Started))}
+    INVARSPEC{(active, Start)}INVARSPEC{(not, (active, Start))}INVARSPEC{(not, (success, Start))}INVARSPEC{(not, (failure, Start))}INVARSPEC{(not, (running, Start))}
+    INVARSPEC{(active, ShutdownSel)}INVARSPEC{(not, (active, ShutdownSel))}INVARSPEC{(not, (success, ShutdownSel))}INVARSPEC{(not, (failure, ShutdownSel))}INVARSPEC{(not, (running, ShutdownSel))}
+    INVARSPEC{(active, NotDone)}INVARSPEC{(not, (active, NotDone))}INVARSPEC{(not, (success, NotDone))}INVARSPEC{(not, (failure, NotDone))}INVARSPEC{(not, (running, NotDone))}
+    INVARSPEC{(active, Shutdown)}INVARSPEC{(not, (active, Shutdown))}INVARSPEC{(not, (success, Shutdown))}INVARSPEC{(not, (failure, Shutdown))}INVARSPEC{(not, (running, Shutdown))}
+    INVARSPEC{(active, Main)}INVARSPEC{(not, (active, Main))}INVARSPEC{(not, (success, Main))}INVARSPEC{(not, (failure, Main))}INVARSPEC{(not, (running, Main))}
+    INVARSPEC{(active, LandingSeq)}INVARSPEC{(not, (active, LandingSeq))}INVARSPEC{(not, (success, LandingSeq))}INVARSPEC{(not, (failure, LandingSeq))}INVARSPEC{(not, (running, LandingSeq))}
+    INVARSPEC{(active, Landing)}INVARSPEC{(not, (active, Landing))}INVARSPEC{(not, (success, Landing))}INVARSPEC{(not, (failure, Landing))}INVARSPEC{(not, (running, Landing))}
+    INVARSPEC{(active, LandSel)}INVARSPEC{(not, (active, LandSel))}INVARSPEC{(not, (success, LandSel))}INVARSPEC{(not, (failure, LandSel))}INVARSPEC{(not, (running, LandSel))}
+    INVARSPEC{(active, Landed)}INVARSPEC{(not, (active, Landed))}INVARSPEC{(not, (success, Landed))}INVARSPEC{(not, (failure, Landed))}INVARSPEC{(not, (running, Landed))}
+    INVARSPEC{(active, Land)}INVARSPEC{(not, (active, Land))}INVARSPEC{(not, (success, Land))}INVARSPEC{(not, (failure, Land))}INVARSPEC{(not, (running, Land))}
+    INVARSPEC{(active, ESeq)}INVARSPEC{(not, (active, ESeq))}INVARSPEC{(not, (success, ESeq))}INVARSPEC{(not, (failure, ESeq))}INVARSPEC{(not, (running, ESeq))}
+    INVARSPEC{(active, ESel)}INVARSPEC{(not, (active, ESel))}INVARSPEC{(not, (success, ESel))}INVARSPEC{(not, (failure, ESel))}INVARSPEC{(not, (running, ESel))}
+    INVARSPEC{(active, BCritical)}INVARSPEC{(not, (active, BCritical))}INVARSPEC{(not, (success, BCritical))}INVARSPEC{(not, (failure, BCritical))}INVARSPEC{(not, (running, BCritical))}
+    INVARSPEC{(active, LBad)}INVARSPEC{(not, (active, LBad))}INVARSPEC{(not, (success, LBad))}INVARSPEC{(not, (failure, LBad))}INVARSPEC{(not, (running, LBad))}
+    INVARSPEC{(active, ELand)}INVARSPEC{(not, (active, ELand))}INVARSPEC{(not, (success, ELand))}INVARSPEC{(not, (failure, ELand))}INVARSPEC{(not, (running, ELand))}
+    INVARSPEC{(active, FlightSeq)}INVARSPEC{(not, (active, FlightSeq))}INVARSPEC{(not, (success, FlightSeq))}INVARSPEC{(not, (failure, FlightSeq))}INVARSPEC{(not, (running, FlightSeq))}
+    INVARSPEC{(active, TakeoffSel)}INVARSPEC{(not, (active, TakeoffSel))}INVARSPEC{(not, (success, TakeoffSel))}INVARSPEC{(not, (failure, TakeoffSel))}INVARSPEC{(not, (running, TakeoffSel))}
+    INVARSPEC{(active, Tookoff)}INVARSPEC{(not, (active, Tookoff))}INVARSPEC{(not, (success, Tookoff))}INVARSPEC{(not, (failure, Tookoff))}INVARSPEC{(not, (running, Tookoff))}
+    INVARSPEC{(active, Takeoff)}INVARSPEC{(not, (active, Takeoff))}INVARSPEC{(not, (success, Takeoff))}INVARSPEC{(not, (failure, Takeoff))}INVARSPEC{(not, (running, Takeoff))}
+    INVARSPEC{(active, MoveSel)}INVARSPEC{(not, (active, MoveSel))}INVARSPEC{(not, (success, MoveSel))}INVARSPEC{(not, (failure, MoveSel))}INVARSPEC{(not, (running, MoveSel))}
+    INVARSPEC{(active, LSeq)}INVARSPEC{(not, (active, LSeq))}INVARSPEC{(not, (success, LSeq))}INVARSPEC{(not, (failure, LSeq))}INVARSPEC{(not, (running, LSeq))}
+    INVARSPEC{(active, BLow)}INVARSPEC{(not, (active, BLow))}INVARSPEC{(not, (success, BLow))}INVARSPEC{(not, (failure, BLow))}INVARSPEC{(not, (running, BLow))}
+    INVARSPEC{(active, SetP0)}INVARSPEC{(not, (active, SetP0))}INVARSPEC{(not, (success, SetP0))}INVARSPEC{(not, (failure, SetP0))}INVARSPEC{(not, (running, SetP0))}
+    INVARSPEC{(active, LSel)}INVARSPEC{(not, (active, LSel))}INVARSPEC{(not, (success, LSel))}INVARSPEC{(not, (failure, LSel))}INVARSPEC{(not, (running, LSel))}
+    INVARSPEC{(active, AtP0)}INVARSPEC{(not, (active, AtP0))}INVARSPEC{(not, (success, AtP0))}INVARSPEC{(not, (failure, AtP0))}INVARSPEC{(not, (running, AtP0))}
+    INVARSPEC{(active, GoTo0)}INVARSPEC{(not, (active, GoTo0))}INVARSPEC{(not, (success, GoTo0))}INVARSPEC{(not, (failure, GoTo0))}INVARSPEC{(not, (running, GoTo0))}
+    INVARSPEC{(active, LLand)}INVARSPEC{(not, (active, LLand))}INVARSPEC{(not, (success, LLand))}INVARSPEC{(not, (failure, LLand))}INVARSPEC{(not, (running, LLand))}
+    INVARSPEC{(active, MoveSeq)}INVARSPEC{(not, (active, MoveSeq))}INVARSPEC{(not, (success, MoveSeq))}INVARSPEC{(not, (failure, MoveSeq))}INVARSPEC{(not, (running, MoveSeq))}
+    INVARSPEC{(active, ObjSel)}INVARSPEC{(not, (active, ObjSel))}INVARSPEC{(not, (success, ObjSel))}INVARSPEC{(not, (failure, ObjSel))}INVARSPEC{(not, (running, ObjSel))}
+    INVARSPEC{(active, CameraTrack)}INVARSPEC{(not, (active, CameraTrack))}INVARSPEC{(not, (success, CameraTrack))}INVARSPEC{(not, (failure, CameraTrack))}INVARSPEC{(not, (running, CameraTrack))}
+    INVARSPEC{(active, PointSeq)}INVARSPEC{(not, (active, PointSeq))}INVARSPEC{(not, (success, PointSeq))}INVARSPEC{(not, (failure, PointSeq))}INVARSPEC{(not, (running, PointSeq))}
+    INVARSPEC{(active, SetMinP)}INVARSPEC{(not, (active, SetMinP))}INVARSPEC{(not, (success, SetMinP))}INVARSPEC{(not, (failure, SetMinP))}INVARSPEC{(not, (running, SetMinP))}
+    INVARSPEC{(active, PointSel)}INVARSPEC{(not, (active, PointSel))}INVARSPEC{(not, (success, PointSel))}INVARSPEC{(not, (failure, PointSel))}INVARSPEC{(not, (running, PointSel))}
+    INVARSPEC{(active, AtP)}INVARSPEC{(not, (active, AtP))}INVARSPEC{(not, (success, AtP))}INVARSPEC{(not, (failure, AtP))}INVARSPEC{(not, (running, AtP))}
+    INVARSPEC{(active, IncP)}INVARSPEC{(not, (active, IncP))}INVARSPEC{(not, (success, IncP))}INVARSPEC{(not, (failure, IncP))}INVARSPEC{(not, (running, IncP))}
+    INVARSPEC{(active, FinalSel)}INVARSPEC{(not, (active, FinalSel))}INVARSPEC{(not, (success, FinalSel))}INVARSPEC{(not, (failure, FinalSel))}INVARSPEC{(not, (running, FinalSel))}
+    INVARSPEC{(active, MaxP)}INVARSPEC{(not, (active, MaxP))}INVARSPEC{(not, (success, MaxP))}INVARSPEC{(not, (failure, MaxP))}INVARSPEC{(not, (running, MaxP))}
+    INVARSPEC{(active, GoToP)}INVARSPEC{(not, (active, GoToP))}INVARSPEC{(not, (success, GoToP))}INVARSPEC{(not, (failure, GoToP))}INVARSPEC{(not, (running, GoToP))}
+    INVARSPEC{(active, SetPMax)}INVARSPEC{(not, (active, SetPMax))}INVARSPEC{(not, (success, SetPMax))}INVARSPEC{(not, (failure, SetPMax))}INVARSPEC{(not, (running, SetPMax))}
+    INVARSPEC{(active, MaxSel)}INVARSPEC{(not, (active, MaxSel))}INVARSPEC{(not, (success, MaxSel))}INVARSPEC{(not, (failure, MaxSel))}INVARSPEC{(not, (running, MaxSel))}
+    INVARSPEC{(active, AtPMax)}INVARSPEC{(not, (active, AtPMax))}INVARSPEC{(not, (success, AtPMax))}INVARSPEC{(not, (failure, AtPMax))}INVARSPEC{(not, (running, AtPMax))}
+    INVARSPEC{(active, GoToMax)}INVARSPEC{(not, (active, GoToMax))}INVARSPEC{(not, (success, GoToMax))}INVARSPEC{(not, (failure, GoToMax))}INVARSPEC{(not, (running, GoToMax))}
+    INVARSPEC{(active, GLand)}INVARSPEC{(not, (active, GLand))}INVARSPEC{(not, (success, GLand))}INVARSPEC{(not, (failure, GLand))}INVARSPEC{(not, (running, GLand))}
+    INVARSPEC{(active, Report)}INVARSPEC{(not, (active, Report))}INVARSPEC{(not, (success, Report))}INVARSPEC{(not, (failure, Report))}INVARSPEC{(not, (running, Report))}
+}

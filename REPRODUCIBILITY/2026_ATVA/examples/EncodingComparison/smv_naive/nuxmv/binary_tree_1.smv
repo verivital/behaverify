@@ -1,0 +1,272 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__Root := -3;
+		child_index_to_resume_from__SelDec := -2;
+		child_index_to_resume_from__Sel0 := -2;
+		child_index_to_resume_from__SelInc := -2;
+		child_index_to_resume_from__Root := -2;
+		status__At0A := At0A.status;
+		status__AtMaxA := AtMaxA.status;
+		status__Dec := Dec.status;
+		status__SelDec := 
+			case
+				status__At0A != failure : status__At0A;
+				status__AtMaxA != failure : status__AtMaxA;
+				status__Dec != failure : status__Dec;
+				TRUE : failure;
+			esac;
+		status__AtV0 := AtV0.status;
+		status__AtV1 := AtV1.status;
+		status__Sel0 := 
+			case
+				status__AtV0 != failure : status__AtV0;
+				status__AtV1 != failure : status__AtV1;
+				TRUE : failure;
+			esac;
+		status__AtMaxB := AtMaxB.status;
+		status__Inc := Inc.status;
+		status__SelInc := 
+			case
+				status__AtMaxB != failure : status__AtMaxB;
+				status__Inc != failure : status__Inc;
+				TRUE : failure;
+			esac;
+		status__Root := 
+			case
+				status__SelDec != success : status__SelDec;
+				status__Sel0 != success : status__Sel0;
+				status__SelInc != success : status__SelInc;
+				TRUE : success;
+			esac;
+		next_child__SelDec := 
+			case
+				(status__At0A = invalid)& (child_index_to_resume_from__SelDec <= 0) : node_names.At0A;
+				(status__AtMaxA = invalid)& (child_index_to_resume_from__SelDec <= 1) : node_names.AtMaxA;
+				(status__Dec = invalid)& (child_index_to_resume_from__SelDec <= 2) : node_names.Dec;
+			esac;
+		next_child__Sel0 := 
+			case
+				(status__AtV0 = invalid)& (child_index_to_resume_from__Sel0 <= 0) : node_names.AtV0;
+				(status__AtV1 = invalid)& (child_index_to_resume_from__Sel0 <= 1) : node_names.AtV1;
+			esac;
+		next_child__SelInc := 
+			case
+				(status__AtMaxB = invalid)& (child_index_to_resume_from__SelInc <= 0) : node_names.AtMaxB;
+				(status__Inc = invalid)& (child_index_to_resume_from__SelInc <= 1) : node_names.Inc;
+			esac;
+		next_child__Root := 
+			case
+				(status__SelDec = invalid)& (child_index_to_resume_from__Root <= 0) : node_names.SelDec;
+				(status__Sel0 = invalid)& (child_index_to_resume_from__Root <= 1) : node_names.Sel0;
+				(status__SelInc = invalid)& (child_index_to_resume_from__Root <= 2) : node_names.SelInc;
+			esac;
+		At0A.active := active_node = node_names.At0A;
+		At0A.reset := active_node = -1;
+		AtMaxA.active := active_node = node_names.AtMaxA;
+		AtMaxA.reset := active_node = -1;
+		Dec.active := active_node = node_names.Dec;
+		Dec.reset := active_node = -1;
+		AtV0.active := active_node = node_names.AtV0;
+		AtV0.reset := active_node = -1;
+		AtV1.active := active_node = node_names.AtV1;
+		AtV1.reset := active_node = -1;
+		AtMaxB.active := active_node = node_names.AtMaxB;
+		AtMaxB.reset := active_node = -1;
+		Inc.active := active_node = node_names.Inc;
+		Inc.reset := active_node = -1;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		active_node : -1..11;
+		At0A : At0A_module(vv);
+		AtMaxA : AtMaxA_module(vv);
+		Dec : Dec_module(rv);
+		AtV0 : AtV0_module(vv);
+		AtV1 : AtV1_module(vv);
+		AtMaxB : AtMaxB_module(vv);
+		Inc : Inc_module(rv);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		vv : 0..2;
+		rv : boolean;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		init(active_node) := -1;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(vv) := 
+			case
+				TRUE : 0;
+			esac;
+		init(rv) := 
+			case
+				TRUE : FALSE;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		next(active_node) :=
+			case
+				active_node = -1 & TRUE : node_names.Root;
+				active_node = -1 & !(TRUE) : -1;
+				(active_node = node_names.At0A) & (status__At0A != invalid) : node_names.SelDec;
+				(active_node = node_names.AtMaxA) & (status__AtMaxA != invalid) : node_names.SelDec;
+				(active_node = node_names.Dec) & (status__Dec != invalid) : node_names.SelDec;
+				(active_node = node_names.SelDec) & (status__SelDec != invalid) : node_names.Root;
+				(active_node = node_names.SelDec) & (status__SelDec = invalid) : next_child__SelDec;
+				(active_node = node_names.AtV0) & (status__AtV0 != invalid) : node_names.Sel0;
+				(active_node = node_names.AtV1) & (status__AtV1 != invalid) : node_names.Sel0;
+				(active_node = node_names.Sel0) & (status__Sel0 != invalid) : node_names.Root;
+				(active_node = node_names.Sel0) & (status__Sel0 = invalid) : next_child__Sel0;
+				(active_node = node_names.AtMaxB) & (status__AtMaxB != invalid) : node_names.SelInc;
+				(active_node = node_names.Inc) & (status__Inc != invalid) : node_names.SelInc;
+				(active_node = node_names.SelInc) & (status__SelInc != invalid) : node_names.Root;
+				(active_node = node_names.SelInc) & (status__SelInc = invalid) : next_child__SelInc;
+				(active_node = node_names.Root) & (status__Root != invalid) : -1;
+				(active_node = node_names.Root) & (status__Root = invalid) : next_child__Root;
+				TRUE : active_node;
+			esac;
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(vv) :=
+			case
+				(active_node = node_names.Dec) & (rv) : vv;
+				(active_node = node_names.Dec) & (TRUE) : max(0, (vv - 1));
+				(active_node = node_names.Inc) & (rv) : min(2, (vv + 1));
+				(active_node = node_names.Inc) & (TRUE) : vv;
+				TRUE : vv;
+			esac;
+		next(rv) :=
+			case
+				(active_node = node_names.Dec) & (TRUE) : {TRUE, FALSE};
+				(active_node = node_names.Inc) & (TRUE) : {TRUE, FALSE};
+				TRUE : rv;
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC G(((AtMaxA.status = success) -> G((!((AtMaxA.status = failure)) & !((At0A.status = success)) & !((Dec.status = success)) & !((Dec.status = failure)) & !((Inc.status = success)) & !((Inc.status = failure))))));
+CTLSPEC AG(((AtMaxA.status = success) -> AG((!((AtMaxA.status = failure)) & !((At0A.status = success)) & !((Dec.status = success)) & !((Dec.status = failure)) & !((Inc.status = success)) & !((Inc.status = failure))))));
+INVARSPEC (vv < 2);
+MODULE define_nodes
+	DEFINE
+		Root := 0;
+		SelDec := 1;
+		At0A := 2;
+		AtMaxA := 3;
+		Dec := 4;
+		Sel0 := 5;
+		AtV0 := 6;
+		AtV1 := 7;
+		SelInc := 8;
+		AtMaxB := 9;
+		Inc := 10;
+MODULE At0A_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 0) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtMaxA_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 2) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE Dec_module(rv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                rv : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV0_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 0) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV1_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 1) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtMaxB_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 2) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE Inc_module(rv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                rv : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;

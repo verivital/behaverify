@@ -1,0 +1,790 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__Root := -3;
+		child_index_to_resume_from__SelDec := -2;
+		child_index_to_resume_from__Sel0 := -2;
+		child_index_to_resume_from__Sel1 := -2;
+		child_index_to_resume_from__Sel2 := -2;
+		child_index_to_resume_from__Sel3 := -2;
+		child_index_to_resume_from__Sel4 := -2;
+		child_index_to_resume_from__Sel5 := -2;
+		child_index_to_resume_from__Sel6 := -2;
+		child_index_to_resume_from__Sel7 := -2;
+		child_index_to_resume_from__Sel8 := -2;
+		child_index_to_resume_from__Sel9 := -2;
+		child_index_to_resume_from__Sel10 := -2;
+		child_index_to_resume_from__Sel11 := -2;
+		child_index_to_resume_from__Sel12 := -2;
+		child_index_to_resume_from__Sel13 := -2;
+		child_index_to_resume_from__Sel14 := -2;
+		child_index_to_resume_from__SelInc := -2;
+		child_index_to_resume_from__Root := -2;
+		status__At0A := At0A.status;
+		status__AtMaxA := AtMaxA.status;
+		status__Dec := Dec.status;
+		status__SelDec := 
+			case
+				status__At0A != failure : status__At0A;
+				status__AtMaxA != failure : status__AtMaxA;
+				status__Dec != failure : status__Dec;
+				TRUE : failure;
+			esac;
+		status__AtV0 := AtV0.status;
+		status__AtV1 := AtV1.status;
+		status__Sel0 := 
+			case
+				status__AtV0 != failure : status__AtV0;
+				status__AtV1 != failure : status__AtV1;
+				TRUE : failure;
+			esac;
+		status__AtV2 := AtV2.status;
+		status__AtV3 := AtV3.status;
+		status__Sel1 := 
+			case
+				status__AtV2 != failure : status__AtV2;
+				status__AtV3 != failure : status__AtV3;
+				TRUE : failure;
+			esac;
+		status__Sel2 := 
+			case
+				status__Sel0 != failure : status__Sel0;
+				status__Sel1 != failure : status__Sel1;
+				TRUE : failure;
+			esac;
+		status__AtV4 := AtV4.status;
+		status__AtV5 := AtV5.status;
+		status__Sel3 := 
+			case
+				status__AtV4 != failure : status__AtV4;
+				status__AtV5 != failure : status__AtV5;
+				TRUE : failure;
+			esac;
+		status__AtV6 := AtV6.status;
+		status__AtV7 := AtV7.status;
+		status__Sel4 := 
+			case
+				status__AtV6 != failure : status__AtV6;
+				status__AtV7 != failure : status__AtV7;
+				TRUE : failure;
+			esac;
+		status__Sel5 := 
+			case
+				status__Sel3 != failure : status__Sel3;
+				status__Sel4 != failure : status__Sel4;
+				TRUE : failure;
+			esac;
+		status__Sel6 := 
+			case
+				status__Sel2 != failure : status__Sel2;
+				status__Sel5 != failure : status__Sel5;
+				TRUE : failure;
+			esac;
+		status__AtV8 := AtV8.status;
+		status__AtV9 := AtV9.status;
+		status__Sel7 := 
+			case
+				status__AtV8 != failure : status__AtV8;
+				status__AtV9 != failure : status__AtV9;
+				TRUE : failure;
+			esac;
+		status__AtV10 := AtV10.status;
+		status__AtV11 := AtV11.status;
+		status__Sel8 := 
+			case
+				status__AtV10 != failure : status__AtV10;
+				status__AtV11 != failure : status__AtV11;
+				TRUE : failure;
+			esac;
+		status__Sel9 := 
+			case
+				status__Sel7 != failure : status__Sel7;
+				status__Sel8 != failure : status__Sel8;
+				TRUE : failure;
+			esac;
+		status__AtV12 := AtV12.status;
+		status__AtV13 := AtV13.status;
+		status__Sel10 := 
+			case
+				status__AtV12 != failure : status__AtV12;
+				status__AtV13 != failure : status__AtV13;
+				TRUE : failure;
+			esac;
+		status__AtV14 := AtV14.status;
+		status__AtV15 := AtV15.status;
+		status__Sel11 := 
+			case
+				status__AtV14 != failure : status__AtV14;
+				status__AtV15 != failure : status__AtV15;
+				TRUE : failure;
+			esac;
+		status__Sel12 := 
+			case
+				status__Sel10 != failure : status__Sel10;
+				status__Sel11 != failure : status__Sel11;
+				TRUE : failure;
+			esac;
+		status__Sel13 := 
+			case
+				status__Sel9 != failure : status__Sel9;
+				status__Sel12 != failure : status__Sel12;
+				TRUE : failure;
+			esac;
+		status__Sel14 := 
+			case
+				status__Sel6 != failure : status__Sel6;
+				status__Sel13 != failure : status__Sel13;
+				TRUE : failure;
+			esac;
+		status__AtMaxB := AtMaxB.status;
+		status__Inc := Inc.status;
+		status__SelInc := 
+			case
+				status__AtMaxB != failure : status__AtMaxB;
+				status__Inc != failure : status__Inc;
+				TRUE : failure;
+			esac;
+		status__Root := 
+			case
+				status__SelDec != success : status__SelDec;
+				status__Sel14 != success : status__Sel14;
+				status__SelInc != success : status__SelInc;
+				TRUE : success;
+			esac;
+		next_child__SelDec := 
+			case
+				(status__At0A = invalid)& (child_index_to_resume_from__SelDec <= 0) : node_names.At0A;
+				(status__AtMaxA = invalid)& (child_index_to_resume_from__SelDec <= 1) : node_names.AtMaxA;
+				(status__Dec = invalid)& (child_index_to_resume_from__SelDec <= 2) : node_names.Dec;
+			esac;
+		next_child__Sel0 := 
+			case
+				(status__AtV0 = invalid)& (child_index_to_resume_from__Sel0 <= 0) : node_names.AtV0;
+				(status__AtV1 = invalid)& (child_index_to_resume_from__Sel0 <= 1) : node_names.AtV1;
+			esac;
+		next_child__Sel1 := 
+			case
+				(status__AtV2 = invalid)& (child_index_to_resume_from__Sel1 <= 0) : node_names.AtV2;
+				(status__AtV3 = invalid)& (child_index_to_resume_from__Sel1 <= 1) : node_names.AtV3;
+			esac;
+		next_child__Sel2 := 
+			case
+				(status__Sel0 = invalid)& (child_index_to_resume_from__Sel2 <= 0) : node_names.Sel0;
+				(status__Sel1 = invalid)& (child_index_to_resume_from__Sel2 <= 1) : node_names.Sel1;
+			esac;
+		next_child__Sel3 := 
+			case
+				(status__AtV4 = invalid)& (child_index_to_resume_from__Sel3 <= 0) : node_names.AtV4;
+				(status__AtV5 = invalid)& (child_index_to_resume_from__Sel3 <= 1) : node_names.AtV5;
+			esac;
+		next_child__Sel4 := 
+			case
+				(status__AtV6 = invalid)& (child_index_to_resume_from__Sel4 <= 0) : node_names.AtV6;
+				(status__AtV7 = invalid)& (child_index_to_resume_from__Sel4 <= 1) : node_names.AtV7;
+			esac;
+		next_child__Sel5 := 
+			case
+				(status__Sel3 = invalid)& (child_index_to_resume_from__Sel5 <= 0) : node_names.Sel3;
+				(status__Sel4 = invalid)& (child_index_to_resume_from__Sel5 <= 1) : node_names.Sel4;
+			esac;
+		next_child__Sel6 := 
+			case
+				(status__Sel2 = invalid)& (child_index_to_resume_from__Sel6 <= 0) : node_names.Sel2;
+				(status__Sel5 = invalid)& (child_index_to_resume_from__Sel6 <= 1) : node_names.Sel5;
+			esac;
+		next_child__Sel7 := 
+			case
+				(status__AtV8 = invalid)& (child_index_to_resume_from__Sel7 <= 0) : node_names.AtV8;
+				(status__AtV9 = invalid)& (child_index_to_resume_from__Sel7 <= 1) : node_names.AtV9;
+			esac;
+		next_child__Sel8 := 
+			case
+				(status__AtV10 = invalid)& (child_index_to_resume_from__Sel8 <= 0) : node_names.AtV10;
+				(status__AtV11 = invalid)& (child_index_to_resume_from__Sel8 <= 1) : node_names.AtV11;
+			esac;
+		next_child__Sel9 := 
+			case
+				(status__Sel7 = invalid)& (child_index_to_resume_from__Sel9 <= 0) : node_names.Sel7;
+				(status__Sel8 = invalid)& (child_index_to_resume_from__Sel9 <= 1) : node_names.Sel8;
+			esac;
+		next_child__Sel10 := 
+			case
+				(status__AtV12 = invalid)& (child_index_to_resume_from__Sel10 <= 0) : node_names.AtV12;
+				(status__AtV13 = invalid)& (child_index_to_resume_from__Sel10 <= 1) : node_names.AtV13;
+			esac;
+		next_child__Sel11 := 
+			case
+				(status__AtV14 = invalid)& (child_index_to_resume_from__Sel11 <= 0) : node_names.AtV14;
+				(status__AtV15 = invalid)& (child_index_to_resume_from__Sel11 <= 1) : node_names.AtV15;
+			esac;
+		next_child__Sel12 := 
+			case
+				(status__Sel10 = invalid)& (child_index_to_resume_from__Sel12 <= 0) : node_names.Sel10;
+				(status__Sel11 = invalid)& (child_index_to_resume_from__Sel12 <= 1) : node_names.Sel11;
+			esac;
+		next_child__Sel13 := 
+			case
+				(status__Sel9 = invalid)& (child_index_to_resume_from__Sel13 <= 0) : node_names.Sel9;
+				(status__Sel12 = invalid)& (child_index_to_resume_from__Sel13 <= 1) : node_names.Sel12;
+			esac;
+		next_child__Sel14 := 
+			case
+				(status__Sel6 = invalid)& (child_index_to_resume_from__Sel14 <= 0) : node_names.Sel6;
+				(status__Sel13 = invalid)& (child_index_to_resume_from__Sel14 <= 1) : node_names.Sel13;
+			esac;
+		next_child__SelInc := 
+			case
+				(status__AtMaxB = invalid)& (child_index_to_resume_from__SelInc <= 0) : node_names.AtMaxB;
+				(status__Inc = invalid)& (child_index_to_resume_from__SelInc <= 1) : node_names.Inc;
+			esac;
+		next_child__Root := 
+			case
+				(status__SelDec = invalid)& (child_index_to_resume_from__Root <= 0) : node_names.SelDec;
+				(status__Sel14 = invalid)& (child_index_to_resume_from__Root <= 1) : node_names.Sel14;
+				(status__SelInc = invalid)& (child_index_to_resume_from__Root <= 2) : node_names.SelInc;
+			esac;
+		At0A.active := active_node = node_names.At0A;
+		At0A.reset := active_node = -1;
+		AtMaxA.active := active_node = node_names.AtMaxA;
+		AtMaxA.reset := active_node = -1;
+		Dec.active := active_node = node_names.Dec;
+		Dec.reset := active_node = -1;
+		AtV0.active := active_node = node_names.AtV0;
+		AtV0.reset := active_node = -1;
+		AtV1.active := active_node = node_names.AtV1;
+		AtV1.reset := active_node = -1;
+		AtV2.active := active_node = node_names.AtV2;
+		AtV2.reset := active_node = -1;
+		AtV3.active := active_node = node_names.AtV3;
+		AtV3.reset := active_node = -1;
+		AtV4.active := active_node = node_names.AtV4;
+		AtV4.reset := active_node = -1;
+		AtV5.active := active_node = node_names.AtV5;
+		AtV5.reset := active_node = -1;
+		AtV6.active := active_node = node_names.AtV6;
+		AtV6.reset := active_node = -1;
+		AtV7.active := active_node = node_names.AtV7;
+		AtV7.reset := active_node = -1;
+		AtV8.active := active_node = node_names.AtV8;
+		AtV8.reset := active_node = -1;
+		AtV9.active := active_node = node_names.AtV9;
+		AtV9.reset := active_node = -1;
+		AtV10.active := active_node = node_names.AtV10;
+		AtV10.reset := active_node = -1;
+		AtV11.active := active_node = node_names.AtV11;
+		AtV11.reset := active_node = -1;
+		AtV12.active := active_node = node_names.AtV12;
+		AtV12.reset := active_node = -1;
+		AtV13.active := active_node = node_names.AtV13;
+		AtV13.reset := active_node = -1;
+		AtV14.active := active_node = node_names.AtV14;
+		AtV14.reset := active_node = -1;
+		AtV15.active := active_node = node_names.AtV15;
+		AtV15.reset := active_node = -1;
+		AtMaxB.active := active_node = node_names.AtMaxB;
+		AtMaxB.reset := active_node = -1;
+		Inc.active := active_node = node_names.Inc;
+		Inc.reset := active_node = -1;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		active_node : -1..39;
+		At0A : At0A_module(vv);
+		AtMaxA : AtMaxA_module(vv);
+		Dec : Dec_module(rv);
+		AtV0 : AtV0_module(vv);
+		AtV1 : AtV1_module(vv);
+		AtV2 : AtV2_module(vv);
+		AtV3 : AtV3_module(vv);
+		AtV4 : AtV4_module(vv);
+		AtV5 : AtV5_module(vv);
+		AtV6 : AtV6_module(vv);
+		AtV7 : AtV7_module(vv);
+		AtV8 : AtV8_module(vv);
+		AtV9 : AtV9_module(vv);
+		AtV10 : AtV10_module(vv);
+		AtV11 : AtV11_module(vv);
+		AtV12 : AtV12_module(vv);
+		AtV13 : AtV13_module(vv);
+		AtV14 : AtV14_module(vv);
+		AtV15 : AtV15_module(vv);
+		AtMaxB : AtMaxB_module(vv);
+		Inc : Inc_module(rv);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		vv : 0..16;
+		rv : boolean;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		init(active_node) := -1;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(vv) := 
+			case
+				TRUE : 0;
+			esac;
+		init(rv) := 
+			case
+				TRUE : FALSE;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		next(active_node) :=
+			case
+				active_node = -1 & TRUE : node_names.Root;
+				active_node = -1 & !(TRUE) : -1;
+				(active_node = node_names.At0A) & (status__At0A != invalid) : node_names.SelDec;
+				(active_node = node_names.AtMaxA) & (status__AtMaxA != invalid) : node_names.SelDec;
+				(active_node = node_names.Dec) & (status__Dec != invalid) : node_names.SelDec;
+				(active_node = node_names.SelDec) & (status__SelDec != invalid) : node_names.Root;
+				(active_node = node_names.SelDec) & (status__SelDec = invalid) : next_child__SelDec;
+				(active_node = node_names.AtV0) & (status__AtV0 != invalid) : node_names.Sel0;
+				(active_node = node_names.AtV1) & (status__AtV1 != invalid) : node_names.Sel0;
+				(active_node = node_names.Sel0) & (status__Sel0 != invalid) : node_names.Sel2;
+				(active_node = node_names.Sel0) & (status__Sel0 = invalid) : next_child__Sel0;
+				(active_node = node_names.AtV2) & (status__AtV2 != invalid) : node_names.Sel1;
+				(active_node = node_names.AtV3) & (status__AtV3 != invalid) : node_names.Sel1;
+				(active_node = node_names.Sel1) & (status__Sel1 != invalid) : node_names.Sel2;
+				(active_node = node_names.Sel1) & (status__Sel1 = invalid) : next_child__Sel1;
+				(active_node = node_names.Sel2) & (status__Sel2 != invalid) : node_names.Sel6;
+				(active_node = node_names.Sel2) & (status__Sel2 = invalid) : next_child__Sel2;
+				(active_node = node_names.AtV4) & (status__AtV4 != invalid) : node_names.Sel3;
+				(active_node = node_names.AtV5) & (status__AtV5 != invalid) : node_names.Sel3;
+				(active_node = node_names.Sel3) & (status__Sel3 != invalid) : node_names.Sel5;
+				(active_node = node_names.Sel3) & (status__Sel3 = invalid) : next_child__Sel3;
+				(active_node = node_names.AtV6) & (status__AtV6 != invalid) : node_names.Sel4;
+				(active_node = node_names.AtV7) & (status__AtV7 != invalid) : node_names.Sel4;
+				(active_node = node_names.Sel4) & (status__Sel4 != invalid) : node_names.Sel5;
+				(active_node = node_names.Sel4) & (status__Sel4 = invalid) : next_child__Sel4;
+				(active_node = node_names.Sel5) & (status__Sel5 != invalid) : node_names.Sel6;
+				(active_node = node_names.Sel5) & (status__Sel5 = invalid) : next_child__Sel5;
+				(active_node = node_names.Sel6) & (status__Sel6 != invalid) : node_names.Sel14;
+				(active_node = node_names.Sel6) & (status__Sel6 = invalid) : next_child__Sel6;
+				(active_node = node_names.AtV8) & (status__AtV8 != invalid) : node_names.Sel7;
+				(active_node = node_names.AtV9) & (status__AtV9 != invalid) : node_names.Sel7;
+				(active_node = node_names.Sel7) & (status__Sel7 != invalid) : node_names.Sel9;
+				(active_node = node_names.Sel7) & (status__Sel7 = invalid) : next_child__Sel7;
+				(active_node = node_names.AtV10) & (status__AtV10 != invalid) : node_names.Sel8;
+				(active_node = node_names.AtV11) & (status__AtV11 != invalid) : node_names.Sel8;
+				(active_node = node_names.Sel8) & (status__Sel8 != invalid) : node_names.Sel9;
+				(active_node = node_names.Sel8) & (status__Sel8 = invalid) : next_child__Sel8;
+				(active_node = node_names.Sel9) & (status__Sel9 != invalid) : node_names.Sel13;
+				(active_node = node_names.Sel9) & (status__Sel9 = invalid) : next_child__Sel9;
+				(active_node = node_names.AtV12) & (status__AtV12 != invalid) : node_names.Sel10;
+				(active_node = node_names.AtV13) & (status__AtV13 != invalid) : node_names.Sel10;
+				(active_node = node_names.Sel10) & (status__Sel10 != invalid) : node_names.Sel12;
+				(active_node = node_names.Sel10) & (status__Sel10 = invalid) : next_child__Sel10;
+				(active_node = node_names.AtV14) & (status__AtV14 != invalid) : node_names.Sel11;
+				(active_node = node_names.AtV15) & (status__AtV15 != invalid) : node_names.Sel11;
+				(active_node = node_names.Sel11) & (status__Sel11 != invalid) : node_names.Sel12;
+				(active_node = node_names.Sel11) & (status__Sel11 = invalid) : next_child__Sel11;
+				(active_node = node_names.Sel12) & (status__Sel12 != invalid) : node_names.Sel13;
+				(active_node = node_names.Sel12) & (status__Sel12 = invalid) : next_child__Sel12;
+				(active_node = node_names.Sel13) & (status__Sel13 != invalid) : node_names.Sel14;
+				(active_node = node_names.Sel13) & (status__Sel13 = invalid) : next_child__Sel13;
+				(active_node = node_names.Sel14) & (status__Sel14 != invalid) : node_names.Root;
+				(active_node = node_names.Sel14) & (status__Sel14 = invalid) : next_child__Sel14;
+				(active_node = node_names.AtMaxB) & (status__AtMaxB != invalid) : node_names.SelInc;
+				(active_node = node_names.Inc) & (status__Inc != invalid) : node_names.SelInc;
+				(active_node = node_names.SelInc) & (status__SelInc != invalid) : node_names.Root;
+				(active_node = node_names.SelInc) & (status__SelInc = invalid) : next_child__SelInc;
+				(active_node = node_names.Root) & (status__Root != invalid) : -1;
+				(active_node = node_names.Root) & (status__Root = invalid) : next_child__Root;
+				TRUE : active_node;
+			esac;
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(vv) :=
+			case
+				(active_node = node_names.Dec) & (rv) : vv;
+				(active_node = node_names.Dec) & (TRUE) : max(0, (vv - 1));
+				(active_node = node_names.Inc) & (rv) : min(16, (vv + 1));
+				(active_node = node_names.Inc) & (TRUE) : vv;
+				TRUE : vv;
+			esac;
+		next(rv) :=
+			case
+				(active_node = node_names.Dec) & (TRUE) : {TRUE, FALSE};
+				(active_node = node_names.Inc) & (TRUE) : {TRUE, FALSE};
+				TRUE : rv;
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC G(((AtMaxA.status = success) -> G((!((AtMaxA.status = failure)) & !((At0A.status = success)) & !((Dec.status = success)) & !((Dec.status = failure)) & !((Inc.status = success)) & !((Inc.status = failure))))));
+CTLSPEC AG(((AtMaxA.status = success) -> AG((!((AtMaxA.status = failure)) & !((At0A.status = success)) & !((Dec.status = success)) & !((Dec.status = failure)) & !((Inc.status = success)) & !((Inc.status = failure))))));
+INVARSPEC (vv < 16);
+MODULE define_nodes
+	DEFINE
+		Root := 0;
+		SelDec := 1;
+		At0A := 2;
+		AtMaxA := 3;
+		Dec := 4;
+		Sel14 := 5;
+		Sel6 := 6;
+		Sel2 := 7;
+		Sel0 := 8;
+		AtV0 := 9;
+		AtV1 := 10;
+		Sel1 := 11;
+		AtV2 := 12;
+		AtV3 := 13;
+		Sel5 := 14;
+		Sel3 := 15;
+		AtV4 := 16;
+		AtV5 := 17;
+		Sel4 := 18;
+		AtV6 := 19;
+		AtV7 := 20;
+		Sel13 := 21;
+		Sel9 := 22;
+		Sel7 := 23;
+		AtV8 := 24;
+		AtV9 := 25;
+		Sel8 := 26;
+		AtV10 := 27;
+		AtV11 := 28;
+		Sel12 := 29;
+		Sel10 := 30;
+		AtV12 := 31;
+		AtV13 := 32;
+		Sel11 := 33;
+		AtV14 := 34;
+		AtV15 := 35;
+		SelInc := 36;
+		AtMaxB := 37;
+		Inc := 38;
+MODULE At0A_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 0) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtMaxA_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 16) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE Dec_module(rv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                rv : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV0_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 0) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV1_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 1) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV2_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 2) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV3_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 3) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV4_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 4) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV5_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 5) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV6_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 6) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV7_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 7) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV8_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 8) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV9_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 9) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV10_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 10) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV11_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 11) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV12_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 12) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV13_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 13) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV14_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 14) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtV15_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 15) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE AtMaxB_module(vv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                (vv = 16) : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;
+MODULE Inc_module(rv)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status :=
+            case
+                reset : invalid;
+                !(active) : previous_status;
+                rv : success;
+                TRUE : failure;
+            esac;
+    VAR
+        previous_status : {invalid, success, failure};
+    ASSIGN
+        init(previous_status) := invalid;
+        next(previous_status) := status;

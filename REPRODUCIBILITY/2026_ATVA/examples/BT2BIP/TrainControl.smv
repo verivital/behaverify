@@ -1,0 +1,130 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC ((system.s_stage_0 -> (system.v_stage_0 = 0)) & (system.d_stage_0 -> (system.v_stage_0 = 0)));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        resume_from_here_in_subtree__Root := -3;
+        Root.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        d_stage_1 :=
+            case
+                !(Open.active) : d_stage_0;
+                TRUE : TRUE;
+            esac;
+        s_stage_1 :=
+            case
+                !(Stop.active) : s_stage_0;
+                TRUE : TRUE;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        IsSpeedZero : IsSpeedZero_module(v_stage_0);
+        Stop : success_DEFAULT_module();
+        Seq1 : composite_sequence_without_memory_2(IsSpeedZero, Stop);
+        IsStopped : IsStopped_module(s_stage_1);
+        Open : success_DEFAULT_module();
+        Seq2 : composite_sequence_without_memory_2(IsStopped, Open);
+        Sel : composite_selector_without_memory_2(Seq1, Seq2);
+        IsDoorClosed : IsDoorClosed_module(d_stage_1);
+        Move : running_DEFAULT_module();
+        Seq3 : composite_sequence_without_memory_2(IsDoorClosed, Move);
+        Root : composite_sequence_without_memory_2(Sel, Seq3);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        v_stage_0 : 0..10;
+        d_stage_0 : boolean;
+        s_stage_0 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(v_stage_0) := 0;
+        init(d_stage_0) := FALSE;
+        init(s_stage_0) := TRUE;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(v_stage_0) :=
+            case
+                !(Move.active) : v_stage_0;
+                TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            esac;
+        next(d_stage_0) := d_stage_1;
+        next(s_stage_0) := s_stage_1;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        Root := 0;
+        Sel := 1;
+        Seq1 := 2;
+        IsSpeedZero := 3;
+        Stop := 4;
+        Seq2 := 5;
+        IsStopped := 6;
+        Open := 7;
+        Seq3 := 8;
+        IsDoorClosed := 9;
+        Move := 10;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE IsSpeedZero_module(v_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((v_stage_0 = 0)) ? success : failure;
+MODULE IsStopped_module(s_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (s_stage_1) ? success : failure;
+MODULE IsDoorClosed_module(d_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (!(d_stage_1)) ? success : failure;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;

@@ -1,0 +1,135 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC (system.storm_stage_0 -> !((system.UnfoldPanels.active)));
+INVARSPEC (system.storm_stage_0 -> !(system.panelsout_stage_1));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        resume_from_here_in_subtree__Root := -3;
+        Root.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        panelsout_stage_1 :=
+            case
+                !(UnfoldPanels.active) : panelsout_stage_0;
+                TRUE : TRUE;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        LowPower : LowPower_module(lowpower_stage_0);
+        UnfoldPanels : success_DEFAULT_module();
+        Seq1 : composite_sequence_without_memory_2(LowPower, UnfoldPanels);
+        Storm : Storm_module(storm_stage_0);
+        Hibernate : success_DEFAULT_module();
+        Seq2 : composite_sequence_without_memory_2(Storm, Hibernate);
+        DataReady : DataReady_module(dataready_stage_0);
+        Send : success_DEFAULT_module();
+        Seq3 : composite_sequence_without_memory_2(DataReady, Send);
+        Root : composite_selector_without_memory_3(Seq1, Seq2, Seq3);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        panelsout_stage_0 : boolean;
+        storm_stage_0 : boolean;
+        lowpower_stage_0 : boolean;
+        dataready_stage_0 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(panelsout_stage_0) := {TRUE, FALSE};
+        init(storm_stage_0) := {TRUE, FALSE};
+        init(lowpower_stage_0) := {TRUE, FALSE};
+        init(dataready_stage_0) := {TRUE, FALSE};
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(panelsout_stage_0) :=
+            case
+                !(Hibernate.active) : panelsout_stage_1;
+                TRUE : FALSE;
+            esac;
+        next(storm_stage_0) :=
+            case
+                !(Root.active) : storm_stage_0;
+                TRUE : {TRUE, FALSE};
+            esac;
+        next(lowpower_stage_0) :=
+            case
+                !(Root.active) : lowpower_stage_0;
+                TRUE : {TRUE, FALSE};
+            esac;
+        next(dataready_stage_0) :=
+            case
+                !(Root.active) : dataready_stage_0;
+                TRUE : {TRUE, FALSE};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        Root := 0;
+        Seq1 := 1;
+        LowPower := 2;
+        UnfoldPanels := 3;
+        Seq2 := 4;
+        Storm := 5;
+        Hibernate := 6;
+        Seq3 := 7;
+        DataReady := 8;
+        Send := 9;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+MODULE LowPower_module(lowpower_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (lowpower_stage_0) ? success : failure;
+MODULE Storm_module(storm_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (storm_stage_0) ? success : failure;
+MODULE DataReady_module(dataready_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (dataready_stage_0) ? success : failure;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;
