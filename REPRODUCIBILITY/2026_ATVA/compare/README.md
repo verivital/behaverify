@@ -1,7 +1,6 @@
-# BehaVerify vs BT2Fiacre vs BT2BIP — single-image comparison harness
+# BehaVerify vs BT2Fiacre vs BT2BIP: Single-Image Comparison Harness
 
-Self-contained Docker image that reproduces, end-to-end, the three
-quantitative results in the BehaVerify ATVA tool paper:
+Self-contained Docker image that reproduces, end-to-end, the three quantitative results in the BehaVerify ATVA tool paper:
 
 | Section / Table        | What this image runs                                      |
 |------------------------|-----------------------------------------------------------|
@@ -47,8 +46,7 @@ The single line that does everything inside the container is:
 /home/bv/run_all.sh   # baked in as the image's CMD
 ```
 
-It runs Table 2 (3-run avg), Table 3 (both tools), Section 4.3 (BehaVerify
-side), then renders the formatted tables.
+It runs Table 2 (3-run avg), Table 3 (both tools), Section 4.3 (BehaVerify side), then renders the formatted tables.
 
 ## Output
 
@@ -75,9 +73,7 @@ side), then renders the formatted tables.
 
 ## How BT2Fiacre is invoked (matches paper's measurement)
 
-The BT2Fiacre pipeline is invoked exactly as the paper's harness does
-(cross-checked with the `2026_FM/comparison/bt2fiacre/run_verification.sh`
-reference implementation in another build of this repo):
+The BT2Fiacre pipeline is invoked exactly as the paper's harness does:
 
 ```
 bt2fiacre -c "set tina_compact on" -c "set tick Node" -c "set default_prop off" \
@@ -87,22 +83,15 @@ sift /tmp/drone3.tts/drone3.net -kts /tmp/drone3.ktz -stats
 selt /tmp/drone3.ktz /tmp/drone3.tts/drone3.ltl -b
 ```
 
-Two knobs control how closely this reproduces the paper's
-"BT2Fiacre TIMEOUT" cell:
+Two knobs control how closely this reproduces the paper's "BT2Fiacre TIMEOUT" cell:
 
 | Env var                  | Default | Effect                                                                 |
 |--------------------------|---------|------------------------------------------------------------------------|
 | `BT2F_TIMEOUT`           | `300`   | Per-stage cap in seconds (5 min, matching Table 2's instance cap)      |
 | `BT2F_PERSISTENT_SETS`   | `0`     | When `1`, passes `-P` to `sift` (persistent-sets reduction)            |
 
-- **Default** (`BT2F_PERSISTENT_SETS=0`): reproduces the paper's slow
-  workload. The reference comparison report shows that without `-P` the
-  drone3 state space does not finish even at 90 min — at our 5 min cap
-  it cleanly TIMEOUTs in the `sift` stage.
-- **Fast path** (`BT2F_PERSISTENT_SETS=1`): adds Tina's persistent-sets
-  reduction. The full pipeline finishes in <1 s with ~5 markings — useful
-  for sanity-checking the toolchain works end-to-end, but **does not**
-  reflect the paper's measurement.
+- **Default** (`BT2F_PERSISTENT_SETS=0`): reproduces the paper's slow workload. The reference comparison report shows that without `-P` the drone3 state space does not finish even at 90 min: at our 5 min cap it cleanly TIMEOUTs in the `sift` stage.
+- **Fast path** (`BT2F_PERSISTENT_SETS=1`): adds Tina's persistent-sets reduction. The full pipeline finishes in under 1 second with roughly 5 markings: useful for sanity-checking the toolchain works end-to-end, but **does not** reflect the paper's measurement.
 
 Override either at run time:
 
@@ -129,12 +118,9 @@ docker run --rm -v "$(pwd)/.../output:/out" behaverify-compare python3 /home/bv/
 On a modern Threadripper-class host (single-CPU, no GPU work), the full
 `run_all.sh`:
 
-- Table 2 — three independent timing runs of N=1..10. The 5 min timeout
-  fires for naive at N >= 7..8, so the upper bound is ~3 × (N=1..6 fast +
-  4 × 5 min) = ~60 min. In practice ~35–45 min.
-- Table 3 — BehaVerify side ~5–10 min (translation + nuXmv INVAR);
-  BT2Fiacre side ~30 sec total.
-- Section 4.3 — reuses Table 3's MarsRover / TrainControl runs; near-zero
-  marginal cost.
+- Table 2: three independent timing runs of N=1..10. The 5 min timeout
+  fires for naive at N >= 7..8, so the upper bound is 3 * (N=1..6 fast + 4 * 5 min) = 60 min. In practice, it takes around 35–45 min.
+- Table 3: BehaVerify side 5–10 min (translation + nuXmv INVAR);   BT2Fiacre side takes 30 sec total.
+- Section 4.3: reuses Table 3's MarsRover / TrainControl runs; near-zero marginal cost.
 
-Plan ~50–60 min wall-clock for a clean run.
+Plan for a 60 min wall-clock for a clean run.
