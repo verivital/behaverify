@@ -23,7 +23,7 @@ Pinned versions (frozen so the comparison stays repeatable):
 > BehaVerify side is reproduced here. The output table includes the
 > verdicts and BehaVerify wall time.
 
-## Build and run (two commands)
+## Full run (two commands)
 
 From the **BehaVerify repo root** (so the local source is in the build
 context):
@@ -47,6 +47,61 @@ The single line that does everything inside the container is:
 ```
 
 It runs Table 2 (3-run avg), Table 3 (both tools), Section 4.3 (BehaVerify side), then renders the formatted tables.
+
+## Smoke test
+
+Run this before the full evaluation to confirm the tool chain works end-to-end
+(~3–5 min, no GPU or special hardware required):
+
+```bash
+mkdir -p REPRODUCIBILITY/2026_ATVA/compare/output
+docker run --rm \
+    -v "$(pwd)/REPRODUCIBILITY/2026_ATVA/compare/output:/out" \
+    behaverify-compare /home/bv/run_smoke.sh /out
+```
+
+What it runs and why it is fast:
+
+| Component | What | Why fast |
+|---|---|---|
+| Table 2 | N=1..3, **1** timing run, 30s timeout | All three instances are sub-second |
+| Table 3 | BT2Fiacre/drone3 with persistent-sets (`-P`) | Reduces state space to ~5 markings; finishes in < 5s per stage |
+| Sec 4.3 | BehaVerify on MarsRover / TrainControl (normal) | nuXmv finds counterexample immediately |
+
+Expected output (exact timings vary by host and run; structure must match):
+
+```
+==========================================================================
+BehaVerify ATVA 2026 SMOKE TEST
+==========================================================================
+...
+============================================================
+SMOKE TEST RESULTS
+============================================================
+
+Table 2 (N=1-3, 1 run, 30s timeout). Expected: all values < 1s
+ N    CTL-FF  CTL-Naive    LTL-FF  LTL-Naive
+ 1      0.01       0.02      0.02       0.03
+ 2      0.01       0.04      0.02       0.10
+ 3      0.01       0.11      0.06       0.15
+(single-run timings; the full evaluation averages 3 runs, so values will differ slightly)
+
+Table 3 BT2Fiacre smoke (drone3, -P). Expected: all stages < 5s
+  btf_to_fcr     : <t>s
+  frac           : <t>s
+  sift           : <t>s
+  selt           : <t>s
+
+Section 4.3 (BehaVerify/BT2BIP). Expected: 'false' verdicts, ~0s wall time
+  MarsRover      : verdicts=false, false  wall=0.00s
+  TrainControl   : verdicts=false  wall=0.00s
+
+============================================================
+Smoke test PASSED. All tools executed without errors.
+...
+```
+
+The smoke test for Table 3 uses BT2Fiacre's persistent-sets reduction (`-P`), so it finishes quickly. However, this is **not** the configuration reported in the paper.  The full evaluation (`run_all.sh`) omits `-P` and the BT2Fiacre columns correctly show TIMEOUT, matching Table 3.
 
 ## Output
 
