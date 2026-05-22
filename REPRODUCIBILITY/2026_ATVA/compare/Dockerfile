@@ -111,6 +111,7 @@ COPY REPRODUCIBILITY/2026_ATVA/compare/run_all.sh         /home/bv/run_all.sh
 COPY REPRODUCIBILITY/2026_ATVA/compare/run_table2.sh      /home/bv/run_table2.sh
 COPY REPRODUCIBILITY/2026_ATVA/compare/run_table3.sh      /home/bv/run_table3.sh
 COPY REPRODUCIBILITY/2026_ATVA/compare/run_section43.sh   /home/bv/run_section43.sh
+COPY REPRODUCIBILITY/2026_ATVA/compare/run_smoke.sh       /home/bv/run_smoke.sh
 COPY REPRODUCIBILITY/2026_ATVA/compare/format_results.py  /home/bv/format_results.py
 RUN dos2unix -q /home/bv/*.sh /home/bv/format_results.py && chmod +x /home/bv/*.sh
 
