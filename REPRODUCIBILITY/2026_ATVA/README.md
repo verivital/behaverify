@@ -248,6 +248,16 @@ docker run --rm -v "$(pwd)/compare/output:/out" behaverify-compare python3 /home
 
 ---
 
+## Running the GUI
+The BehaVerify GUI can be used using the same script provided in the paper.
+
+```python
+python src/behaverify_gui.py
+```
+
+## BehaVerify Documentation: Reuse and Repurposing Beyond the Tool Paper Results
+In addition to the artifact, BehaVerify has detailed documentation available on [https://verivital.github.io/behaverify/index.html](https://verivital.github.io/behaverify/index.html). There are starter guides for creating [custom trees in BehaVerify](https://verivital.github.io/behaverify/getting-started/first-model.html) and [various examples](https://verivital.github.io/behaverify/examples/index.html) to better understand the tool. We have also wrote an [API reference](https://verivital.github.io/behaverify/api/index.html) to facilitate reuse and repurposing.
+
 ## Folder Overview (Outside of Comparison Tests)
 
 | Folder | Contents |
@@ -260,6 +270,7 @@ docker run --rm -v "$(pwd)/compare/output:/out" behaverify-compare python3 /home
 | [`examples/NetworkExample/`](examples/NetworkExample/) | NSBT repo example with trained ONNX networks, used for the network verification experiment |
 | [`examples/DrunkenDrone/`](examples/DrunkenDrone/) | DrunkenDrone `.tree` source used for Figure 1 |
 | [`examples/MoVe4BT/`](examples/MoVe4BT/) | MoVe4BT comparison example sources, processed by `scripts/` |
+| [`saved_images/`](saved_images/) | Shows the saved images for the Mars Rover and Train Control examples referenced in Section 4.3 |
 | [`src/`](src/) | Frozen BehaVerify source snapshot; `scripts/` calls `src/dsl_to_nuxmv.py` directly |
 | [`metamodel/`](metamodel/) | Frozen BehaVerify DSL grammar (`behaverify.tx`), referenced by `src/dsl_to_nuxmv.py` |
 | [`requirements/`](requirements/) | Python dependency list installed by `compare/Dockerfile` |
