@@ -980,6 +980,19 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
             if serene_print:
                 running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
             return (node_name, node_names, running_string, variable_print_info)
+        if current_node.node_type == 'one_shot':
+            if current_node.one_shot == 'success_only':
+                policy = 'py_trees.common.OneShotPolicy.ON_SUCCESSFUL_COMPLETION'
+            elif current_node.one_shot == 'success_failure':
+                policy = 'py_trees.common.OneShotPolicy.ON_COMPLETION'
+            else:
+                raise NotImplementedError('ERROR: one_shot ' + current_node.one_shot + ' is not supported in PyTrees (only success_only and success_failure).')
+            (child_name, node_names, running_string, variable_print_info) = walk_tree_recursive(current_node.child, node_names, running_string, variable_print_info)
+            running_string += (indent(1) + node_name + ' = py_trees.decorators.OneShot('
+                               + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ', policy = ' + policy + ')' + os.linesep)
+            if serene_print:
+                running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
+            return (node_name, node_names, running_string, variable_print_info)
 
         # so at this point, we're in composite node territory
         children = []
