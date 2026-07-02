@@ -28,7 +28,7 @@ from PIL import Image, ImageDraw, ImageFont
 CELL = 26
 BORDER = 14
 PAD = 6
-CAPTION = 78
+CAPTION = 148
 
 AMBER = (235, 165, 0)
 GREEN = (0, 150, 60)
@@ -40,9 +40,16 @@ DRONE = (25, 90, 220)
 TARGET = (230, 90, 20)
 DRONE_TRAIL = (140, 170, 240)
 TARGET_TRAIL = (245, 180, 130)
+STREET_PATH = (200, 120, 40)
+ZONE_BELIEF_FILL = (255, 244, 180)
+ZONE_BELIEF_EDGE = (200, 160, 0)
+ZONE_GOAL_FILL = (200, 240, 200)
+ZONE_GOAL_EDGE = (0, 130, 60)
+KOZ_EDGE = (205, 30, 30)
+STAY_WITHIN_EDGE = (0, 160, 200)
 
 SPEC_TEXT = {
-    'sat': 'LTL F(found) / CTL (drone_safe -> AF found)   [verified SAT; witness trace]',
+    'sat': 'CTL (drone_safe -> AF found) + AG zone-consistency   [verified SAT; witness trace]',
     'violation': 'LTL F[0,30](found) / CTL (drone_safe -> AF(found & step<=30))   [VIOLATED; counterexample]',
     'neural': 'retrained neural planner (2048x2 ONNX, greedy) -- SIMULATION ONLY, not verified',
 }
@@ -106,6 +113,27 @@ def render(input_path, meta_path, mode, prefix):
     path = meta['path']
     deadline = meta['deadline']
     sensor = meta['sensor_range']
+    block = meta.get('block', 40)
+    fly_at = meta.get('fly_at', 80)
+    zones = meta.get('zones', [])
+    inventory = meta.get('zone_inventory', {})
+    polyline = meta.get('target_world_polyline', [])
+
+    def world_to_px(wx, wy):
+        '''continuous world coords -> pixel coords (same +500 // block
+        transform as the abstraction, kept continuous for the street path)'''
+        bx = (wx + 500.0) / block
+        by = (wy + 500.0) / block
+        return (BORDER + PAD + bx * CELL, BORDER + PAD + (n - by) * CELL)
+
+    def zone_style(zone):
+        if zone['kind'] == 'keep_out':
+            return (None, KOZ_EDGE)
+        if zone['kind'] == 'stay_within':
+            return (None, STAY_WITHIN_EDGE)
+        if zone['label'].startswith('goal'):
+            return (ZONE_GOAL_FILL, ZONE_GOAL_EDGE)
+        return (ZONE_BELIEF_FILL, ZONE_BELIEF_EDGE)
 
     (states, loop_index) = load_states(input_path)
     if not states:
@@ -164,6 +192,34 @@ def render(input_path, meta_path, mode, prefix):
                     draw.rectangle(box, fill=OBSTACLE)
                 else:
                     draw.rectangle(box, outline=GRID_LINE)
+        # mission zones (episode description.json, projected to blocks):
+        # free cells inside a zone are tinted; zone boundary drawn on top,
+        # thick while the zone's step window is active
+        for zone in zones:
+            (fill, edge) = zone_style(zone)
+            (bx0, by0, bx1, by1) = zone['block_rect']
+            if fill is not None:
+                for gx in range(bx0, bx1 + 1):
+                    for gy in range(by0, by1 + 1):
+                        if grid[gx][gy] == 0:
+                            box = cell_box(gx, gy, n)
+                            draw.rectangle(box, fill=fill, outline=GRID_LINE)
+            lo = cell_box(bx0, by1, n)
+            hi = cell_box(bx1, by0, n)
+            window = zone.get('step_window')
+            active = window is not None and window[0] <= step <= window[1]
+            if zone['kind'] == 'keep_out':
+                # hatch the keep-out interior (drone-forbidden)
+                for off in range(0, (hi[2] - lo[0]) + (hi[3] - lo[1]), 10):
+                    draw.line([(lo[0] + off, lo[1]), (lo[0], lo[1] + off)],
+                              fill=edge, width=1)
+            draw.rectangle([lo[0], lo[1], hi[2], hi[3]], outline=edge,
+                           width=4 if active else 2)
+        # actual (world-coordinate) target street trajectory from the episode
+        # CSV: the ground vehicle drives streets THROUGH drone no-fly blocks
+        if polyline:
+            draw.line([world_to_px(wx, wy) for (wx, wy) in polyline],
+                      fill=STREET_PATH, width=2)
         # trails
         drone_trail.append((dx, dy))
         target_trail.append((tx, ty))
@@ -190,11 +246,42 @@ def render(input_path, meta_path, mode, prefix):
         # caption
         cap_y = height - CAPTION - BORDER + 2 * PAD
         draw.rectangle([BORDER, height - CAPTION - BORDER + PAD, width - BORDER, height - BORDER], fill=(25, 28, 32))
-        draw.text((BORDER + PAD, cap_y), 'NSBT city tracking - 25x25 ADK city map (block=40m, fly_at=80m)', fill='white', font=font_small)
+        draw.text((BORDER + PAD, cap_y),
+                  'NSBT city tracking - %dx%d ADK city (block=%dm, fly_at=%dm) - episode-000 track'
+                  % (n, n, block, fly_at), fill='white', font=font_small)
         draw.text((BORDER + PAD, cap_y + 17), SPEC_TEXT[mode], fill=(200, 200, 200), font=font_small)
         draw.text((BORDER + PAD, cap_y + 36),
                   'tick %3d   drone=(%d,%d)  target=(%d,%d)  dist=%d   %s' % (step, dx, dy, tx, ty, dist, status[0]),
                   fill=status[1] if status[1] != AMBER else (255, 200, 90), font=font_big)
+        # legend
+        leg_y = cap_y + 58
+        draw.ellipse([BORDER + PAD, leg_y, BORDER + PAD + 12, leg_y + 12], fill=DRONE)
+        draw.text((BORDER + PAD + 17, leg_y - 1), 'drone (verified NSBT)', fill=(200, 200, 200), font=font_small)
+        draw.rectangle([BORDER + 190, leg_y, BORDER + 202, leg_y + 12], fill=TARGET)
+        draw.text((BORDER + 207, leg_y - 1), 'target (ground vehicle)', fill=(200, 200, 200), font=font_small)
+        draw.rectangle([BORDER + 390, leg_y, BORDER + 402, leg_y + 12], fill=OBSTACLE)
+        draw.text((BORDER + 407, leg_y - 1), 'drone no-fly block (>=%dm structure)' % fly_at,
+                  fill=(200, 200, 200), font=font_small)
+        leg_y += 19
+        draw.line([BORDER + PAD, leg_y + 6, BORDER + PAD + 12, leg_y + 6], fill=STREET_PATH, width=2)
+        draw.text((BORDER + PAD + 17, leg_y - 1), 'actual street trajectory (target drives BELOW the no-fly blocks)',
+                  fill=(200, 200, 200), font=font_small)
+        leg_y += 19
+        leg_x = BORDER + PAD
+        for zone in zones:
+            (fill, edge) = zone_style(zone)
+            draw.rectangle([leg_x, leg_y, leg_x + 12, leg_y + 12],
+                           fill=fill, outline=edge)
+            text = '%s t=[%g,%g]s' % (zone['label'], zone['window_s'][0], zone['window_s'][1])
+            draw.text((leg_x + 17, leg_y - 1), text, fill=(200, 200, 200), font=font_small)
+            leg_x += 17 + 8 * len(text) + 20
+        leg_y += 19
+        koz_text = ('keep-out: none in episode' if not inventory.get('keep_out_zones')
+                    else 'keep-out zones: %d (hatched red)' % inventory['keep_out_zones'])
+        sw_text = ('stay-within: none (full map reachable)' if not inventory.get('stay_within_zones')
+                   else 'stay-within zones: %d (cyan)' % inventory['stay_within_zones'])
+        draw.text((BORDER + PAD, leg_y - 1), koz_text + '   ' + sw_text,
+                  fill=(200, 200, 200), font=font_small)
         frame_path = os.path.join(frames_dir, 'frame_%03d.png' % tick)
         image.save(frame_path)
         frames.append(image)
