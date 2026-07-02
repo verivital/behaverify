@@ -1,4 +1,6 @@
-FROM ubuntu:24.10
+FROM ubuntu:24.04
+# 24.10 (oracular) reached EOL and was dropped from archive.ubuntu.com,
+# which 404s apt-get update; 24.04 is the LTS base.
 RUN apt-get update -y
 RUN apt-get upgrade -y
 
