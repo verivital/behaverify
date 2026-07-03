@@ -40,8 +40,8 @@ AMBER = base.AMBER
 GREEN = base.GREEN
 RED = base.RED
 
-SPEC_LINE = ('LTL window [%g,%g]s: eventually acquire target  '
-             '[model nuXmv-verified SAT]')
+SPEC_LINE = ('Spec window [%g,%g]s: eventually acquire target  '
+             '[BehaVerify/nuXmv model: SAT]')
 
 
 def load_csv(path, cols):
@@ -115,7 +115,8 @@ def render(args):
                 base.BORDER + base.PAD + (n - by) * base.CELL)
 
     width = 2 * (base.BORDER + base.PAD) + n * base.CELL
-    height = 2 * (base.BORDER + base.PAD) + n * base.CELL + base.CAPTION
+    height = (2 * (base.BORDER + base.PAD) + n * base.CELL
+              + (0 if args.plain else base.CAPTION))
     font_big = base.get_font(15)
     font_small = base.get_font(12)
     os.makedirs(args.frames_dir, exist_ok=True)
@@ -135,6 +136,7 @@ def render(args):
         (dx, dy) = to_block(dxw, dyw)
         (tx, ty) = to_block(txw, tyw)
         dist = abs(dx - tx) + abs(dy - ty)
+        dist_m = math.hypot(dxw - txw, dyw - tyw)
         found_ever = mt >= args.found_t and args.found_t <= w1
         violated = (not found_ever) and mt > w1
 
@@ -147,10 +149,12 @@ def render(args):
         else:
             status = ('PENDING: %.0fs left' % (w1 - mt), AMBER)
 
-        image = Image.new('RGB', (width, height), status[1])
+        image = Image.new('RGB', (width, height),
+                          base.GRID_LINE if args.plain else status[1])
         draw = ImageDraw.Draw(image)
         draw.rectangle([base.BORDER, base.BORDER, width - base.BORDER,
-                        height - base.BORDER - base.CAPTION + base.PAD],
+                        height - base.BORDER
+                        - (0 if args.plain else base.CAPTION - base.PAD)],
                        fill=base.FREE)
         for gx in range(n):
             for gy in range(n):
@@ -219,12 +223,16 @@ def render(args):
         box = base.cell_box(tx, ty, n)
         draw.rectangle([box[0] + 3, box[1] + 3, box[2] - 3, box[3] - 3],
                        fill=base.TARGET)
-        draw.text((box[0] + 8, box[1] + 5), 'T', fill='white',
-                  font=font_small)
+        if not args.plain:
+            draw.text((box[0] + 8, box[1] + 5), 'T', fill='white',
+                      font=font_small)
         # drone
         box = base.cell_box(dx, dy, n)
         draw.ellipse([box[0] + 2, box[1] + 2, box[2] - 2, box[3] - 2],
                      fill=base.DRONE, outline='white')
+        if args.plain:
+            image.save(os.path.join(args.frames_dir, 'frame_%05d.png' % k))
+            continue
         draw.text((box[0] + 8, box[1] + 5), 'D', fill='white',
                   font=font_small)
         # caption
@@ -234,7 +242,7 @@ def render(args):
                         width - base.BORDER, height - base.BORDER],
                        fill=(25, 28, 32))
         draw.text((base.BORDER + base.PAD, cap_y),
-                  'NSBT REAL FLIGHT %s - %dx%d (block %dm, fly_at %dm)'
+                  'GRIDWORLD TWIN %s - %dx%d (block %dm, fly_at %dm)'
                   % (args.run_label, n, n, block, fly_at),
                   fill='white', font=font_small)
         draw.text((base.BORDER + base.PAD, cap_y + 17),
@@ -242,9 +250,9 @@ def render(args):
                   font=font_small)
         mode = mode_at(mt)
         draw.text((base.BORDER + base.PAD, cap_y + 36),
-                  't=%6.1fs %s D=(%d,%d) T=(%d,%d) dist=%d  %s'
+                  't=%6.1fs %s D=(%d,%d) T=(%d,%d) dist=%d blk (%.0f m)  %s'
                   % (mt, ('[%s]' % mode) if mode else '', dx, dy, tx, ty,
-                     dist, status[0]),
+                     dist, dist_m, status[0]),
                   fill=status[1] if status[1] != AMBER else (255, 200, 90),
                   font=font_big)
         leg_y = cap_y + 58
@@ -252,7 +260,7 @@ def render(args):
                       base.BORDER + base.PAD + 12, leg_y + 12],
                      fill=base.DRONE)
         draw.text((base.BORDER + base.PAD + 17, leg_y - 1),
-                  'drone (NSBT, bag telemetry)', fill=(200, 200, 200),
+                  'drone (bag telemetry)', fill=(200, 200, 200),
                   font=font_small)
         draw.rectangle([base.BORDER + 230, leg_y, base.BORDER + 242,
                         leg_y + 12], fill=base.TARGET)
@@ -306,4 +314,7 @@ if __name__ == '__main__':
     ap.add_argument('--window', nargs=2, type=float, default=[5.0, 111.0])
     ap.add_argument('--modes', default=None)
     ap.add_argument('--run-label', default='trackrun_2026_07_02__09_27_14')
+    ap.add_argument('--plain', action='store_true',
+                    help='grid+markers+trails only: no caption, no border '
+                         'status, no text')
     render(ap.parse_args())

@@ -48,11 +48,12 @@ ZONE_GOAL_EDGE = (0, 130, 60)
 KOZ_EDGE = (205, 30, 30)
 STAY_WITHIN_EDGE = (0, 160, 200)
 
-SPEC_TEXT = {
-    'sat': 'CTL (drone_safe -> AF found) + AG zone-consistency   [verified SAT; witness trace]',
-    'violation': 'LTL F[0,30](found) / CTL (drone_safe -> AF(found & step<=30))   [VIOLATED; counterexample]',
-    'neural': 'retrained neural planner (2048x2 ONNX, greedy) -- SIMULATION ONLY, not verified',
-}
+def spec_text(mode, deadline):
+    return {
+        'sat': 'CTL (drone_safe -> AF found) + zone-consistency   [verified SAT; witness trace]',
+        'violation': 'CTL (drone_safe -> AF(found & step<=%d))   [VIOLATED; counterexample]' % deadline,
+        'neural': 'retrained neural planner (2048x2 ONNX, greedy) -- SIMULATION ONLY, not verified',
+    }[mode]
 
 
 def parse_nuxmv_trace(file_name):
@@ -105,8 +106,9 @@ def cell_box(x, y, n):
     return (px, py, px + CELL, py + CELL)
 
 
-def render(input_path, meta_path, mode, prefix):
+def render(input_path, meta_path, mode, prefix, plain=False):
     meta = json.load(open(meta_path, 'r', encoding='utf-8'))
+    episode_label = meta.get('episode_label', 'episode-000 track')
     grid = meta['grid']
     n = len(grid)
     tpw = meta['ticks_per_waypoint']
@@ -150,7 +152,7 @@ def render(input_path, meta_path, mode, prefix):
     print('rendering %d frames after static-tail trim' % len(states))
 
     width = 2 * (BORDER + PAD) + n * CELL
-    height = 2 * (BORDER + PAD) + n * CELL + CAPTION
+    height = 2 * (BORDER + PAD) + n * CELL + (0 if plain else CAPTION)
     font_big = get_font(15)
     font_small = get_font(12)
 
@@ -181,9 +183,10 @@ def render(input_path, meta_path, mode, prefix):
         if mode == 'violation' and violated:
             status = ('VIOLATED: missed deadline', RED)
 
-        image = Image.new('RGB', (width, height), status[1])
+        image = Image.new('RGB', (width, height), GRID_LINE if plain else status[1])
         draw = ImageDraw.Draw(image)
-        draw.rectangle([BORDER, BORDER, width - BORDER, height - BORDER - CAPTION + PAD], fill=FREE)
+        draw.rectangle([BORDER, BORDER, width - BORDER,
+                        height - BORDER - (0 if plain else CAPTION - PAD)], fill=FREE)
         # cells
         for gx in range(n):
             for gy in range(n):
@@ -238,18 +241,25 @@ def render(input_path, meta_path, mode, prefix):
         # target
         box = cell_box(tx, ty, n)
         draw.rectangle([box[0] + 3, box[1] + 3, box[2] - 3, box[3] - 3], fill=TARGET)
-        draw.text((box[0] + 8, box[1] + 5), 'T', fill='white', font=font_small)
+        if not plain:
+            draw.text((box[0] + 8, box[1] + 5), 'T', fill='white', font=font_small)
         # drone
         box = cell_box(dx, dy, n)
         draw.ellipse([box[0] + 2, box[1] + 2, box[2] - 2, box[3] - 2], fill=DRONE, outline='white')
-        draw.text((box[0] + 8, box[1] + 5), 'D', fill='white', font=font_small)
+        if not plain:
+            draw.text((box[0] + 8, box[1] + 5), 'D', fill='white', font=font_small)
+        if plain:
+            frame_path = os.path.join(frames_dir, 'frame_%03d.png' % tick)
+            image.save(frame_path)
+            frames.append(image)
+            continue
         # caption
         cap_y = height - CAPTION - BORDER + 2 * PAD
         draw.rectangle([BORDER, height - CAPTION - BORDER + PAD, width - BORDER, height - BORDER], fill=(25, 28, 32))
         draw.text((BORDER + PAD, cap_y),
-                  'NSBT city tracking - %dx%d ADK city (block=%dm, fly_at=%dm) - episode-000 track'
-                  % (n, n, block, fly_at), fill='white', font=font_small)
-        draw.text((BORDER + PAD, cap_y + 17), SPEC_TEXT[mode], fill=(200, 200, 200), font=font_small)
+                  'NSBT city tracking - %dx%d ADK city (block=%dm, fly_at=%dm) - %s'
+                  % (n, n, block, fly_at, episode_label), fill='white', font=font_small)
+        draw.text((BORDER + PAD, cap_y + 17), spec_text(mode, deadline), fill=(200, 200, 200), font=font_small)
         draw.text((BORDER + PAD, cap_y + 36),
                   'tick %3d   drone=(%d,%d)  target=(%d,%d)  dist=%d   %s' % (step, dx, dy, tx, ty, dist, status[0]),
                   fill=status[1] if status[1] != AMBER else (255, 200, 90), font=font_big)
@@ -302,4 +312,6 @@ def render(input_path, meta_path, mode, prefix):
 
 
 if __name__ == '__main__':
-    render(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    plain_flag = '--plain' in sys.argv
+    argv = [a for a in sys.argv if a != '--plain']
+    render(argv[1], argv[2], argv[3], argv[4], plain=plain_flag)

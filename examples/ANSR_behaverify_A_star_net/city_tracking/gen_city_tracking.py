@@ -73,14 +73,14 @@ def world_to_block(w):
     return min(MAX_VAL, max(MIN_VAL, int((w + HALF_WORLD) // BLOCK)))
 
 
-def load_target_path():
+def load_target_path(target_csv):
     '''downscale the episode target trajectory to a deduped block waypoint
     list; also return the block-entry wall time (s) of every waypoint and a
     decimated world polyline (for the renderer street-path overlay)'''
     blocks = []
     entry_times = []
     polyline = []
-    with open(TARGET_CSV, 'r', encoding='utf-8') as csv_file:
+    with open(target_csv, 'r', encoding='utf-8') as csv_file:
         for (i, row) in enumerate(csv.reader(csv_file)):
             block = (world_to_block(float(row[0])), world_to_block(float(row[1])))
             if not blocks or block != blocks[-1]:
@@ -129,10 +129,10 @@ def window_to_steps(window, entry_times, ticks_per_waypoint, step_max):
     return (lo, hi)
 
 
-def load_zones(entry_times, ticks_per_waypoint, step_max):
+def load_zones(episode_desc, entry_times, ticks_per_waypoint, step_max):
     '''parse ALL zone/constraint types of the adapted episode description;
     project each into block space; map time bounds to step windows'''
-    desc = json.load(open(EPISODE_DESC, 'r', encoding='utf-8'))
+    desc = json.load(open(episode_desc, 'r', encoding='utf-8'))
     spatial = desc.get('scenario_constraints', {}).get('spatial_constraints', {})
     koz = spatial.get('keep_out_zones', [])
     swz = spatial.get('stay_within_zones', [])
@@ -175,16 +175,30 @@ def load_zones(entry_times, ticks_per_waypoint, step_max):
     return (zones, inventory)
 
 
-def zone_spec(zone):
-    '''step-counter-dependent CTL consistency spec: whenever the step counter
-    is inside the zone's active window, the scripted target is inside the
-    zone's block rectangle'''
+def zone_exprs(zone):
     (bx0, by0, bx1, by1) = zone['block_rect']
     (s_lo, s_hi) = zone['step_window']
     inside = ('(and, (gte, tar_x, %d), (lte, tar_x, %d), '
               '(gte, tar_y, %d), (lte, tar_y, %d))' % (bx0, bx1, by0, by1))
     when = ('(and, (gte, step, %d), (lte, step, %d))' % (s_lo, s_hi))
+    return (when, inside)
+
+
+def zone_spec(zone):
+    '''step-counter-dependent CTL consistency spec: whenever the step counter
+    is inside the zone's active window, the scripted target is inside the
+    zone's block rectangle (containment semantics: park/goal-style beliefs)'''
+    (when, inside) = zone_exprs(zone)
     return ('    CTLSPEC { (always_globally, (implies, %s, %s)) }'
+            % (when, inside))
+
+
+def zone_visit_spec(zone):
+    '''step-counter-dependent CTL consistency spec, VISIT semantics (looping
+    routes): on every path the scripted target is eventually inside the
+    zone's block rectangle at some step of the zone's active window'''
+    (when, inside) = zone_exprs(zone)
+    return ('    CTLSPEC { (always_finally, (and, %s, %s)) }'
             % (when, inside))
 
 
@@ -383,6 +397,12 @@ def main():
     parser.add_argument('--ignore-dir', default=IGNORE)
     parser.add_argument('--prefix', default='city_track')
     parser.add_argument('--allow-pursuit-failure', action='store_true')
+    parser.add_argument('--target-csv', default=TARGET_CSV,
+                        help='episode target trajectory CSV [x,y,heading,t]')
+    parser.add_argument('--episode-desc', default=EPISODE_DESC,
+                        help='adapted episode description.json')
+    parser.add_argument('--episode-label', default='episode-000 track',
+                        help='human label stored in meta for the renderers')
     args = parser.parse_args()
     (deadline, ticks_per_waypoint) = (args.deadline, args.ticks_per_waypoint)
     (MAX_VAL, BLOCK) = (args.max_val, args.block)
@@ -390,7 +410,7 @@ def main():
     OBSTACLES = os.path.join(out_dir, 'obstacles%s.txt' % args.map_id)
     TABLE = os.path.join(out_dir, 'table%s.txt' % args.map_id)
 
-    (path, entry_times, polyline) = load_target_path()
+    (path, entry_times, polyline) = load_target_path(args.target_csv)
     (grid, number_of_obstacles) = load_obstacle_grid()
     cases = load_table_cases()
     net = make_net(cases)
@@ -423,8 +443,9 @@ def main():
     print('step_max:', step_max, '| deadline:', deadline)
 
     # mission zones of the ACTUAL adapted episode
-    (zones, inventory) = load_zones(entry_times, ticks_per_waypoint, step_max)
-    print('zone inventory of', EPISODE_DESC, '->', inventory)
+    (zones, inventory) = load_zones(args.episode_desc, entry_times,
+                                    ticks_per_waypoint, step_max)
+    print('zone inventory of', args.episode_desc, '->', inventory)
     zone_specs = []
     for zone in zones:
         print('  zone [%s] world_rect=%s window_s=%s -> blocks=%s steps=%s'
@@ -433,14 +454,30 @@ def main():
         if zone['step_window'] is None:
             print('    (window precedes/follows the scripted path: no spec)')
             continue
-        # python-mirror consistency check before emitting the CTL spec
+        # python-mirror consistency check picks the belief semantics:
+        #   containment (AG window -> in zone) if the scripted target never
+        #   leaves the zone inside its window (park/goal-style episodes);
+        #   otherwise visit (AF (window & in zone)) for looping routes that
+        #   pass through the belief zone during the window.
         (bx0, by0, bx1, by1) = zone['block_rect']
         (s_lo, s_hi) = zone['step_window']
+        in_zone_steps = []
         for step in range(s_lo, min(s_hi, step_max) + 1):
             (tx, ty) = path[min(len(path) - 1, step // ticks_per_waypoint)]
-            assert bx0 <= tx <= bx1 and by0 <= ty <= by1, \
-                ('scripted target leaves zone inside its window', zone, step)
-        zone_specs.append(zone_spec(zone))
+            if bx0 <= tx <= bx1 and by0 <= ty <= by1:
+                in_zone_steps.append(step)
+        window_steps = min(s_hi, step_max) - s_lo + 1
+        assert in_zone_steps, \
+            ('scripted target NEVER inside zone during its window '
+             '(belief map inconsistent with trajectory)', zone)
+        if len(in_zone_steps) == window_steps:
+            zone['spec_kind'] = 'containment (AG window -> in zone)'
+            zone_specs.append(zone_spec(zone))
+        else:
+            zone['spec_kind'] = 'visit (AF (window & in zone))'
+            zone_specs.append(zone_visit_spec(zone))
+        print('    in-zone steps %d/%d -> %s'
+              % (len(in_zone_steps), window_steps, zone['spec_kind']))
     zone_spec_text = ('\n' + '\n'.join(zone_specs)) if zone_specs else ''
 
     # pick the sim start: catch time in [16, 24], farthest from the target start
@@ -507,6 +544,8 @@ def main():
         'zones': zones, 'zone_inventory': inventory,
         'pursuit_failures': failed_starts,
         'target_world_polyline': polyline,
+        'episode_label': args.episode_label,
+        'target_csv': args.target_csv, 'episode_desc': args.episode_desc,
     }
     meta_path = os.path.join(out_dir, '%s_meta.json' % args.prefix)
     with open(meta_path, 'w', encoding='utf-8') as meta_file:
