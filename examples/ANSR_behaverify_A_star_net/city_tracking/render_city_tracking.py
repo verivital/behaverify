@@ -117,15 +117,17 @@ def render(input_path, meta_path, mode, prefix, plain=False):
     sensor = meta['sensor_range']
     block = meta.get('block', 40)
     fly_at = meta.get('fly_at', 80)
+    x_off = meta.get('x_off', 500)
+    y_off = meta.get('y_off', 500)
     zones = meta.get('zones', [])
     inventory = meta.get('zone_inventory', {})
     polyline = meta.get('target_world_polyline', [])
 
     def world_to_px(wx, wy):
-        '''continuous world coords -> pixel coords (same +500 // block
+        '''continuous world coords -> pixel coords (same (w+off) // block
         transform as the abstraction, kept continuous for the street path)'''
-        bx = (wx + 500.0) / block
-        by = (wy + 500.0) / block
+        bx = (wx + x_off) / block
+        by = (wy + y_off) / block
         return (BORDER + PAD + bx * CELL, BORDER + PAD + (n - by) * CELL)
 
     def zone_style(zone):

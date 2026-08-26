@@ -39,9 +39,27 @@ import render_city_tracking as base
 AMBER = base.AMBER
 GREEN = base.GREEN
 RED = base.RED
+LIGHT_BUILDING = (196, 202, 210)   # mid-height building, below the no-fly threshold
 
 SPEC_LINE = ('Spec window [%g,%g]s: eventually acquire target  '
              '[BehaVerify/nuXmv model: SAT]')
+
+
+def building_grid(elev_path, n, block, x_off, y_off, thresh):
+    '''per-cell mid-height building mask (block-max ground elevation >= thresh) so
+    the twin can show the real city buildings that fall below the verified no-fly
+    height. Visualization only -- the verified obstacle set stays meta['grid'].'''
+    import numpy as _np
+    e = _np.fromfile(elev_path, dtype=_np.float32).reshape(1000, 1000)
+    b = [[0] * n for _ in range(n)]
+    for gx in range(n):
+        ix = int(gx * block - x_off + 500)
+        for gy in range(n):
+            iy = int(gy * block - y_off + 500)
+            blk = e[ix:ix + block, iy:iy + block]
+            if blk.size and blk.max() >= thresh:
+                b[gx][gy] = 1
+    return b
 
 
 def load_csv(path, cols):
@@ -83,9 +101,15 @@ def render(args):
     sensor = meta['sensor_range']
     block = meta.get('block', 40)
     fly_at = meta.get('fly_at', 80)
+    x_off = meta.get('x_off', 500)
+    y_off = meta.get('y_off', 500)
     zones = meta.get('zones', [])
     inventory = meta.get('zone_inventory', {})
     polyline = meta.get('target_world_polyline', [])
+
+    buildings = None
+    if args.elev and os.path.exists(args.elev):
+        buildings = building_grid(args.elev, n, block, x_off, y_off, args.build_thresh)
 
     drone = load_csv(args.drone_csv, (1, 2, 3, 4))     # t_header, x, y, z
     target = load_csv(args.target_csv, (3, 0, 1))      # t, x, y
@@ -105,12 +129,12 @@ def render(args):
         return short_modes.get(cur, cur)
 
     def to_block(wx, wy):
-        return (max(0, min(n - 1, int((wx + 500) // block))),
-                max(0, min(n - 1, int((wy + 500) // block))))
+        return (max(0, min(n - 1, int((wx + x_off) // block))),
+                max(0, min(n - 1, int((wy + y_off) // block))))
 
     def world_to_px(wx, wy):
-        bx = (wx + 500.0) / block
-        by = (wy + 500.0) / block
+        bx = (wx + x_off) / block
+        by = (wy + y_off) / block
         return (base.BORDER + base.PAD + bx * base.CELL,
                 base.BORDER + base.PAD + (n - by) * base.CELL)
 
@@ -161,6 +185,8 @@ def render(args):
                 box = base.cell_box(gx, gy, n)
                 if grid[gx][gy] == 1:
                     draw.rectangle(box, fill=base.OBSTACLE)
+                elif buildings is not None and buildings[gx][gy]:
+                    draw.rectangle(box, fill=LIGHT_BUILDING, outline=base.GRID_LINE)
                 else:
                     draw.rectangle(box, outline=base.GRID_LINE)
         # mission zones: tint free cells, boundary thick while window active
@@ -270,8 +296,12 @@ def render(args):
         draw.rectangle([base.BORDER + 440, leg_y, base.BORDER + 452,
                         leg_y + 12], fill=base.OBSTACLE)
         draw.text((base.BORDER + 457, leg_y - 1),
-                  'drone no-fly block (>=%dm)' % fly_at,
-                  fill=(200, 200, 200), font=font_small)
+                  'no-fly (>=%dm)' % fly_at, fill=(200, 200, 200), font=font_small)
+        if buildings is not None:
+            draw.rectangle([base.BORDER + 560, leg_y, base.BORDER + 572,
+                            leg_y + 12], fill=LIGHT_BUILDING)
+            draw.text((base.BORDER + 577, leg_y - 1), 'building (<no-fly)',
+                      fill=(200, 200, 200), font=font_small)
         leg_y += 19
         leg_x = base.BORDER + base.PAD
         for zone in zones:
@@ -317,4 +347,10 @@ if __name__ == '__main__':
     ap.add_argument('--plain', action='store_true',
                     help='grid+markers+trails only: no caption, no border '
                          'status, no text')
+    ap.add_argument('--elev', default=None,
+                    help='city_elev.f32 (1000x1000): draw mid-height buildings '
+                         '(below the no-fly height) as a light tier so the twin '
+                         'matches the overhead city (visualization only)')
+    ap.add_argument('--build-thresh', type=float, default=10.0,
+                    help='min ground elevation (m) to show as a building tier')
     render(ap.parse_args())

@@ -67,10 +67,16 @@ MIN_VAL = 0
 MAX_VAL = 24
 BLOCK = 40
 HALF_WORLD = 500  # npz cell = world coord + 500 (center [0,0], resolution 1)
+# per-axis world->block origin offset: block = (w + OFF) // BLOCK. For the full
+# 1000x1000 map OFF = HALF_WORLD = 500 on both axes (origin at world -500). For
+# a cropped ROI (finer block over the region the drone/target actually traverse)
+# OFF = -world_min of the ROI on that axis, so block 0 is the ROI's min corner.
+X_OFF = 500
+Y_OFF = 500
 
 
-def world_to_block(w):
-    return min(MAX_VAL, max(MIN_VAL, int((w + HALF_WORLD) // BLOCK)))
+def world_to_block(w, off=None):
+    return min(MAX_VAL, max(MIN_VAL, int((w + (HALF_WORLD if off is None else off)) // BLOCK)))
 
 
 def load_target_path(target_csv):
@@ -82,7 +88,8 @@ def load_target_path(target_csv):
     polyline = []
     with open(target_csv, 'r', encoding='utf-8') as csv_file:
         for (i, row) in enumerate(csv.reader(csv_file)):
-            block = (world_to_block(float(row[0])), world_to_block(float(row[1])))
+            block = (world_to_block(float(row[0]), X_OFF),
+                     world_to_block(float(row[1]), Y_OFF))
             if not blocks or block != blocks[-1]:
                 blocks.append(block)
                 entry_times.append(float(row[3]))
@@ -103,12 +110,12 @@ def rect_of_polygon(poly):
 def rect_to_block_rect(rect):
     '''world bbox -> inclusive block index ranges of every intersected block'''
     (x0, y0, x1, y1) = rect
-    bx0 = max(MIN_VAL, int((x0 + HALF_WORLD) // BLOCK))
-    by0 = max(MIN_VAL, int((y0 + HALF_WORLD) // BLOCK))
+    bx0 = max(MIN_VAL, int((x0 + X_OFF) // BLOCK))
+    by0 = max(MIN_VAL, int((y0 + Y_OFF) // BLOCK))
     # subtract an epsilon so a boundary exactly on a block edge does not
     # drag in the next (untouched) block
-    bx1 = min(MAX_VAL, int((x1 + HALF_WORLD - 1e-9) // BLOCK))
-    by1 = min(MAX_VAL, int((y1 + HALF_WORLD - 1e-9) // BLOCK))
+    bx1 = min(MAX_VAL, int((x1 + X_OFF - 1e-9) // BLOCK))
+    by1 = min(MAX_VAL, int((y1 + Y_OFF - 1e-9) // BLOCK))
     return (bx0, by0, bx1, by1)
 
 
@@ -386,7 +393,7 @@ NONDET_INIT = '(loop, loop_var, [min_val, max_val] such_that True, loop_var)'
 
 
 def main():
-    global MAX_VAL, BLOCK, OBSTACLES, TABLE
+    global MAX_VAL, BLOCK, OBSTACLES, TABLE, X_OFF, Y_OFF
     parser = argparse.ArgumentParser()
     parser.add_argument('deadline', nargs='?', type=int, default=30)
     parser.add_argument('ticks_per_waypoint', nargs='?', type=int, default=2)
@@ -394,6 +401,11 @@ def main():
     parser.add_argument('--block', type=int, default=40)
     parser.add_argument('--max-val', type=int, default=24)
     parser.add_argument('--fly-at', type=int, default=80)
+    parser.add_argument('--x-off', type=float, default=None,
+                        help='world->block x origin offset: bx=(wx+x_off)//block '
+                             '(ROI crop; default HALF_WORLD=500 = full-map origin)')
+    parser.add_argument('--y-off', type=float, default=None,
+                        help='world->block y origin offset (default 500)')
     parser.add_argument('--ignore-dir', default=IGNORE)
     parser.add_argument('--prefix', default='city_track')
     parser.add_argument('--allow-pursuit-failure', action='store_true')
@@ -406,6 +418,8 @@ def main():
     args = parser.parse_args()
     (deadline, ticks_per_waypoint) = (args.deadline, args.ticks_per_waypoint)
     (MAX_VAL, BLOCK) = (args.max_val, args.block)
+    X_OFF = HALF_WORLD if args.x_off is None else args.x_off
+    Y_OFF = HALF_WORLD if args.y_off is None else args.y_off
     out_dir = args.ignore_dir
     OBSTACLES = os.path.join(out_dir, 'obstacles%s.txt' % args.map_id)
     TABLE = os.path.join(out_dir, 'table%s.txt' % args.map_id)
@@ -541,6 +555,7 @@ def main():
         'worst_start': list(max(catch_times, key=catch_times.get)),
         'grid': grid,
         'block': BLOCK, 'fly_at': args.fly_at, 'map_id': args.map_id,
+        'x_off': X_OFF, 'y_off': Y_OFF,
         'zones': zones, 'zone_inventory': inventory,
         'pursuit_failures': failed_starts,
         'target_world_polyline': polyline,
