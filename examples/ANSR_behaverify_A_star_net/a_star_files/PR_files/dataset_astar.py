@@ -5,6 +5,40 @@ import torch
 from torch.utils.data import Dataset
 import importlib.util
 
+
+def _parse_rows(path):
+    rows = []
+    with open(path, 'r', encoding='utf-8') as data_file:
+        for line in data_file:
+            if ',' not in line:
+                continue
+            line = line.split(']', 1)[0].replace('[', '')
+            rows.append([float(line_part.strip()) for line_part in line.split(',')])
+    return rows
+
+
+def load_tensors(input_path, target_path):
+    """
+    Parse the generated inputs/targets text files ONCE into tensors.
+    Returns (inputs float32 [N, 4], targets long [N]) with one-hot targets
+    converted to class indices. This replaces the per-sample DataLoader
+    collation, which was the training-throughput bottleneck (see training.py).
+    """
+    inputs = torch.tensor(_parse_rows(input_path), dtype=torch.float32)
+    targets_raw = torch.tensor(_parse_rows(target_path))
+    if targets_raw.dim() > 1 and targets_raw.shape[1] > 1:
+        targets = targets_raw.argmax(dim=1).type(torch.long)
+    else:
+        targets = targets_raw.reshape(-1).type(torch.long)
+    if inputs.shape[0] == 0:
+        raise RuntimeError('no training samples parsed from ' + input_path
+                           + ' -- was the map degenerate (all obstacles / empty table)?')
+    if inputs.shape[0] != targets.shape[0]:
+        raise RuntimeError('inputs/targets length mismatch: '
+                           + str(inputs.shape[0]) + ' vs ' + str(targets.shape[0]))
+    return (inputs, targets)
+
+
 class AStarDataset(Dataset):
     def __init__(self, input_path, target_path):
         """

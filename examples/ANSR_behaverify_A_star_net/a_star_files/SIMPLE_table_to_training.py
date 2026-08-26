@@ -70,6 +70,15 @@ def convert_table_to_training_data(input_path):
                             # if len(seen_values) % 1000 == 0:
                             #     print('iteration: ' + str(len(seen_values)))
     print(len(seen_values))
+    if len(seen_values) == 0:
+        # Overnight fix (2026-07-02): a table with zero case rules means the A*
+        # table is empty (e.g. the whole map became obstacles after
+        # fill_holes at a coarse block size). Previously this silently
+        # generated an all-XX "training set" of max_val^4 useless samples.
+        raise RuntimeError('table ' + input_path + ' contains no case rules: '
+                           'the map is degenerate (no reachable free cells). '
+                           'Refusing to generate an all-XX training set; '
+                           'try a smaller block_size or a lower fly_at.')
     result = target_code['XX']
     # for s_x in range(all_min_vals[0], all_max_vals[0] + 1):
     #     for s_y in range(all_min_vals[1], all_max_vals[1] + 1):
